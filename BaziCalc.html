@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KK子平八字 - 專業排盤</title>
+    <style>
+        :root {
+            --bg-color: #f5f7fa;
+            --header-bg: #2c3e50;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #bdc3c7;
+            --accent-blue: #3498db;
+            --accent-purple: #9b59b6;
+            --accent-dark: #34495e;
+            --font-main: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* 標題區 */
+        .main-header {
+            background-color: var(--header-bg);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .main-header h1 { margin: 0; font-size: 26px; letter-spacing: 2px; }
+
+        /* 輸入區 */
+        .input-section {
+            padding: 20px;
+            background-color: #ecf0f1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #606060;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            font-family: var(--font-main);
+        }
+
+        .btn-group {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        .btn-run { background-color: #2980b9; }
+        .btn-clear { background-color: #95a5a6; }
+        button:hover { opacity: 0.9; }
+
+        /* 排盤結果區 */
+        .result-section { padding: 20px; }
+
+        .section-title {
+            padding: 10px 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .title-yuanju { background-color: var(--accent-blue); }
+        .title-dayun { background-color: var(--accent-purple); }
+        .title-liunian { background-color: var(--accent-dark); }
+
+        /* 表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .highlight-bg { background-color: #ecf0f1; font-weight: bold; font-size: 1.2em; color: #2c3e50; }
+        
+        /* 顏色類別 */
+        .color-green { color: #009600; font-weight: bold; }
+        .color-purple { color: #9b59b6; font-weight: bold; }
+        .color-red { color: #e74c3c; font-weight: bold; }
+        .text-gray { color: #7f8c8d; }
+        .text-bold { font-weight: bold; }
+
+        /* 大運捲動區 */
+        .dayun-container {
+            overflow-x: auto;
+        }
+        .dayun-table td { white-space: nowrap; }
+
+        /* 流年卡片 */
+        .liunian-card {
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .liunian-header {
+            background-color: var(--accent-dark);
+            color: white;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .liunian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 左太歲 右串宮 */
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .sub-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .red-text { color: #c0392b; }
+        .green-text { color: #27ae60; }
+        
+        .row-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .row-item .label { width: 15%; color: #888; }
+        .row-item .gan-shen { width: 30%; font-size: 0.9em; }
+        .row-item .gan-zhi { width: 20%; font-weight: bold; font-size: 1.1em; text-align: center; }
+        .row-item .zhi-shen { width: 35%; font-size: 0.9em; text-align: right; }
+        
+        /* 隱藏元素 */
+        .hidden { display: none; }
+        
+        @media (max-width: 768px) {
+            .liunian-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="main-header">
+        <h1>K K 子 平 八 字 | 專 業 排 盤</h1>
+    </div>
+
+    <div class="input-section">
+        <div class="form-group">
+            <label>出生年 (西元)</label>
+            <input type="number" id="inYear" value="1990">
+        </div>
+        <div class="form-group">
+            <label>出生月</label>
+            <input type="number" id="inMonth" value="1" min="1" max="12">
+        </div>
+        <div class="form-group">
+            <label>出生日</label>
+            <input type="number" id="inDay" value="1" min="1" max="31">
+        </div>
+        <div class="form-group">
+            <label>出生時辰</label>
+            <select id="inHour">
+                <option value="0">子 (23-01)</option>
+                <option value="1">丑 (01-03)</option>
+                <option value="2">寅 (03-05)</option>
+                <option value="3">卯 (05-07)</option>
+                <option value="4">辰 (07-09)</option>
+                <option value="5">巳 (09-11)</option>
+                <option value="6" selected>午 (11-13)</option>
+                <option value="7">未 (13-15)</option>
+                <option value="8">申 (15-17)</option>
+                <option value="9">酉 (17-19)</option>
+                <option value="10">戌 (19-21)</option>
+                <option value="11">亥 (21-23)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>性別</label>
+            <select id="inGender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>顯示區間</label>
+            <select id="inRange">
+                <option value="0-9">0-9歲</option>
+                <option value="10-19">10-19歲</option>
+                <option value="20-29">20-29歲</option>
+                <option value="30-39">30-39歲</option>
+                <option value="40-49">40-49歲</option>
+                <option value="50-59">50-59歲</option>
+                <option value="60-69">60-69歲</option>
+                <option value="70-79">70-79歲</option>
+                <option value="80-89">80-89歲</option>
+                <option value="90-99">90-99歲</option>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-run" onclick="runCalculation()">開始排盤</button>
+            <button class="btn-clear" onclick="clearData()">清除數據</button>
+        </div>
+    </div>
+
+    <div id="outputArea" class="result-section hidden">
+        <div id="yuanJuArea"></div>
+        <div id="daYunArea"></div>
+        <div id="liuNianArea"></div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    //  全域資料 (Global Variables)
+    // ==========================================
+    const Tiangan = "甲,乙,丙,丁,戊,己,庚,辛,壬,癸".split(",");
+    const Dizhi = "子,丑,寅,卯,辰,巳,午,未,申,酉,戌,亥".split(",");
+    
+    // 神煞表 (依照 VBA 邏輯)
+    const ShenSha = [
+        "太歲 劍鋒",            // 0
+        "青龍 太陽 天空",       // 1
+        "喪門 地喪 驛馬",       // 2
+        "六合 勾絞 太陰",       // 3
+        "官符 五鬼",            // 4
+        "小耗 死符 月德",       // 5
+        "大耗 歲破",            // 6
+        "朱雀 龍德 紫薇",       // 7
+        "白虎 飛廉 披麻",       // 8
+        "貴神 福德 天德",       // 9
+        "吊客 天狗",            // 10
+        "病符 是非 陌越"        // 11
+    ];
+
+    const TenGodsYang = "比肩,劫財,食神,傷官,偏財,正財,七殺,正官,偏印,正印".split(",");
+    const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏印,劫財".split(",");
+    const BranchMainQi = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8]; // 子(9=癸)...
+    
+    // 簡易節氣C值 (VBA Array)
+    const JieQiCVal = [5.4055, 3.87, 5.63, 4.81, 5.52, 5.678, 7.108, 7.5, 7.646, 8.318, 7.438, 7.18];
+    
+    const NaYinList = [
+        "海中金","爐中火","大林木","路旁土","劍鋒金","山頭火","澗下水","城頭土","白蠟金","楊柳木",
+        "泉中水","屋上土","霹靂火","松柏木","長流水","沙中金","山下火","平地木","壁上土","金箔金",
+        "覆燈火","天河水","大驛土","釵釧金","桑柘木","大溪水","沙中土","天上火","石榴木","大海水"
+    ];
+
+    // ==========================================
+    //  主程式邏輯
+    // ==========================================
+    function runCalculation() {
+        const y = parseInt(document.getElementById('inYear').value);
+        const m = parseInt(document.getElementById('inMonth').value);
+        const d = parseInt(document.getElementById('inDay').value);
+        const hBranchIdx = parseInt(document.getElementById('inHour').value);
+        const gender = document.getElementById('inGender').value;
+        const rangeStr = document.getElementById('inRange').value;
+
+        if (!y || !m || !d) {
+            alert("請輸入完整日期！");
+            return;
+        }
+
+        // 清空並顯示區域
+        clearData();
+        document.getElementById('outputArea').classList.remove('hidden');
+
+        // --- 1. 計算四柱 ---
+        // 簡易判斷立春前後：如果日期在立春前，算上一年
+        let yStem, yBranch;
+        let realBaziYear = y;
+        
+        // 計算該年立春日期
+        const liChunDate = getJieQiDate(y, 1); // 索引1 = 立春
+        // 構造出生日期 (為求簡單，假設中午12點比對)
+        const bDate = new Date(y, m - 1, d, 12, 0, 0);
+
+        let offY = (y - 4) % 60;
+        if (offY < 0) offY += 60;
+        
+        yStem = offY % 10;
+        yBranch = offY % 12;
+
+        if (bDate < liChunDate) {
+            yStem = (yStem - 1 + 10) % 10;
+            yBranch = (yBranch - 1 + 12) % 12;
+            realBaziYear = y - 1;
+        }
+
+        // 月柱 (節氣法)
+        let mBranch = -1;
+        let foundJie = false;
+        
+        // 倒推找節氣
+        for (let scanM = m; scanM >= m - 1; scanM--) {
+            let yy = y;
+            let checkM = scanM;
+            if (checkM < 1) { checkM = 12; yy = y - 1; }
+            
+            let jieIdx = checkM - 1; // 1月=小寒(0)
+            if (jieIdx < 0) jieIdx = 11;
+            
+            let tDate = getJieQiDate(yy, jieIdx);
+            if (bDate >= tDate) {
+                mBranch = (jieIdx + 1) % 12; // 寅月=2
+                foundJie = true;
+                break;
+            }
+        }
+        if (!foundJie) mBranch = (m - 1 + 12) % 12; // fallback
+
+        // 月干 (五虎遁)
+        let mStartStem = (yStem % 5) * 2;
+        if (mStartStem > 9) mStartStem -= 10; // 甲己之年丙作首(2)...
+        // 公式修正: (yStem%5 + 1)*2 ? 
+        // VBA Code: Case 0(甲):2(丙), Case 1(乙):4(戊)... -> (yStem%5)*2 + 2
+        // Wait, Code says: Case 0->2. Correct.
+        // Formula: mStartStem + (MonthIndex - 2)
+        // Note: mBranch 0=子, 1=丑, 2=寅(建寅). 
+        // Index offset from Yin(2): (mBranch - 2 + 12) % 12
+        let mStem = (mStartStem + 2 + (mBranch - 2 + 12) % 12) % 10;
+
+        // 日柱 (1900-1-31 基隨)
+        const baseD = new Date(1900, 0, 31);
+        const targetD = new Date(y, m - 1, d);
+        const timeDiff = targetD - baseD;
+        const daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+        
+        let dStem = (0 + daysDiff) % 10;
+        let dBranch = (4 + daysDiff) % 12;
+        if (dStem < 0) dStem += 10;
+        if (dBranch < 0) dBranch += 12;
+
+        // 時柱 (五鼠遁)
+        // 日干推時干: 甲己還加甲(0)...
+        let hStartStem = (dStem % 5) * 2;
+        let hStem = (hStartStem + hBranchIdx) % 10;
+        let hBranch = hBranchIdx;
+
+        // 胎元 / 命宮 / 身宮
+        let taiStem = (mStem + 1) % 10;
+        let taiBranch = (mBranch + 3) % 12;
+
+        let mNum = (mBranch - 2 + 12) % 12 + 1; // 寅=1
+        let hNum = (hBranch - 2 + 12) % 12 + 1; // 寅=1
+        
+        let mingNum = (26 - (mNum + hNum)) % 12;
+        if (mingNum === 0) mingNum = 12;
+        let mingBranch = (mingNum + 1) % 12; // 轉回 index
+        let mingStem = (mStartStem + 2 + (mingBranch - 2 + 12) % 12) % 10;
+
+        let shenNum = (2 + mNum + hNum) % 12;
+        if (shenNum === 0) shenNum = 12;
+        let shenBranch = (shenNum + 1) % 12;
+        let shenStem = (mStartStem + 2 + (shenBranch - 2 + 12) % 12) % 10;
+
+        // --- 起運計算 ---
+        const isYangYear = (yStem % 2 === 0);
+        const isMale = (gender === "男");
+        const isForward = (isMale && isYangYear) || (!isMale && !isYangYear);
+        
+        let targetJieDate;
+        let infoStr = isForward ? "順推" : "逆推";
+        
+        if (isForward) targetJieDate = getNextJieQi(bDate);
+        else targetJieDate = getPrevJieQi(bDate);
+        
+        let diffMins = Math.abs(targetJieDate - bDate) / (1000 * 60);
+        let dyStartAge = Math.floor(diffMins / 4320); // 3天1歲 -> 1天=1440分, 3天=4320分
+        if ((diffMins / 4320) > dyStartAge) dyStartAge += 1;
+        if (dyStartAge < 1) dyStartAge = 1;
+
+        // --- 渲染原局 ---
+        renderYuanJu(
+            yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch,
+            taiStem, taiBranch, mingStem, mingBranch, shenStem, shenBranch,
+            infoStr, dyStartAge, diffMins
+        );
+
+        // --- 渲染大運 ---
+        renderDaYun(mStem, mBranch, dStem, isForward, dyStartAge);
+
+        // --- 渲染流年 ---
+        renderLiuNian(
+            realBaziYear, rangeStr, dyStartAge, mStem, mBranch, isForward,
+            yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch, 
+            mingBranch, isMale
+        );
+    }
+
+    // ==========================================
+    //  渲染函數 (Rendering)
+    // ==========================================
+    function renderYuanJu(yS, yB, mS, mB, dS, dB, hS, hB, tS, tB, mnS, mnB, ssS, ssB, infoStr, age, mins) {
+        const div = document.getElementById('yuanJuArea');
+        const days = (mins / 1440).toFixed(1);
+        
+        // 標題
+        let html = `<div class="section-title title-yuanju">【 原 局 命 盤 】 ${infoStr} ${days}天交運 (${age}歲起運)</div>`;
+        
+        // 表格
+        html += `<table>
+            <tr class="text-gray">
+                <th></th><th>年柱</th><th>月柱</th><th>日柱</th><th>時柱</th>
+                <th>胎元</th><th>命宮</th><th>身宮</th>
+            </tr>
+            <tr>
+                <td>十神</td>
+                <td>${getTenGod(dS, yS)}</td>
+                <td>${getTenGod(dS, mS)}</td>
+                <td>【日主】</td>
+                <td>${getTenGod(dS, hS)}</td>
+                <td>${getTenGod(dS, tS)}</td>
+                <td>${getTenGod(dS, mnS)}</td>
+                <td>${getTenGod(dS, ssS)}</td>
+            </tr>
+            <tr>
+                <td>串宮(干)</td>
+                ${generateShenShaCells(dS, [yS, mS, -1, hS, tS, mnS, ssS], true)}
+            </tr>
+            <tr class="highlight-bg">
+                <td>干支/納音</td>
+                <td>${getGZNY(yS, yB)}</td>
+                <td>${getGZNY(mS, mB)}</td>
+                <td>${getGZNY(dS, dB)}</td>
+                <td>${getGZNY(hS, hB)}</td>
+                <td>${getGZNY(tS, tB)}</td>
+                <td>${getGZNY(mnS, mnB)}</td>
+                <td>${getGZNY(ssS, ssB)}</td>
+            </tr>
+            <tr>
+                <td>串宮(支)</td>
+                ${generateShenShaCells(dS, [yB, mB, dB, hB, tB, mnB, ssB], false)}
+            </tr>
+             <tr>
+                <td>藏干</td>
+                <td>${getBranchTenGod(dS, yB)}</td>
+                <td>${getBranchTenGod(dS, mB)}</td>
+                <td>${getBranchTenGod(dS, dB)}</td>
+                <td>${getBranchTenGod(dS, hB)}</td>
+                <td colspan="3" class="text-gray">-</td>
+            </tr>
+        </table>`;
+        
+        div.innerHTML = html;
+    }
+
+    function renderDaYun(mStem, mBranch, dStem, isForward, startAge) {
+        const div = document.getElementById('daYunArea');
+        let html = `<div class="section-title title-dayun">【 大 運 程 】</div>`;
+        
+        html += `<div class="dayun-container"><table class="dayun-table"><tr>`;
+        
+        // 頭部 (歲數)
+        html += `<th>歲數</th>`;
+        for (let k = 1; k <= 10; k++) {
+            html += `<th>${startAge + (k-1)*10}歲</th>`;
+        }
+        html += `</tr><tr>`;
+
+        // 干神
+        html += `<td>神煞(干)</td>`;
+        for (let k = 1; k <= 10; k++) {
+            let dyS = isForward ? (mStem + k)%10 : (mStem - k)%10;
+            if (dyS < 0) dyS += 10;
+            html += `<td>${getShenShaHTML(dStem, dyS, true)}</td>`;
+        }
+        html += `</tr><tr>`;
+
+        // 干支
+        html += `<td>干支</td>`;
+        for (let k = 1; k <= 10; k++) {
+            let dyS = isForward ? (mStem + k)%10 : (mStem - k)%10;
+            if (dyS < 0) dyS += 10;
+            let dyB = isForward ? (mBranch + k)%12 : (mBranch - k)%12;
+            if (dyB < 0) dyB += 12;
+            html += `<td class="highlight-bg">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.7em;font-weight:normal">${getNaYin(dyS, dyB)}</span></td>`;
+        }
+        html += `</tr><tr>`;
+
+        // 支神
+        html += `<td>神煞(支)</td>`;
+        for (let k = 1; k <= 10; k++) {
+            let dyB = isForward ? (mBranch + k)%12 : (mBranch - k)%12;
+            if (dyB < 0) dyB += 12;
+            html += `<td>${getShenShaHTML(dStem, dyB, false)}</td>`; // 這裡大運神煞也是以日柱太歲(GetStemMapping)查
+        }
+        html += `</tr></table></div>`;
+
+        div.innerHTML = html;
+    }
+
+    function renderLiuNian(realY, rangeStr, dyStartAge, mS, mB, isForward, yS, yB, mStem, mBranch, dStem, dBranch, hStem, hBranch, mingBranch, isMale) {
+        const div = document.getElementById('liuNianArea');
+        div.innerHTML = `<div class="section-title title-liunian">【 流 年 細 批 】</div>`;
+
+        let [sAge, eAge] = rangeStr.replace("歲","").split("-").map(Number);
+        
+        for (let age = sAge; age <= eAge; age++) {
+            if (age === 0) continue;
+            let loopY = realY + age - 1;
+            let off = (loopY - 4) % 60;
+            if (off < 0) off += 60;
+            let loopStem = off % 10;
+            let loopBranch = off % 12;
+            
+            // 計算大運
+            let currDyStr = "未起運";
+            let currDyStem = -1; 
+            let currDyBranch = -1;
+            
+            if (age >= dyStartAge) {
+                let step = Math.floor((age - dyStartAge) / 10) + 1;
+                if (step > 10) step = 10; // Max logic
+                
+                if (isForward) {
+                    currDyStem = (mS + step) % 10;
+                    currDyBranch = (mB + step) % 12;
+                } else {
+                    currDyStem = (mS - step) % 10; if (currDyStem<0) currDyStem+=10;
+                    currDyBranch = (mB - step) % 12; if (currDyBranch<0) currDyBranch+=12;
+                }
+                currDyStr = Tiangan[currDyStem] + Dizhi[currDyBranch];
+            }
+
+            // 小限
+            let xxBranch;
+            if (isMale) xxBranch = (mingBranch + (age - 1)) % 12;
+            else { xxBranch = (mingBranch - (age - 1)) % 12; if(xxBranch<0) xxBranch+=12; }
+            
+            // 小限干 (五虎遁 - 年上起)
+            let xxStartStem = (yS % 5) * 2 + 2;
+            let xxStem = (xxStartStem + (xxBranch - 2 + 12) % 12) % 10;
+            
+            // 卡片 HTML
+            let card = document.createElement('div');
+            card.className = "liunian-card";
+            
+            let header = `<div class="liunian-header">
+                ${loopY}年 (${Tiangan[loopStem]}${Dizhi[loopBranch]} / ${getNaYin(loopStem, loopBranch)}) 
+                ${age}歲 [大運: ${currDyStr}]
+            </div>`;
+            
+            // 內容 Grid
+            let grid = `<div class="liunian-grid">
+                <div>
+                    <div class="sub-header red-text">【太歲入局】 (年支為君)</div>
+                    ${generateRowTypeA("年柱", yS, yB, loopBranch)}
+                    ${generateRowTypeA("月柱", mStem, mBranch, loopBranch)}
+                    ${generateRowTypeA("日柱", dStem, dBranch, loopBranch)}
+                    ${generateRowTypeA("時柱", hStem, hBranch, loopBranch)}
+                    ${currDyStem !== -1 ? generateRowTypeA("大運", currDyStem, currDyBranch, loopBranch) : '<div class="row-item">大運未起</div>'}
+                </div>
+
+                <div>
+                    <div class="sub-header green-text">【串宮壓運】 (日干為君)</div>
+                    <div class="row-item">
+                        <span class="label">流干</span>
+                        <span class="gan-shen">${getTenGod(dStem, loopStem)}</span>
+                        <span class="gan-zhi">${Tiangan[loopStem]}</span>
+                        <span class="zhi-shen">${getShenShaHTML(dStem, loopStem, true)}</span>
+                    </div>
+                    <div class="row-item">
+                        <span class="label">流支</span>
+                        <span class="gan-shen">${getBranchTenGod(dStem, loopBranch)}</span>
+                        <span class="gan-zhi">${Dizhi[loopBranch]}</span>
+                        <span class="zhi-shen">${getShenShaHTML(dStem, loopBranch, false)}</span>
+                    </div>
+                     ${currDyStem !== -1 ? `
+                    <div class="row-item">
+                        <span class="label">運干</span>
+                        <span class="gan-shen"></span>
+                        <span class="gan-zhi">${Tiangan[currDyStem]}</span>
+                        <span class="zhi-shen">${getShenShaHTML(dStem, currDyStem, true)}</span>
+                    </div>
+                     <div class="row-item">
+                        <span class="label">運支</span>
+                        <span class="gan-shen"></span>
+                        <span class="gan-zhi">${Dizhi[currDyBranch]}</span>
+                        <span class="zhi-shen">${getShenShaHTML(dStem, currDyBranch, false)}</span>
+                    </div>` : ''}
+                    <div class="row-item" style="border-top:1px dashed #ccc; margin-top:5px;">
+                        <span class="label">小限</span>
+                        <span class="gan-shen"></span>
+                        <span class="gan-zhi text-gray">${Tiangan[xxStem]}${Dizhi[xxBranch]}</span>
+                        <span class="zhi-shen">${getShenShaHTML(dStem, xxBranch, false)}</span>
+                    </div>
+                </div>
+            </div>`;
+
+            card.innerHTML = header + grid;
+            div.appendChild(card);
+        }
+    }
+
+    // 生成 "太歲入局" 風格的行
+    function generateRowTypeA(title, s, b, loopB) {
+        // 干神 (以流年支 loopB 查 干 s) -> 但神煞表是 Dizhi diff.
+        // VBA 邏輯: GetDayBasedShenSha(loopB, s, True)
+        // 這裡的神煞計算：Base = loopB. Target = s(mapped to branch)
+        let stemSS = getShenShaByBranchDiff(loopB, getStemMapping(s));
+        let branchSS = getShenShaByBranchDiff(loopB, b);
+        
+        return `<div class="row-item">
+            <span class="label">${title}</span>
+            <span class="gan-shen">${colorize(stemSS)}</span>
+            <span class="gan-zhi">${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.8em;font-weight:normal">${getNaYin(s,b)}</span></span>
+            <span class="zhi-shen">${colorize(branchSS)}</span>
+        </div>`;
+    }
+
+    function generateShenShaCells(dStem, targets, isStem) {
+        let html = "";
+        let dTaiSui = getStemMapping(dStem);
+        targets.forEach(t => {
+            if (t === -1) {
+                html += `<td>-</td>`;
+            } else {
+                html += `<td>${getShenShaHTMLByBranchBase(dTaiSui, t, isStem)}</td>`;
+            }
+        });
+        return html;
+    }
+
+    // ==========================================
+    //  輔助計算 (Helpers)
+    // ==========================================
+    function getTenGod(dStem, tStem) {
+        let idx = (tStem - dStem + 10) % 10;
+        if (dStem % 2 === 0) return TenGodsYang[idx];
+        return TenGodsYin[idx];
+    }
+    
+    function getBranchTenGod(dStem, branch) {
+        let mainS = BranchMainQi[branch];
+        return getTenGod(dStem, mainS);
+    }
+    
+    function getNaYin(s, b) {
+        // 找 pos
+        for(let i=0; i<60; i++) {
+            if (i%10 === s && i%12 === b) {
+                return NaYinList[Math.floor(i/2)] || "";
+            }
+        }
+        return "";
+    }
+    
+    function getGZNY(s, b) {
+        return `${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.8em">${getNaYin(s,b)}</span>`;
+    }
+
+    function getStemMapping(s) {
+        // 0甲->2寅, 1乙->3卯... 
+        // VBA: 0->2, 1->3, 2->5(巳), 3->6(午), 4->5(戊寄巳), 5->6(己寄午), 6->8(申), 7->9(酉), 8->11(亥), 9->0(子)
+        const map = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0];
+        return map[s];
+    }
+
+    // 統一神煞接口 (Base: 日干寄宮 or 年支)
+    function getShenShaHTML(dStem, target, isStem) {
+        let base = getStemMapping(dStem);
+        return getShenShaHTMLByBranchBase(base, target, isStem);
+    }
+    
+    function getShenShaHTMLByBranchBase(baseBranch, target, isStem) {
+        let tBranch = isStem ? getStemMapping(target) : target;
+        let txt = getShenShaByBranchDiff(baseBranch, tBranch);
+        return colorize(txt);
+    }
+
+    function getShenShaByBranchDiff(base, target) {
+        let diff = (target - base + 12) % 12;
+        return ShenSha[diff];
+    }
+
+    // 著色 HTML 生成
+    function colorize(txt) {
+        if (!txt) return "";
+        let className = "color-red"; // 默認凶
+        // 吉星判斷
+        const lucky = ["六合", "青龍", "貴神", "龍德", "福德", "天德", "月德", "太陽", "太陰", "紫薇", "官符"];
+        // 太歲判斷
+        if (txt.includes("太歲")) className = "color-purple";
+        else {
+            for (let l of lucky) {
+                if (txt.includes(l)) { className = "color-green"; break; }
+            }
+        }
+        // 為了排版，將空格換行
+        return `<span class="${className}">${txt.replace(/ /g, "<br>")}</span>`;
+    }
+
+    // 清除資料
+    function clearData() {
+        document.getElementById('yuanJuArea').innerHTML = "";
+        document.getElementById('daYunArea').innerHTML = "";
+        document.getElementById('liuNianArea').innerHTML = "";
+        document.getElementById('outputArea').classList.add('hidden');
+    }
+
+    // ==========================================
+    //  節氣日期計算 (忠實還原 VBA 邏輯)
+    // ==========================================
+    function getJieQiDate(y, idx) {
+        let C = JieQiCVal[idx];
+        let m = idx + 1;
+        // VBA: Int((y Mod 100) * 0.2422 + C_Val) - Int((y Mod 100 - 1) / 4)
+        let yMod100 = y % 100;
+        let d = Math.floor(yMod100 * 0.2422 + C) - Math.floor((yMod100 - 1) / 4);
+        return new Date(y, m - 1, d);
+    }
+    
+    function getNextJieQi(currDate) {
+        let y = currDate.getFullYear();
+        // Check this year
+        for (let i=0; i<12; i++) {
+            let d = getJieQiDate(y, i);
+            if (d > currDate) return d;
+        }
+        // Check next year
+        for (let i=0; i<12; i++) {
+            let d = getJieQiDate(y+1, i);
+            if (d > currDate) return d;
+        }
+        return new Date(currDate.getTime() + 30*24*3600*1000);
+    }
+    
+    function getPrevJieQi(currDate) {
+        let y = currDate.getFullYear();
+        // Check this year backwards
+        for (let i=11; i>=0; i--) {
+            let d = getJieQiDate(y, i);
+            if (d <= currDate) return d;
+        }
+        // Check prev year backwards
+        for (let i=11; i>=0; i--) {
+            let d = getJieQiDate(y-1, i);
+            if (d <= currDate) return d;
+        }
+        return new Date(currDate.getTime() - 30*24*3600*1000);
+    }
+
+</script>
+
+</body>
+</html>
