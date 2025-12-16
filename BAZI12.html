@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天時子平八字 | 專業排盤 (串宮修正版)</title>
+    <style>
+        :root {
+            --bg-color: #f5f7fa;
+            --primary-blue: #2c3e50;
+            --btn-blue: #2980b9;
+            --btn-gray: #95a5a6;
+            --header-blue: #3498db;
+            --da-yun-purple: #9b59b6;
+            --liu-nian-dark: #34495e;
+            --text-color: #2c3e50;
+            --border-color: #bdc3c7;
+            
+            /* 神煞顏色 */
+            --color-green: #009600;
+            --color-purple: #9b59b6;
+            --color-red: #e74c3c;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* 標題區 */
+        .main-header {
+            background-color: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+
+        /* 輸入區 */
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #3c3c3c;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .input-group input, .input-group select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* 按鈕區 */
+        .btn-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .btn-run { background-color: var(--btn-blue); }
+        .btn-clear { background-color: var(--btn-gray); }
+
+        /* 結果顯示區通用樣式 */
+        .section-title {
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        .chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .chart-table th, .chart-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            vertical-align: middle;
+        }
+        
+        /* 原局命盤 */
+        .yuan-ju-header { background-color: var(--header-blue); }
+        .highlight-bg { background-color: #ecf0f1; font-size: 1.2em; font-weight: bold; }
+        .shensha-row { font-size: 0.9em; }
+
+        /* 大運 */
+        .dayun-header { background-color: var(--da-yun-purple); }
+        .dayun-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 0;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+        .dayun-col {
+            flex: 0 0 80px;
+            border-right: 1px solid var(--border-color);
+            text-align: center;
+            padding: 5px 0;
+        }
+        .dayun-col div { padding: 4px 0; }
+
+        /* 流年與列表新樣式 */
+        .liunian-block {
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .liunian-title {
+            background-color: var(--liu-nian-dark);
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .liunian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 太歲入局 | 串宮壓運 */
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .liunian-grid { grid-template-columns: 1fr; }
+        }
+
+        .subtitle {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+        .subtitle.red { color: var(--color-red); border-bottom-color: var(--color-red); }
+        .subtitle.green { color: #009600; border-bottom-color: #009600; }
+
+        /* 左側：比較複雜的行 */
+        .complex-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 10px 0;
+        }
+        .complex-row .label { width: 50px; font-weight: bold; color: #7f8c8d; }
+        .complex-row .content { flex: 1; display: flex; justify-content: space-around; text-align: center; }
+
+        /* 右側：列表行 */
+        .bazi-list-row {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 5px;
+        }
+        .bazi-list-row:last-child { border-bottom: none; }
+        
+        .bazi-list-row .label {
+            width: 60px;
+            text-align: left;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        
+        .bazi-list-row .center-val {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .bazi-list-row .status {
+            width: 60px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* 顏色輔助 */
+        .c-green { color: var(--color-green); }
+        .c-purple { color: var(--color-purple); }
+        .c-red { color: var(--color-red); }
+        .t-bold { font-weight: bold; }
+        .t-large { font-size: 1.1em; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="main-header">天 時 子 平 八 字 | 專 業 排 盤</div>
+
+    <div class="input-section">
+        <div class="input-group">
+            <label>出生年 (西元)</label>
+            <input type="number" id="inpYear" value="1990">
+        </div>
+        <div class="input-group">
+            <label>出生月</label>
+            <input type="number" id="inpMonth" value="1">
+        </div>
+        <div class="input-group">
+            <label>出生日</label>
+            <input type="number" id="inpDay" value="1">
+        </div>
+        <div class="input-group">
+            <label>出生時 (0-23)</label>
+            <input type="number" id="inpHour" value="12">
+        </div>
+        <div class="input-group">
+            <label>性別</label>
+            <select id="inpGender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>顯示區間</label>
+            <select id="inpRange">
+                <option value="0-9">0-9歲</option>
+                <option value="10-19">10-19歲</option>
+                <option value="20-29">20-29歲</option>
+                <option value="30-39">30-39歲</option>
+                <option value="40-49">40-49歲</option>
+                <option value="50-59">50-59歲</option>
+                <option value="60-69">60-69歲</option>
+                <option value="70-79">70-79歲</option>
+                <option value="80-89">80-89歲</option>
+                <option value="90-99">90-99歲</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="btn-section">
+        <button class="btn btn-run" onclick="runCalculation()">開始排盤</button>
+        <button class="btn btn-clear" onclick="clearData()">清除數據</button>
+    </div>
+
+    <div id="resultArea"></div>
+</div>
+
+<script>
+/**
+ * 程式夥伴 - JS 移植版 (串宮修正版)
+ */
+
+// ==========================================
+//    全域變數與初始化
+// ==========================================
+const Tiangan = "甲,乙,丙,丁,戊,己,庚,辛,壬,癸".split(",");
+const Dizhi = "子,丑,寅,卯,辰,巳,午,未,申,酉,戌,亥".split(",");
+const ShenSha = "太歲,青龍,喪門,六合,官符,小耗,大耗,朱雀,白虎,貴神,吊客,病符".split(",");
+const TenGodsYang = "比肩,劫財,食神,傷官,偏財,正財,七殺,正官,偏印,正印".split(",");
+const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏印,劫財".split(",");
+const BranchMainQi = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8]; // 子(9=癸)...
+const JieQiCVal = [5.4055, 3.87, 5.63, 4.81, 5.52, 5.678, 7.108, 7.5, 7.646, 8.318, 7.438, 7.18];
+const NaYinList = ("海中金,爐中火,大林木,路旁土,劍鋒金,山頭火,澗下水,城頭土,白蠟金,楊柳木," + 
+                  "泉中水,屋上土,霹靂火,松柏木,長流水,沙中金,山下火,平地木,壁上土,金箔金," + 
+                  "覆燈火,天河水,大驛土,釵釧金,桑柘木,大溪水,沙中土,天上火,石榴木,大海水").split(",");
+
+function safeMod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+// ==========================================
+//    核心運算
+// ==========================================
+
+function runCalculation() {
+    const y = parseInt(document.getElementById('inpYear').value);
+    const m = parseInt(document.getElementById('inpMonth').value);
+    const d = parseInt(document.getElementById('inpDay').value);
+    const h = parseInt(document.getElementById('inpHour').value);
+    const gender = document.getElementById('inpGender').value;
+    const rangeVal = document.getElementById('inpRange').value.split("-");
+    const viewStartAge = parseInt(rangeVal[0]);
+    const viewEndAge = parseInt(rangeVal[1]);
+
+    if (!y || y === 0) {
+        alert("請輸入正確年份");
+        return;
+    }
+
+    const resultArea = document.getElementById('resultArea');
+    resultArea.innerHTML = ""; 
+
+    // --- 運算邏輯 (同前) ---
+    let yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch;
+    let offY = safeMod(y - 4, 60);
+    yStem = offY % 10;
+    yBranch = offY % 12;
+
+    let RealBaziYear = y;
+    const bDate = new Date(y, m - 1, d, h); 
+    const liChunDate = getJieQiDate(y, 1); 
+
+    if (bDate < liChunDate) {
+        yStem = safeMod(yStem - 1, 10);
+        yBranch = safeMod(yBranch - 1, 12);
+        RealBaziYear = y - 1;
+    }
+
+    let foundJie = false;
+    for (let scanM = m; scanM >= m - 1; scanM--) {
+        let yy = y;
+        let checkM = scanM;
+        if (checkM < 1) { checkM = 12; yy = y - 1; }
+        
+        let scanJieIdx = checkM - 1; 
+        let testDate = getJieQiDate(yy, scanJieIdx);
+
+        if (bDate >= testDate) {
+            mBranch = safeMod(scanJieIdx + 1, 12);
+            foundJie = true;
+            break;
+        }
+    }
+    if (!foundJie) {
+        mBranch = safeMod(m + 12, 12);
+    }
+
+    let mStartStem;
+    switch (yStem % 5) {
+        case 0: mStartStem = 2; break; 
+        case 1: mStartStem = 4; break; 
+        case 2: mStartStem = 6; break; 
+        case 3: mStartStem = 8; break; 
+        case 4: mStartStem = 0; break; 
+    }
+    mStem = safeMod(mStartStem + safeMod(mBranch - 2, 12), 10);
+
+    const baseD = new Date(1900, 0, 31); 
+    const targetD = new Date(y, m - 1, d);
+    const timeDiff = targetD - baseD;
+    const daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+    
+    dStem = safeMod(0 + daysDiff, 10); 
+    dBranch = safeMod(4 + daysDiff, 12); 
+
+    if (h >= 23 || h < 1) hBranch = 0; 
+    else hBranch = Math.floor((h + 1) / 2);
+
+    let hStartStem;
+    switch (dStem % 5) {
+        case 0: hStartStem = 0; break; 
+        case 1: hStartStem = 2; break; 
+        case 2: hStartStem = 4; break; 
+        case 3: hStartStem = 6; break; 
+        case 4: hStartStem = 8; break; 
+    }
+    hStem = safeMod(hStartStem + hBranch, 10);
+
+    let taiStem = safeMod(mStem + 1, 10);
+    let taiBranch = safeMod(mBranch + 3, 12);
+
+    let mNum = safeMod(mBranch - 2, 12) + 1;
+    let hNum = safeMod(hBranch - 2, 12) + 1;
+    let mingNum = safeMod(26 - (mNum + hNum), 12);
+    if (mingNum === 0) mingNum = 12;
+    let mingBranch = safeMod(mingNum + 1, 12); 
+    let mingStem = safeMod(mStartStem + safeMod(mingBranch - 2, 12), 10);
+
+    let shenNum = safeMod(2 + mNum + hNum, 12);
+    if (shenNum === 0) shenNum = 12;
+    let shenBranch = safeMod(shenNum + 1, 12);
+    let shenStem = safeMod(mStartStem + safeMod(shenBranch - 2, 12), 10);
+
+    let isYangYear = (yStem % 2 === 0);
+    let isMale = (gender === "男");
+    let isForward = ((isMale && isYangYear) || (!isMale && !isYangYear));
+
+    let targetJieDate, infoStr;
+    if (isForward) {
+        targetJieDate = getNextJieQi(bDate);
+        infoStr = "順推";
+    } else {
+        targetJieDate = getPrevJieQi(bDate);
+        infoStr = "逆推";
+    }
+
+    let timeDiffMinutes = Math.abs((targetJieDate - bDate) / (1000 * 60));
+    let dyStartAge = Math.floor(timeDiffMinutes / 4320); 
+    if ((timeDiffMinutes / 4320) > dyStartAge) dyStartAge += 1; 
+    if (dyStartAge < 1) dyStartAge = 1;
+
+    // --- UI 渲染 ---
+    let html = "";
+    
+    // 1. 原局命盤
+    // 注意：這裡的原局命盤串宮是以「日干」查各柱「地支」的太歲
+    let dTaiSuiBranch = getStemMapping(dStem);
+    let daysToJie = (timeDiffMinutes / 1440).toFixed(1);
+
+    html += `<div class="section-title yuan-ju-header">【 原 局 命 盤 】 ${infoStr} ${daysToJie}天交運 (${dyStartAge}歲起運)</div>`;
+    
+    html += `<table class="chart-table">`;
+    html += `<tr><th></th><th>年柱</th><th>月柱</th><th>日柱</th><th>時柱</th><th>胎元</th><th>命宮</th><th>身宮</th></tr>`;
+    
+    html += `<tr><td>十神</td>`;
+    html += `<td>${getTenGod(dStem, yStem)}</td><td>${getTenGod(dStem, mStem)}</td><td>【日主】</td><td>${getTenGod(dStem, hStem)}</td>`;
+    html += `<td>${getTenGod(dStem, taiStem)}</td><td>${getTenGod(dStem, mingStem)}</td><td>${getTenGod(dStem, shenStem)}</td></tr>`;
+
+    html += `<tr class="shensha-row"><td>串宮(干)</td>`;
+    html += `<td>${getShenSha(dTaiSuiBranch, yStem, true)}</td><td>${getShenSha(dTaiSuiBranch, mStem, true)}</td><td>-</td><td>${getShenSha(dTaiSuiBranch, hStem, true)}</td>`;
+    html += `<td>${getShenSha(dTaiSuiBranch, taiStem, true)}</td><td>${getShenSha(dTaiSuiBranch, mingStem, true)}</td><td>${getShenSha(dTaiSuiBranch, shenStem, true)}</td></tr>`;
+
+    html += `<tr><td></td>`;
+    const pillars = [
+        {s: yStem, b: yBranch}, {s: mStem, b: mBranch}, {s: dStem, b: dBranch}, {s: hStem, b: hBranch},
+        {s: taiStem, b: taiBranch}, {s: mingStem, b: mingBranch}, {s: shenStem, b: shenBranch}
+    ];
+    pillars.forEach(p => {
+        html += `<td class="highlight-bg">${Tiangan[p.s]}${Dizhi[p.b]}<br><span style="font-size:0.6em;font-weight:normal">${getNaYin(p.s, p.b)}</span></td>`;
+    });
+    html += `</tr>`;
+
+    html += `<tr class="shensha-row"><td>串宮(支)</td>`;
+    pillars.forEach((p, idx) => {
+        html += `<td>${getShenSha(dTaiSuiBranch, p.b, false)}</td>`;
+    });
+    html += `</tr>`;
+    
+    html += `<tr><td>藏干</td>`;
+    html += `<td>${getBranchTenGod(dStem, yBranch)}</td><td>${getBranchTenGod(dStem, mBranch)}</td><td>${getBranchTenGod(dStem, dBranch)}</td><td>${getBranchTenGod(dStem, hBranch)}</td>`;
+    html += `<td colspan="3" style="background:#f9f9f9"></td></tr>`;
+    html += `</table>`;
+
+    // 2. 大運
+    html += `<div class="section-title dayun-header">【 大 運 程 】</div>`;
+    html += `<div class="dayun-container">`;
+    for(let k=1; k<=11; k++) {
+        let dyS, dyB;
+        if (isForward) {
+            dyS = safeMod(mStem + k, 10);
+            dyB = safeMod(mBranch + k, 12);
+        } else {
+            dyS = safeMod(mStem - k, 10);
+            dyB = safeMod(mBranch - k, 12);
+        }
+        let ageLabel = (dyStartAge + (k-1)*10) + "歲";
+        
+        html += `<div class="dayun-col">`;
+        html += `<div>${ageLabel}</div>`;
+        html += `<div>${getShenSha(dTaiSuiBranch, dyS, true)}</div>`;
+        html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}</div>`;
+        html += `<div>${getShenSha(dTaiSuiBranch, dyB, false)}</div>`;
+        html += `<div style="font-size:0.8em">${getTenGod(dStem, dyS)}<br>${getBranchTenGod(dStem, dyB)}</div>`;
+        html += `</div>`;
+    }
+    html += `</div>`;
+
+    // 3. 流年
+    for(let age = viewStartAge; age <= viewEndAge; age++) {
+        let currentAge = (age === 0) ? 1 : age;
+        let loopY = RealBaziYear + currentAge - 1;
+        let off = safeMod(loopY - 4, 60);
+        let loopStem = off % 10;
+        let loopBranch = off % 12;
+
+        let dyStep = Math.floor((currentAge - dyStartAge) / 10) + 1;
+        if (dyStep > 11) dyStep = 11;
+        let currDyGZ = "未起運", currDyStem = -1, currDyBranch = -1;
+        
+        if (currentAge >= dyStartAge) {
+             if (isForward) {
+                currDyStem = safeMod(mStem + dyStep, 10);
+                currDyBranch = safeMod(mBranch + dyStep, 12);
+            } else {
+                currDyStem = safeMod(mStem - dyStep, 10);
+                currDyBranch = safeMod(mBranch - dyStep, 12);
+            }
+            currDyGZ = Tiangan[currDyStem] + Dizhi[currDyBranch];
+        }
+
+        html += `<div class="liunian-block">`;
+        html += `<div class="liunian-title">${loopY}年 (${Tiangan[loopStem]}${Dizhi[loopBranch]} / ${getNaYin(loopStem, loopBranch)}) ${currentAge}歲 [大運: ${currDyGZ}]</div>`;
+        
+        html += `<div class="liunian-grid">`;
+        
+        // 左：太歲入局
+        html += `<div>`;
+        html += `<div class="subtitle red">【太歲入局】(年支為君)</div>`;
+        html += generateRowTypeA("年柱", yStem, yBranch, loopBranch);
+        html += generateRowTypeA("月柱", mStem, mBranch, loopBranch);
+        html += generateRowTypeA("日柱", dStem, dBranch, loopBranch);
+        html += generateRowTypeA("時柱", hStem, hBranch, loopBranch);
+        if (currDyStem !== -1) {
+            html += generateRowTypeA("大運", currDyStem, currDyBranch, loopBranch);
+        } else {
+            html += `<div class="complex-row"><span class="label">大運</span><span class="content">未起運</span></div>`;
+        }
+        html += `</div>`;
+
+        // 右：串宮壓運
+        html += `<div>`;
+        html += `<div class="subtitle green">【串宮壓運】(日干為君)</div>`;
+        
+        // 流干
+        html += generateListRow("流干", `(${getTenGod(dStem, loopStem)}) ${Tiangan[loopStem]}`, getShenSha(dTaiSuiBranch, loopStem, true));
+
+        // 流支
+        html += generateListRow("流支", `(${getBranchTenGod(dStem, loopBranch)}) ${Dizhi[loopBranch]}`, getShenSha(dTaiSuiBranch, loopBranch, false));
+
+        if (currDyStem !== -1) {
+             html += generateListRow("運干", Tiangan[currDyStem], getShenSha(dTaiSuiBranch, currDyStem, true));
+             html += generateListRow("運支", Dizhi[currDyBranch], getShenSha(dTaiSuiBranch, currDyBranch, false));
+        }
+
+        // 小限
+        let xxBranch;
+        if (isMale) xxBranch = safeMod(mingBranch + (currentAge - 1), 12);
+        else xxBranch = safeMod(mingBranch - (currentAge - 1), 12);
+        
+        let xxStartStem;
+        switch (yStem % 5) {
+             case 0: xxStartStem = 2; break;
+             case 1: xxStartStem = 4; break;
+             case 2: xxStartStem = 6; break;
+             case 3: xxStartStem = 8; break;
+             case 4: xxStartStem = 0; break;
+        }
+        let xxStem = safeMod(xxStartStem + safeMod(xxBranch - 2, 12), 10);
+
+        html += generateListRow("小限", Tiangan[xxStem] + Dizhi[xxBranch], getShenSha(dTaiSuiBranch, xxBranch, false));
+
+        html += `</div>`; // End 右側
+        html += `</div>`; // End Grid
+        html += `</div>`; // End Block
+    }
+
+    resultArea.innerHTML = html;
+}
+
+function clearData() {
+    document.getElementById('resultArea').innerHTML = "";
+}
+
+// ==========================================
+//    輔助函數
+// ==========================================
+
+function getTenGod(dStem, targetStem) {
+    if (dStem % 2 === 0) return TenGodsYang[safeMod(targetStem - dStem, 10)];
+    return TenGodsYin[safeMod(targetStem - dStem, 10)];
+}
+
+function getBranchTenGod(dStem, branch) {
+    const mainStem = BranchMainQi[branch];
+    return getTenGod(dStem, mainStem);
+}
+
+function getNaYin(s, b) {
+    for(let i=0; i<60; i++) {
+        if(i%10 === s && i%12 === b) {
+            let idx = Math.floor(i/2);
+            return NaYinList[idx] || "";
+        }
+    }
+    return "";
+}
+
+// === 核心修正處：串宮壓運天干對照表 ===
+function getStemMapping(s) {
+    // 根據串宮壓運法：
+    // 甲(0)->寅(2), 乙(1)->卯(3), 丙(2)->巳(5), 丁(3)->午(6)
+    // 戊(4)->戌(10) [修正], 己(5)->丑(1) [修正]
+    // 庚(6)->申(8), 辛(7)->酉(9), 壬(8)->亥(11), 癸(9)->子(0)
+    const map = [2, 3, 5, 6, 10, 1, 8, 9, 11, 0];
+    return map[s];
+}
+
+function getShenSha(startB, target, isStem) {
+    let targetB = target;
+    if (isStem) targetB = getStemMapping(target);
+    
+    let diff = safeMod(targetB - startB, 12);
+    let txt = ShenSha[diff];
+    return colorize(txt);
+}
+
+function colorize(txt) {
+    let cls = "c-red";
+    if (txt.includes("六合") || txt.includes("青龍") || txt.includes("官符") || txt.includes("貴神")) cls = "c-green";
+    else if (txt.includes("太歲")) cls = "c-purple";
+    return `<span class="${cls}">${txt}</span>`;
+}
+
+// 產生左側複雜行的 HTML
+function generateRowTypeA(title, s, b, loopB) {
+    let stemSS = getShenSha(loopB, s, true);
+    let diff = safeMod(b - loopB, 12);
+    let branchSS = ShenSha[diff];
+    let branchSSHtml = colorize(branchSS);
+
+    return `
+    <div class="complex-row">
+        <span class="label">${title}</span>
+        <div class="content">
+            <span class="t-large">${Tiangan[s]}<br><span style="font-size:0.8em">${stemSS}</span></span>
+            <span class="t-bold t-large">${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.6em;font-weight:normal">${getNaYin(s,b)}</span></span>
+            <span class="t-large">${Dizhi[b]}<br><span style="font-size:0.8em">${branchSSHtml}</span></span>
+        </div>
+    </div>`;
+}
+
+// 產生右側整齊列表行的 HTML
+function generateListRow(label, content, statusHtml) {
+    return `
+    <div class="bazi-list-row">
+        <span class="label">${label}</span>
+        <span class="center-val">${content}</span>
+        <span class="status">${statusHtml}</span>
+    </div>`;
+}
+
+// ---------------------------------------------------------
+// 節氣計算 (VBA Port)
+// ---------------------------------------------------------
+function getJieQiDate(y, termIndex) {
+    let idx = termIndex;
+    if (idx < 0) idx = 0;
+    if (idx > 11) idx = idx % 12;
+    let C_Val = JieQiCVal[idx];
+    let m = idx + 1;
+    let yMod100 = y % 100;
+    let d = Math.floor(yMod100 * 0.2422 + C_Val) - Math.floor((yMod100 - 1) / 4);
+    return new Date(y, m - 1, d);
+}
+
+function getNextJieQi(d) {
+    let y = d.getFullYear();
+    for (let i = 0; i <= 11; i++) {
+        let testD = getJieQiDate(y, i);
+        if (testD > d) return testD;
+    }
+    for (let i = 0; i <= 11; i++) {
+        let testD = getJieQiDate(y + 1, i);
+        if (testD > d) return testD;
+    }
+    let fallback = new Date(d);
+    fallback.setDate(d.getDate() + 30);
+    return fallback;
+}
+
+function getPrevJieQi(d) {
+    let y = d.getFullYear();
+    for (let i = 11; i >= 0; i--) {
+        let testD = getJieQiDate(y, i);
+        if (testD <= d) return testD;
+    }
+    for (let i = 11; i >= 0; i--) {
+        let testD = getJieQiDate(y - 1, i);
+        if (testD <= d) return testD;
+    }
+    let fallback = new Date(d);
+    fallback.setDate(d.getDate() - 30);
+    return fallback;
+}
+</script>
+
+</body>
+</html>
