@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤版(含紅艷沐浴)</title>
+    <title>八字神煞速查 | 羅盤版(日時專用)</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -52,7 +52,7 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #eee;
-            align-items: flex-end; /* 對齊底部 */
+            align-items: flex-end;
         }
 
         .input-item {
@@ -79,7 +79,7 @@
         }
         
         input { width: 80px; }
-        select { width: 100px; } /* 稍微加寬給時辰選單 */
+        select { width: 100px; }
         
         input.disabled, select.disabled {
             background-color: #e9ecef;
@@ -519,10 +519,9 @@
 
     // === 規則庫 ===
     
-    // 1. 天干查地支 (天乙貴人 + 紅艷 + 沐浴)
+    // 1. 天干查地支 (天乙貴人 + 紅艷 + 沐浴 + 文昌)
     
-    // 紅艷 (Day Stem -> Branch) [來源: 圖1]
-    // 甲乙見午, 丙見寅, 丁見未, 戊己見辰, 庚見戌, 辛見酉, 壬見子, 癸臨申
+    // 紅艷 (Stem -> Branch)
     const HongYanMap = {
         0: [6], // 甲 -> 午
         1: [6], // 乙 -> 午
@@ -536,8 +535,7 @@
         9: [8]  // 癸 -> 申
     };
 
-    // 沐浴 (Day Stem -> Branch) [來源: 圖2]
-    // 甲子 乙巳 丙卯 丁申 戊卯 己申 庚午 辛亥 壬酉 癸寅
+    // 沐浴 (Stem -> Branch)
     const MuYuMap = {
         0: [0],  // 甲 -> 子
         1: [5],  // 乙 -> 巳
@@ -592,7 +590,6 @@
     }
 
     // 2. 地支查地支 (一般神煞)
-    // 陣列對應: [子, 丑, 寅, 卯, 辰, 巳, 午, 未, 申, 酉, 戌, 亥]
     const BranchRulesData = {
         "咸池(桃花)": { map: [9,6,3,0,9,6,3,0,9,6,3,0], color: "tag-purple", bg: "#f3e5f5" },
         "紅鸞":       { map: [3,2,1,0,11,10,9,8,7,6,5,4], color: "tag-red", bg: "#ffebee" },
@@ -624,8 +621,8 @@
 
     // 全域變數，用於儲存當前命盤資料以便互動
     let globalShenshaList = []; 
-    let currentBaziData = {}; // 儲存當前八字的年月日時干支
-    let currentDayunList = []; // 儲存算出的大運列表
+    let currentBaziData = {}; 
+    let currentDayunList = [];
 
     // 簡易節氣日參考 (概略值)
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7]; 
@@ -644,13 +641,12 @@
         }
     }
 
-    // === 主計算邏輯 (點擊"開始排盤") ===
+    // === 主計算邏輯 ===
     function calculate() {
         const year = parseInt(document.getElementById('year').value);
         const month = parseInt(document.getElementById('month').value);
         const day = parseInt(document.getElementById('day').value);
         
-        // 處理時辰邏輯
         const noHourChecked = document.getElementById('noHour').checked;
         const gender = document.getElementById('gender').value; 
 
@@ -694,9 +690,7 @@
         let hBranch = -1;
 
         if (!noHourChecked) {
-            // 直接讀取使用者選擇的地支索引
             hBranch = parseInt(document.getElementById('hourBranch').value);
-            // 五鼠遁時: 甲己還加甲(0) => (日干%5)*2
             let hStartStem = (dStem % 5) * 2; 
             hStem = (hStartStem + hBranch) % 10;
         }
@@ -724,11 +718,10 @@
         let startAge = calculateStartAge(year, month, day, direction);
         document.getElementById('startAgeInfo').innerText = `(約 ${startAge} 歲起運)`;
 
-        // 計算並渲染大運 (存入 global 並繪製 HTML)
         calculateAndRenderDayun(mStem, mBranch, direction, startAge, year);
 
-        // --- 初始神煞計算與顯示 (不含大運) ---
-        updateShenshaDisplay(null); // 傳入 null 表示未選擇大運
+        // --- 初始神煞計算與顯示 ---
+        updateShenshaDisplay(null); 
 
         document.getElementById('result').style.display = 'block';
     }
@@ -770,24 +763,24 @@
 
         const d = currentBaziData;
 
-        // --- 第一部分：以原局（年日）為主，查自己或查大運 ---
+        // --- 第一部分：以原局為主 ---
         
-        // 1. 日支查
+        // 1. 日支查 (一般神煞)
         processShenshaGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch), container);
-        // 2. 年支查
+        // 2. 年支查 (一般神煞)
         processShenshaGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch), container);
-        // 3. 日干查 (包含天乙、紅艷、沐浴)
+        
+        // 3. 日干查 (貴人/紅艷/沐浴/文昌) - 僅日干
         let dayStemRules = getStemRules(d.dStem);
         processShenshaGroup("日干", Tiangan[d.dStem], dayStemRules, container);
-        // 4. 年干查
-        let yearStemRules = getStemRules(d.yStem);
-        processShenshaGroup("年干", Tiangan[d.yStem], yearStemRules, container);
         
-        // 5. 時支查
+        // 4. 年干查 - (已根據要求刪除)
+        
+        // 5. 時支查 (一般神煞)
         if (d.hBranch !== -1) {
             processShenshaGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch), container);
         }
-        // 6. 時干查
+        // 6. 時干查 (貴人/紅艷/沐浴/文昌) - 僅時干
         if (d.hStem !== -1) {
             let hourStemRules = getStemRules(d.hStem);
             processShenshaGroup("時干", Tiangan[d.hStem], hourStemRules, container);
@@ -804,11 +797,14 @@
                 let rulesFromDayBranch = getBranchRules(d.dBranch);
                 let foundFromDay = rulesFromDayBranch.filter(r => r.targets.includes(dy.branch));
                 
-                let rulesFromYearStem = getStemRules(d.yStem);
-                let foundFromYearStem = rulesFromYearStem.filter(r => r.targets.includes(dy.branch));
+                // 年干查大運 (已刪除)
 
                 let rulesFromDayStem = getStemRules(d.dStem);
                 let foundFromDayStem = rulesFromDayStem.filter(r => r.targets.includes(dy.branch));
+
+                // 檢查時干查大運 (因為是日時專用)
+                let rulesFromHourStem = (d.hStem !== -1) ? getStemRules(d.hStem) : [];
+                let foundFromHourStem = rulesFromHourStem.filter(r => r.targets.includes(dy.branch));
 
                 let dayunPassiveShenshas = []; // 被動神煞 (原局看大運)
                 
@@ -833,8 +829,9 @@
 
                 addPassive("年支", foundFromYear);
                 addPassive("日支", foundFromDay);
-                addPassive("年干", foundFromYearStem);
+                // addPassive("年干", foundFromYearStem); // Removed
                 addPassive("日干", foundFromDayStem);
+                if(d.hStem !== -1) addPassive("時干", foundFromHourStem);
 
                 // 渲染 "原局 -> 大運"
                 if (dayunPassiveShenshas.length > 0) {
