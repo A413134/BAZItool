@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KK子平八字 - 神煞排盤 (分隔線版)</title>
+    <title>KK子平八字 - 神煞排盤 (小限公式修正版)</title>
     <style>
         :root {
             --bg-color: #f5f7fa;
@@ -291,8 +291,7 @@
     const Tiangan = "甲,乙,丙,丁,戊,己,庚,辛,壬,癸".split(",");
     const Dizhi = "子,丑,寅,卯,辰,巳,午,未,申,酉,戌,亥".split(",");
     
-    // 神煞表 (十二串宮神煞)
-    // 0:太歲, 1:青龍, 2:喪門...
+    // 神煞表
     const ShenSha = [
         "太歲 劍鋒",            // 0
         "青龍 太陽 天空",       // 1
@@ -320,6 +319,28 @@
         "泉中水","屋上土","霹靂火","松柏木","長流水","沙中金","山下火","平地木","壁上土","金箔金",
         "覆燈火","天河水","大驛土","釵釧金","桑柘木","大溪水","沙中土","天上火","石榴木","大海水"
     ];
+
+    // ==========================================
+    //  核心邏輯修正：數值轉換
+    // ==========================================
+    
+    /**
+     * 將程式陣列索引 (0=子, 1=丑, 2=寅...) 轉換為公式數值 (1=寅, 2=卯... 11=子, 12=丑)
+     */
+    function toFormulaNum(branchIdx) {
+        // 0(子) -> (0-2+12)%12 + 1 = 11
+        // 2(寅) -> (2-2+12)%12 + 1 = 1
+        return (branchIdx - 2 + 12) % 12 + 1;
+    }
+
+    /**
+     * 將公式數值 (1=寅...) 轉回程式陣列索引 (0=子...)
+     */
+    function fromFormulaNum(formulaNum) {
+        // 1(寅) -> (1+1)%12 = 2
+        // 11(子) -> (11+1)%12 = 0
+        return (formulaNum + 1) % 12;
+    }
 
     // ==========================================
     //  主程式邏輯
@@ -402,21 +423,35 @@
         let hStem = (hStartStem + hBranchIdx) % 10;
         let hBranch = hBranchIdx;
 
-        // 胎元 / 命宮 / 身宮
+        // 胎元
         let taiStem = (mStem + 1) % 10;
         let taiBranch = (mBranch + 3) % 12;
 
-        let mNum = (mBranch - 2 + 12) % 12 + 1; // 寅=1
-        let hNum = (hBranch - 2 + 12) % 12 + 1; // 寅=1
-        
-        let mingNum = (26 - (mNum + hNum)) % 12;
-        if (mingNum === 0) mingNum = 12;
-        let mingBranch = (mingNum + 1) % 12; 
-        let mingStem = (mStartStem + 2 + (mingBranch - 2 + 12) % 12) % 10;
+        // ------------------------------------------
+        // 修正：命宮計算 (依據文字公式)
+        // ------------------------------------------
+        // 步驟 1: 取得月支與時支的「公式數值」 (寅=1, 卯=2...)
+        let mNum = toFormulaNum(mBranch);
+        let hNum = toFormulaNum(hBranch);
+        let sum = mNum + hNum;
 
-        let shenNum = (2 + mNum + hNum) % 12;
+        // 步驟 2: 套用公式 14 - sum 或 26 - sum
+        let mingNum;
+        if (sum < 14) {
+            mingNum = 14 - sum;
+        } else {
+            mingNum = 26 - sum;
+        }
+
+        // 步驟 3: 將結果轉回程式索引 (0=子)
+        let mingBranch = fromFormulaNum(mingNum);
+        let mingStem = (mStartStem + 2 + (mingBranch - 2 + 12) % 12) % 10; // 五虎遁起命宮干
+
+        // 身宮 (這裡維持原算法或依據需要調整，此處保留原樣)
+        let shenNum = (2 + mNum + hNum) % 12; // 這裡的原邏輯
         if (shenNum === 0) shenNum = 12;
-        let shenBranch = (shenNum + 1) % 12;
+        let shenBranch = (shenNum + 1) % 12; 
+        // 其實身宮通常公式是 月支+時支 ... 此處暫不更動，聚焦命宮修正
         let shenStem = (mStartStem + 2 + (shenBranch - 2 + 12) % 12) % 10;
 
         // --- 起運計算 ---
@@ -454,7 +489,7 @@
     // ==========================================
     //  渲染函數 (Rendering)
     // ==========================================
-    function renderYuanJu(yS, yB, mS, mB, dS, dB, hS, hB, tS, tB, mnS, mnB, ssS, ssB, infoStr, age, mins) {
+   function renderYuanJu(yS, yB, mS, mB, dS, dB, hS, hB, tS, tB, mnS, mnB, ssS, ssB, infoStr, age, mins) {
         const div = document.getElementById('yuanJuArea');
         const days = (mins / 1440).toFixed(1);
         
@@ -499,14 +534,15 @@
                 <td>${getBranchTenGod(dS, mB)}</td>
                 <td>${getBranchTenGod(dS, dB)}</td>
                 <td>${getBranchTenGod(dS, hB)}</td>
-                <td colspan="3" class="text-gray">-</td>
+                <td>${getBranchTenGod(dS, tB)}</td>
+                <td>${getBranchTenGod(dS, mnB)}</td>
+                <td>${getBranchTenGod(dS, ssB)}</td>
             </tr>
         </table>`;
         
         div.innerHTML = html;
     }
 
-    // 修正過的 renderDaYun 函式
     function renderDaYun(mStem, mBranch, dStem, isForward, startAge) {
         const div = document.getElementById('daYunArea');
         let html = `<div class="section-title title-dayun">【 大 運 程 】</div>`;
@@ -515,7 +551,6 @@
         
         html += `<th>歲數</th>`;
         for (let k = 1; k <= 10; k++) {
-            // 修正：加上反引號
             html += `<th>${startAge + (k-1)*10}歲</th>`;
         }
         html += `</tr><tr>`;
@@ -525,7 +560,6 @@
         for (let k = 1; k <= 10; k++) {
             let dyS = isForward ? (mStem + k)%10 : (mStem - k)%10;
             if (dyS < 0) dyS += 10;
-            // 修正：加上反引號
             html += `<td>${getShenShaHTML(dStem, dyS, true)}</td>`;
         }
         html += `</tr><tr>`;
@@ -536,7 +570,6 @@
             if (dyS < 0) dyS += 10;
             let dyB = isForward ? (mBranch + k)%12 : (mBranch - k)%12;
             if (dyB < 0) dyB += 12;
-            // 修正：加上反引號
             html += `<td class="highlight-bg">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.7em;font-weight:normal">${getNaYin(dyS, dyB)}</span></td>`;
         }
         html += `</tr><tr>`;
@@ -546,7 +579,6 @@
         for (let k = 1; k <= 10; k++) {
             let dyB = isForward ? (mBranch + k)%12 : (mBranch - k)%12;
             if (dyB < 0) dyB += 12;
-            // 修正：加上反引號
             html += `<td>${getShenShaHTML(dStem, dyB, false)}</td>`;
         }
         html += `</tr></table></div>`;
@@ -560,6 +592,10 @@
 
         let [sAge, eAge] = rangeStr.replace("歲","").split("-").map(Number);
         
+        // 準備小限計算需要的基數 (轉為公式數值 1=寅)
+        let mingNum = toFormulaNum(mingBranch);
+        let birthYearNum = toFormulaNum(yB);
+
         for (let age = sAge; age <= eAge; age++) {
             if (age === 0) continue;
             let loopY = realY + age - 1;
@@ -587,14 +623,40 @@
                 currDyStr = Tiangan[currDyStem] + Dizhi[currDyBranch];
             }
 
-            // 小限
-            let xxBranch;
-            if (isMale) xxBranch = (mingBranch + (age - 1)) % 12;
-            else { xxBranch = (mingBranch - (age - 1)) % 12; if(xxBranch<0) xxBranch+=12; }
+            // ==========================================
+            // 修正：小限計算 (嚴格套用公式)
+            // ==========================================
             
-            let xxStartStem = (yS % 5) * 2 + 2;
-            let xxStem = (xxStartStem + (xxBranch - 2 + 12) % 12) % 10;
+            // 1. 小限地支
+            // 公式：(命宮 + 生年) - 今流年 ＝ 小限
+            let currYearNum = toFormulaNum(loopBranch);
             
+            let xxVal = (mingNum + birthYearNum) - currYearNum;
+            
+            // 修正循環 (不足減本年流之數，則再加十二)
+            while (xxVal <= 0) {
+                xxVal += 12;
+            }
+            while (xxVal > 12) {
+                xxVal -= 12;
+            }
+
+            // 轉回程式索引 (0=子)
+            let xxBranch = fromFormulaNum(xxVal);
+
+            // 2. 小限天干 (依據附件圖二 - 五虎遁年法)
+            // 規則：以「流年天干」起寅，推算至小限地支
+            // 公式：(流年天干索引 * 2 + 2) = 寅上天干索引 (甲=0 => 0*2+2=2丙)
+            let startStem = (loopStem % 5) * 2 + 2; 
+            
+            // 計算小限地支距離寅(公式數值1)多遠
+            // 因為 xxVal 已經是 1=寅，所以距離就是 xxVal - 1
+            let stemDist = xxVal - 1;
+            
+            let xxStem = (startStem + stemDist) % 10;
+            
+            // ==========================================
+
             let card = document.createElement('div');
             card.className = "liunian-card";
             
@@ -603,7 +665,6 @@
                 ${age}歲 [大運: ${currDyStr}]
             </div>`;
             
-            // 注意：這裡使用了 liunian-col 和 liunian-left 類別
             let grid = `<div class="liunian-grid">
                 <div class="liunian-col liunian-left">
                     <div class="sub-header red-text">【太歲入局】 (年支為君)</div>
@@ -802,6 +863,3 @@
 
 </body>
 </html>
-
-
-
