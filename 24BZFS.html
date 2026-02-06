@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤全神煞版</title>
+    <title>八字神煞速查 | 羅盤流年全功能版</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
             --card-bg: #ffffff;
-            --primary: #333;
+            --primary: #2c3e50;
             --border: #ddd;
             
             /* 神煞顏色定義 */
-            --color-noble: #e74c3c; /* 吉星 (紅) */
+            --color-noble: #e74c3c; /* 吉星/貴人 (紅) */
             --color-active: #2980b9; /* 次吉/功能 (藍) */
             --color-peach: #9b59b6; /* 桃花/強烈 (紫) */
-            --color-bad: #7f8c8d;   /* 凶星 (灰) */
+            --color-bad: #7f8c8d;   /* 凶星/一般 (灰) */
+            --color-wealth: #e67e22; /* 祿神/金輿 (橘) */
+            --color-liunian: #27ae60; /* 流年專用 (綠) */
         }
 
         body { font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
@@ -56,8 +58,8 @@
         .zg-shishen { color: #999; width: 24px; text-align: right; transform: scale(0.9); }
         .zg-stem { color: #555; font-weight: bold; width: 14px; }
 
-        /* 大運區塊 */
-        .dayun-section { margin-bottom: 30px; overflow-x: auto; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fdfdfd; }
+        /* 大運與流年區塊 */
+        .dayun-section { margin-bottom: 20px; overflow-x: auto; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fdfdfd; }
         .dayun-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #2c3e50; border-left: 4px solid #2c3e50; padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         .dayun-container { display: flex; gap: 10px; min-width: max-content; padding-bottom: 5px; }
         
@@ -74,10 +76,18 @@
         .shishen-small { font-size: 11px; color: #888; margin-bottom: 0px; min-height: 15px;}
         .dayun-stem { font-size: 20px; color: #e74c3c; font-weight: bold; }
         .dayun-branch { font-size: 20px; color: #2c3e50; font-weight: bold; }
-        
         .dayun-age-info { margin-top: 8px; border-top: 1px dashed #eee; width: 100%; text-align: center; padding-top: 5px; }
         .dayun-age { font-size: 13px; font-weight: bold; color: #555; }
         .dayun-year { font-size: 11px; color: #999; }
+
+        /* 流年列 */
+        .liunian-bar { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; width: 100%; overflow-x: auto; }
+        .liunian-flex { display: flex; gap: 5px; min-width: max-content; }
+        .liunian-btn { padding: 6px 12px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; text-align: center; }
+        .liunian-btn:hover { background: #e8f5e9; border-color: #27ae60; }
+        .liunian-btn.active { background: #27ae60; color: white; border-color: #27ae60; font-weight: bold; }
+        .liunian-gz { font-size: 14px; font-weight: bold; display: block;}
+        .liunian-y { font-size: 11px; opacity: 0.8; }
 
         /* 結果展示區 */
         .result-box { display: none; margin-top: 30px; }
@@ -85,6 +95,7 @@
         .category-header { background-color: #333; color: white; padding: 8px 15px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
         .category-header.dayun-header { background-color: #2980b9; }
         .category-header.dayun-active-header { background-color: #8e44ad; }
+        .category-header.liunian-header { background-color: #27ae60; }
 
         .shensha-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; padding: 10px; background: #fff; }
         .shensha-item { border: 1px solid #eee; border-radius: 6px; padding: 6px 10px; font-size: 13px; background: #fdfdfd; display: flex; justify-content: space-between; align-items: center; }
@@ -94,6 +105,8 @@
         .tag-purple { color: var(--color-peach); }
         .tag-blue { color: var(--color-active); }
         .tag-gray { color: var(--color-bad); }
+        .tag-orange { color: var(--color-wealth); }
+        .tag-green { color: var(--color-liunian); }
 
         .location-badge { font-size: 11px; background: #333; color: #fff; padding: 2px 5px; border-radius: 4px; margin-left: 5px; }
 
@@ -103,14 +116,14 @@
         .compass-subtitle { text-align: center; font-size: 14px; color: #666; margin-top: -15px; margin-bottom: 20px; }
         .compass-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 600px; margin: 0 auto; aspect-ratio: 1/1; }
 
-        .compass-cell { border: 2px solid #ccc; border-radius: 8px; background: #fff; position: relative; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 120px; }
+        .compass-cell { border: 2px solid #ccc; border-radius: 8px; background: #fff; position: relative; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 140px; }
         .cell-n { border-color: #2c3e50; } .cell-s { border-color: #e74c3c; }
         .cell-e, .cell-se { border-color: #27ae60; } .cell-w, .cell-nw { border-color: #f1c40f; }
         .cell-ne, .cell-sw, .cell-c { border-color: #95a5a6; }
 
         .mountains-label { font-size: 12px; color: #999; margin-top: 5px; font-family: "Courier New", monospace; letter-spacing: 2px; }
         .direction-label { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #333; }
-        .cell-content { flex-grow: 1; width: 100%; display: flex; flex-direction: column; gap: 4px; margin-top: 5px; overflow-y: auto; }
+        .cell-content { flex-grow: 1; width: 100%; display: flex; flex-direction: column; gap: 4px; margin-top: 5px; overflow-y: auto; max-height: 180px;}
 
         .compass-star { font-size: 12px; padding: 2px 4px; border-radius: 3px; background: #eee; text-align: center; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .star-br { font-size: 10px; opacity: 0.8; margin-left: 4px; background: rgba(0,0,0,0.1); padding: 0 3px; border-radius: 2px; }
@@ -121,7 +134,7 @@
 <body>
 
 <div class="container">
-    <h1>八字神煞速查 | 羅盤版(含藏干)</h1>
+    <h1>八字神煞速查 | 羅盤全神煞版</h1>
     
     <div class="input-group">
         <div class="input-item">
@@ -176,10 +189,14 @@
 
         <div class="dayun-section">
             <div class="dayun-title">
-                <span>大運排盤 (點擊大運可進行「神煞互查」)</span>
+                <span>大運排盤 (點擊大運顯示流年)</span>
                 <span id="startAgeInfo" style="font-size:12px; color:#666; font-weight:normal;"></span>
             </div>
             <div id="dayunDisplay" class="dayun-container"></div>
+            
+            <div id="liunianDisplay" class="liunian-bar">
+                <div class="liunian-flex" id="liunianList"></div>
+            </div>
         </div>
 
         <div id="shenshaContainer"></div>
@@ -248,7 +265,6 @@
             "文昌": { 0:[5], 1:[6], 2:[8], 3:[9], 4:[8], 5:[9], 6:[11], 7:[0], 8:[2], 9:[3] },
             "紅艷": { 0:[6], 1:[6], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
             "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] },
-            // 新增: 祿神, 羊刃, 金輿, 流霞, 學堂
             "祿神": { 0:[2], 1:[3], 2:[5], 3:[6], 4:[5], 5:[6], 6:[8], 7:[9], 8:[11], 9:[0] },
             "羊刃": { 0:[3], 1:[4], 2:[6], 3:[7], 4:[6], 5:[7], 6:[9], 7:[10], 8:[0], 9:[1] },
             "金輿": { 0:[4], 1:[5], 2:[7], 3:[8], 4:[7], 5:[8], 6:[10], 7:[11], 8:[1], 9:[2] },
@@ -267,14 +283,13 @@
             "亡神": { map: [11,8,5,2,11,8,5,2,11,8,5,2] },
             "劫煞": { map: [5,2,11,8,5,2,11,8,5,2,11,8] },
             "災煞": { map: [6,3,0,9,6,3,0,9,6,3,0,9] },
-            // 新增: 大耗
             "大耗": { map: [6,7,8,9,10,11,0,1,2,3,4,5] }
         }
     };
     
     // 神煞顯示屬性
     const StarStyles = {
-        "天乙": { type: "tag-red", bg: "#ffebee" }, "文昌": { type: "tag-blue", bg: "#e8f5e9" }, "祿神": { type: "tag-red", bg: "#ffebee" },
+        "天乙": { type: "tag-red", bg: "#ffebee" }, "文昌": { type: "tag-blue", bg: "#e8f5e9" }, "祿神": { type: "tag-orange", bg: "#fff3e0" },
         "紅艷": { type: "tag-purple", bg: "#f3e5f5" }, "沐浴": { type: "tag-purple", bg: "#f3e5f5" }, "金輿": { type: "tag-red", bg: "#ffebee" },
         "咸池": { type: "tag-purple", bg: "#f3e5f5" }, "紅鸞": { type: "tag-red", bg: "#ffebee" }, "天喜": { type: "tag-red", bg: "#ffebee" },
         "驛馬": { type: "tag-blue", bg: "#e1f5fe" }, "將星": { type: "tag-red", bg: "#ffebee" }, "華蓋": { type: "tag-gray", bg: "#eee" },
@@ -287,6 +302,7 @@
     let globalShenshaList = [];
     let currentBaziData = {};
     let currentDayunList = [];
+    let currentLiunian = null; // 當前選擇的流年 {year, stem, branch}
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7];
 
     // === 2. 核心邏輯 (Core Logic) ===
@@ -298,7 +314,6 @@
         cb.checked ? sel.classList.add('disabled') : sel.classList.remove('disabled');
     }
 
-    // 計算十神：日主 vs 目標天干 (完整名稱)
     function calculateShishen(dayStem, targetStem) {
         if (dayStem === -1 || targetStem === -1) return "";
         const diff = (targetStem - dayStem + 10) % 10;
@@ -306,7 +321,6 @@
         return isYang ? ShishenNames.yang[diff] : ShishenNames.yin[diff];
     }
 
-    // 計算十神：日主 vs 目標天干 (簡寫，用於藏干)
     function calculateShishenShort(dayStem, targetStem) {
         if (dayStem === -1 || targetStem === -1) return "";
         const diff = (targetStem - dayStem + 10) % 10;
@@ -314,24 +328,18 @@
         return isYang ? ShishenShort.yang[diff] : ShishenShort.yin[diff];
     }
     
-    // 產生藏干的 HTML 結構 (用於 Render 函數)
     function renderHiddenStemsHTML(dayStem, branchIdx) {
         if (dayStem === -1 || branchIdx === -1) return "";
         const stems = ZangGanFull[branchIdx];
         let html = '<div class="zanggan-box">';
         stems.forEach(stemIdx => {
             let shishen = calculateShishenShort(dayStem, stemIdx);
-            html += `
-                <div class="zg-row">
-                    <span class="zg-shishen">${shishen}</span>
-                    <span class="zg-stem">${Tiangan[stemIdx]}</span>
-                </div>`;
+            html += `<div class="zg-row"><span class="zg-shishen">${shishen}</span><span class="zg-stem">${Tiangan[stemIdx]}</span></div>`;
         });
         html += '</div>';
         return html;
     }
 
-    // 取得天干對地支的神煞規則
     function getStemRules(stemIdx) {
         if (stemIdx < 0) return [];
         let rules = [];
@@ -344,7 +352,6 @@
         return rules;
     }
 
-    // 取得地支對地支的神煞規則
     function getBranchRules(branchIdx) {
         if (branchIdx < 0) return [];
         let rules = [];
@@ -355,19 +362,12 @@
         return rules;
     }
     
-    // 計算虛歲 (出生1歲，過立春加1歲)
     function calculateVirtualAgeCorrectly(birthYear) {
         const now = new Date();
         const currentYear = now.getFullYear();
-        // 簡易立春判定：每年2月4日
         const liChunDate = new Date(currentYear, 1, 4); 
-
         let age = currentYear - birthYear + 1;
-
-        // 如果今年還沒過立春，對於命理年來說，還屬於上一年的氣，歲數要-1
-        if (now < liChunDate) {
-            age -= 1;
-        }
+        if (now < liChunDate) age -= 1;
         return age;
     }
 
@@ -378,7 +378,7 @@
         const noHour = document.getElementById('noHour').checked;
         const gender = document.getElementById('gender').value;
 
-        // 簡易節氣計算年柱與月柱
+        // 簡易節氣
         let isAfterTerm = day >= TermDays[month - 1];
         let mBranch = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0][month];
         if (!isAfterTerm) mBranch = (mBranch - 1 + 12) % 12;
@@ -404,17 +404,19 @@
         
         renderBazi(yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch);
         
-        // 修正虛歲計算
         const vAge = calculateVirtualAgeCorrectly(year);
         document.getElementById('virtualAgeDisplay').innerText = `當前虛歲：${vAge} 歲`;
 
-        // 大運
         let isYangYear = (yStem % 2 === 0);
         let direction = (gender === 'm') ? (isYangYear ? 1 : -1) : (isYangYear ? -1 : 1);
         let startAge = calculateStartAge(year, month, day, direction);
         document.getElementById('startAgeInfo').innerText = `(約 ${startAge} 歲起運)`;
+        
         calculateAndRenderDayun(mStem, mBranch, direction, startAge, year, dStem);
 
+        // 重置流年
+        currentLiunian = null;
+        document.getElementById('liunianDisplay').style.display = 'none';
         updateShenshaDisplay(null);
         document.getElementById('result').style.display = 'block';
     }
@@ -431,7 +433,7 @@
         return Math.max(1, Math.min(10, age));
     }
 
-    // === 3. 顯示與渲染 (Rendering) ===
+    // === 3. 顯示與渲染 ===
 
     function renderBazi(yS, yB, mS, mB, dS, dB, hS, hB) {
         const pillars = [
@@ -445,7 +447,6 @@
             let sText = p.unknown ? '<span class="unknown-text">X</span>' : Tiangan[p.s];
             let bText = p.unknown ? '<span class="unknown-text">?</span>' : Dizhi[p.b];
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
-            // 藏干區塊
             let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
 
             return `
@@ -470,12 +471,11 @@
             cS = (cS + dir + 10) % 10;
             cB = (cB + dir + 12) % 12;
             let age = startAge + (i - 1) * 10;
+            let startY = bYear + age;
             
-            currentDayunList.push({ seq: i, stem: cS, branch: cB });
+            currentDayunList.push({ seq: i, stem: cS, branch: cB, startYear: startY, startAge: age });
             
-            // 天干十神
             let sShishen = calculateShishen(dStem, cS);
-            // 地支藏干顯示
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
 
             html += `
@@ -487,7 +487,7 @@
                     ${hiddenStemsHTML}
                     <div class="dayun-age-info">
                         <div class="dayun-age">${age}歲</div>
-                        <div class="dayun-year">${bYear + age}年</div>
+                        <div class="dayun-year">${startY}年</div>
                     </div>
                 </div>`;
         }
@@ -495,10 +495,47 @@
     }
 
     function selectDayun(idx) {
+        // UI選中效果
         document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
         const el = document.getElementById(`dayun-${idx}`);
         if(el) el.classList.add('selected');
+        
+        // 重置流年
+        currentLiunian = null;
+        
+        // 渲染該大運的流年列表
+        renderLiunianBar(idx);
+        
+        // 更新神煞 (只含大運，不含流年)
         updateShenshaDisplay(idx);
+    }
+
+    function renderLiunianBar(dyIdx) {
+        const dy = currentDayunList[dyIdx];
+        const bar = document.getElementById('liunianDisplay');
+        const list = document.getElementById('liunianList');
+        bar.style.display = "block";
+        list.innerHTML = "";
+
+        for(let i=0; i<10; i++) {
+            let year = dy.startYear + i;
+            let off = (year - 4) % 60; if(off<0) off+=60;
+            let s = off % 10, b = off % 12;
+            
+            let btn = document.createElement('div');
+            btn.className = "liunian-btn";
+            btn.innerHTML = `<span class="liunian-gz">${Tiangan[s]}${Dizhi[b]}</span><span class="liunian-y">${year}</span>`;
+            btn.onclick = function() {
+                // UI切換
+                document.querySelectorAll('.liunian-btn').forEach(b=>b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 設定流年
+                currentLiunian = { year: year, stem: s, branch: b };
+                updateShenshaDisplay(dyIdx); // 觸發重算
+            };
+            list.appendChild(btn);
+        }
     }
 
     function updateShenshaDisplay(dyIdx) {
@@ -546,11 +583,9 @@
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
             let activeRules = [];
             
-            // 大運天干查
             getStemRules(dy.stem).forEach(r => pillars.forEach(p => {
                 if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, type:r.type, loc:p.n, i:p.i, bg:r.bg, src:"大運干"});
             }));
-            // 大運地支查
             getBranchRules(dy.branch).forEach(r => pillars.forEach(p => {
                 if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, type:r.type, loc:p.n, i:p.i, bg:r.bg, src:"大運支"});
             }));
@@ -563,6 +598,45 @@
                 container.innerHTML += `<div class="category-row" style="border-color:#8e44ad"><div class="category-header dayun-active-header"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入原局</span></div><div class="shensha-grid">${aItems}</div></div>`;
             }
         }
+
+        // 3. 流年互動 (新增)
+        if (currentLiunian) {
+            const ln = currentLiunian;
+            
+            // A. 原局查流年 (被動) - 日干看流年是什麼神煞 (例如流年是天乙貴人)
+            let lnPassiveRules = [
+                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
+                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
+                ...getStemRules(d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日干"}))
+            ];
+
+            let lnpItems = lnPassiveRules.map(r => {
+                // 特殊標記：流年神煞
+                globalShenshaList.push({ name: r.name, branchIdx: ln.branch, type: "tag-green", bg: "#e8f5e9", source: `流年(${r.src})` });
+                return `<div class="shensha-item"><div><span class="shensha-name tag-green">${r.name}</span></div><div><span style="font-size:11px;color:#666">由${r.src}起</span><span class="location-badge" style="background:#27ae60">${Dizhi[ln.branch]}</span></div></div>`;
+            }).join('');
+
+            container.innerHTML += `<div class="category-row" style="border-color:#27ae60"><div class="category-header liunian-header"><span>原局 查 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] (${ln.year})</span></div><div class="shensha-grid">${lnpItems || '<span style="color:#888;margin:auto">無主要神煞</span>'}</div></div>`;
+
+            // B. 流年查原局 (主動) - 流年入局照哪一柱 (例如流年帶紅艷煞入日時)
+            let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
+            let lnActiveRules = [];
+
+            getStemRules(ln.stem).forEach(r => pillars.forEach(p => {
+                if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, type:"tag-green", loc:p.n, i:p.i, bg:"#e8f5e9", src:"流年干"});
+            }));
+            getBranchRules(ln.branch).forEach(r => pillars.forEach(p => {
+                if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, type:"tag-green", loc:p.n, i:p.i, bg:"#e8f5e9", src:"流年支"});
+            }));
+
+            if(lnActiveRules.length > 0) {
+                let lnaItems = lnActiveRules.map(r => {
+                    globalShenshaList.push({ name: r.name, branchIdx: r.i, type: r.type, bg: r.bg, source: r.src });
+                    return `<div class="shensha-item"><div><span class="shensha-name tag-green">${r.name}</span></div><div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:#27ae60">${r.loc}</span></div></div>`;
+                }).join('');
+                container.innerHTML += `<div class="category-row" style="border-color:#27ae60"><div class="category-header liunian-header" style="background:#219150"><span>流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] 照入原局</span></div><div class="shensha-grid">${lnaItems}</div></div>`;
+            }
+        }
         
         renderCompassGrid();
     }
@@ -573,9 +647,10 @@
         let map = Array.from({length:12}, () => ({}));
 
         globalShenshaList.forEach(item => {
-            let entry = map[item.branchIdx][item.name] || { data: item, count: 0, fromDayun: false };
+            let entry = map[item.branchIdx][item.name] || { data: item, count: 0, fromDayun: false, fromLiunian: false };
             entry.count++;
             if(item.source.includes("大運")) entry.fromDayun = true;
+            if(item.source.includes("流年")) entry.fromLiunian = true;
             map[item.branchIdx][item.name] = entry;
         });
 
@@ -587,12 +662,24 @@
             let starsHtml = cell.branches.map(bIdx => {
                 return Object.values(map[bIdx]).map(e => {
                     let s = e.data, style = "";
-                    if(s.type === 'tag-red') style = "color:#e74c3c";
-                    else if(s.type === 'tag-blue') style = "color:#2980b9";
-                    else if(s.type === 'tag-purple') style = "color:#9b59b6";
-                    else style = "color:#7f8c8d";
                     
-                    let border = e.fromDayun ? "border:1px solid #8e44ad;box-shadow:0 0 3px #8e44ad;" : "";
+                    // 顏色優先級：流年 > 大運 > 原局設定
+                    if (e.fromLiunian) {
+                        style = "color:#27ae60; font-weight:bold;"; 
+                    } else if (e.fromDayun) {
+                        style = "color:#8e44ad; font-weight:bold;";
+                    } else {
+                        if(s.type === 'tag-red') style = "color:#e74c3c";
+                        else if(s.type === 'tag-blue') style = "color:#2980b9";
+                        else if(s.type === 'tag-purple') style = "color:#9b59b6";
+                        else if(s.type === 'tag-orange') style = "color:#e67e22";
+                        else style = "color:#7f8c8d";
+                    }
+                    
+                    let border = "";
+                    if (e.fromLiunian) border = "border:1px solid #27ae60;box-shadow:0 0 3px #27ae60;background:#e8f5e9;";
+                    else if (e.fromDayun) border = "border:1px solid #8e44ad;box-shadow:0 0 3px #8e44ad;background:#f3e5f5;";
+
                     return `<div class="compass-star" style="background:${s.bg||'#f0f0f0'};${style};${border}">
                         <div>${s.name}${e.count > 1 ? `<span class="count-badge">x${e.count}</span>` : ""}</div>
                         <span class="star-br">${Dizhi[bIdx]}</span>
