@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤版(含雙十神)</title>
+    <title>八字神煞速查 | 羅盤版(含藏干與十神)</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -12,10 +12,10 @@
             --border: #ddd;
             
             /* 神煞顏色定義 */
-            --color-noble: #e74c3c; /* 貴人/紅艷/沐浴 - 紅 */
-            --color-active: #2980b9; /* 動星 - 藍 */
-            --color-peach: #9b59b6; /* 桃花 - 紫 */
-            --color-bad: #7f8c8d;   /* 凶煞 - 灰 */
+            --color-noble: #e74c3c;
+            --color-active: #2980b9;
+            --color-peach: #9b59b6;
+            --color-bad: #7f8c8d;
         }
 
         body { font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
@@ -45,24 +45,30 @@
         .pillar { display: flex; flex-direction: column; gap: 2px; }
         .pillar-head { font-size: 14px; color: #777; font-weight: bold; margin-bottom: 5px;}
         
-        /* 十神與干支樣式 */
         .shishen { font-size: 13px; color: #7f8c8d; min-height: 18px; margin-bottom: -2px; }
-        .shishen-branch { font-size: 13px; color: #7f8c8d; min-height: 18px; margin-top: -2px; } /* 新增地支十神樣式 */
-        .stem { font-size: 24px; font-weight: bold; color: #e74c3c; min-height: 36px;}
-        .branch { font-size: 24px; font-weight: bold; color: #2c3e50; min-height: 36px;}
+        .stem { font-size: 24px; font-weight: bold; color: #e74c3c; min-height: 36px; line-height: 1.2;}
+        .branch { font-size: 24px; font-weight: bold; color: #2c3e50; min-height: 36px; line-height: 1.2;}
         .unknown-text { color: #aaa; font-size: 20px; }
+
+        /* 藏干顯示區 */
+        .zanggan-box { display: flex; flex-direction: column; margin-top: 5px; border-top: 1px dashed #eee; padding-top: 4px; gap: 2px; }
+        .zg-row { display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 11px; }
+        .zg-shishen { color: #999; width: 24px; text-align: right; transform: scale(0.9); }
+        .zg-stem { color: #555; font-weight: bold; width: 14px; }
 
         /* 大運區塊 */
         .dayun-section { margin-bottom: 30px; overflow-x: auto; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fdfdfd; }
         .dayun-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #2c3e50; border-left: 4px solid #2c3e50; padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         .dayun-container { display: flex; gap: 10px; min-width: max-content; padding-bottom: 5px; }
         
-        .dayun-col { display: flex; flex-direction: column; align-items: center; background: #fff; border: 2px solid #ddd; padding: 10px 5px; border-radius: 6px; min-width: 70px; cursor: pointer; transition: all 0.2s ease; }
+        .dayun-col { display: flex; flex-direction: column; align-items: center; background: #fff; border: 2px solid #ddd; padding: 10px 5px; border-radius: 6px; min-width: 85px; cursor: pointer; transition: all 0.2s ease; }
         .dayun-col:hover { border-color: #3498db; background-color: #f0f8ff; transform: translateY(-2px); }
         .dayun-col.selected { background-color: #2c3e50; border-color: #2c3e50; color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transform: scale(1.05); z-index: 10; }
         
         .dayun-col.selected .dayun-seq, .dayun-col.selected .dayun-year, .dayun-col.selected .dayun-age, .dayun-col.selected .shishen-small { color: #ddd; }
         .dayun-col.selected .dayun-stem, .dayun-col.selected .dayun-branch { color: #fff; }
+        .dayun-col.selected .zg-shishen { color: #bbb; }
+        .dayun-col.selected .zg-stem { color: #eee; }
 
         .dayun-seq { font-size: 12px; color: #999; margin-bottom: 2px; }
         .shishen-small { font-size: 11px; color: #888; margin-bottom: 0px; min-height: 15px;}
@@ -115,7 +121,7 @@
 <body>
 
 <div class="container">
-    <h1>八字神煞速查 | 羅盤版(含十神)</h1>
+    <h1>八字神煞速查 | 羅盤版(含藏干)</h1>
     
     <div class="input-group">
         <div class="input-item">
@@ -191,13 +197,32 @@
     const Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     
-    // 地支藏干(本氣)對照表：0子->9癸, 1丑->5己, 2寅->0甲... (用於地支十神計算)
-    const ZangGanMain = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8];
+    // 地支藏干完整表 (包含本氣、中氣、餘氣)
+    const ZangGanFull = [
+        [9],          // 子: 癸
+        [5, 9, 7],    // 丑: 己癸辛
+        [0, 2, 4],    // 寅: 甲丙戊
+        [1],          // 卯: 乙
+        [4, 1, 9],    // 辰: 戊乙癸
+        [2, 4, 6],    // 巳: 丙戊庚
+        [3, 5],       // 午: 丁己
+        [5, 3, 1],    // 未: 己丁乙
+        [6, 8, 4],    // 申: 庚壬戊
+        [7],          // 酉: 辛
+        [4, 7, 3],    // 戌: 戊辛丁
+        [8, 0]        // 亥: 壬甲
+    ];
 
     // 十神名稱
     const ShishenNames = {
         yang: ["比肩","劫財","食神","傷官","偏財","正財","七殺","正官","偏印","正印"],
         yin:  ["比肩","傷官","食神","正財","偏財","正官","七殺","正印","偏印","劫財"]
+    };
+    
+    // 十神簡寫 (用於藏干顯示)
+    const ShishenShort = {
+        yang: ["比","劫","食","傷","才","財","殺","官","梟","印"],
+        yin:  ["比","傷","食","財","才","官","殺","印","梟","劫"]
     };
 
     // 24山九宮格
@@ -264,19 +289,37 @@
         cb.checked ? sel.classList.add('disabled') : sel.classList.remove('disabled');
     }
 
-    // 計算十神：日主 vs 目標天干
+    // 計算十神：日主 vs 目標天干 (完整名稱)
     function calculateShishen(dayStem, targetStem) {
         if (dayStem === -1 || targetStem === -1) return "";
         const diff = (targetStem - dayStem + 10) % 10;
         const isYang = (dayStem % 2 === 0);
         return isYang ? ShishenNames.yang[diff] : ShishenNames.yin[diff];
     }
+
+    // 計算十神：日主 vs 目標天干 (簡寫，用於藏干)
+    function calculateShishenShort(dayStem, targetStem) {
+        if (dayStem === -1 || targetStem === -1) return "";
+        const diff = (targetStem - dayStem + 10) % 10;
+        const isYang = (dayStem % 2 === 0);
+        return isYang ? ShishenShort.yang[diff] : ShishenShort.yin[diff];
+    }
     
-    // 計算地支藏干(本氣)十神
-    function getBranchTenGod(dayStem, branchIdx) {
+    // 產生藏干的 HTML 結構 (用於 Render 函數)
+    function renderHiddenStemsHTML(dayStem, branchIdx) {
         if (dayStem === -1 || branchIdx === -1) return "";
-        const mainStem = ZangGanMain[branchIdx];
-        return calculateShishen(dayStem, mainStem);
+        const stems = ZangGanFull[branchIdx];
+        let html = '<div class="zanggan-box">';
+        stems.forEach(stemIdx => {
+            let shishen = calculateShishenShort(dayStem, stemIdx);
+            html += `
+                <div class="zg-row">
+                    <span class="zg-shishen">${shishen}</span>
+                    <span class="zg-stem">${Tiangan[stemIdx]}</span>
+                </div>`;
+        });
+        html += '</div>';
+        return html;
     }
 
     // 取得天干對地支的神煞規則
@@ -301,6 +344,23 @@
             rules.push({ name, targets: [target], ...StarStyles[name] });
         }
         return rules;
+    }
+    
+    // 計算虛歲 (出生1歲，過立春加1歲)
+    function calculateVirtualAgeCorrectly(birthYear) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        // 簡易立春判定：每年2月4日
+        const liChunDate = new Date(currentYear, 1, 4); 
+
+        let age = currentYear - birthYear + 1;
+
+        // 如果今年還沒過立春，對於命理年來說，還屬於上一年的氣，歲數要-1
+        // (也就是說，雖然過年了，但未過立春，虛歲還沒跳)
+        if (now < liChunDate) {
+            age -= 1;
+        }
+        return age;
     }
 
     function calculate() {
@@ -336,8 +396,9 @@
         
         renderBazi(yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch);
         
-        // 虛歲
-        document.getElementById('virtualAgeDisplay').innerText = `當前虛歲：${(new Date().getFullYear() - year) + 1} 歲`;
+        // 修正虛歲計算
+        const vAge = calculateVirtualAgeCorrectly(year);
+        document.getElementById('virtualAgeDisplay').innerText = `當前虛歲：${vAge} 歲`;
 
         // 大運
         let isYangYear = (yStem % 2 === 0);
@@ -376,8 +437,8 @@
             let sText = p.unknown ? '<span class="unknown-text">X</span>' : Tiangan[p.s];
             let bText = p.unknown ? '<span class="unknown-text">?</span>' : Dizhi[p.b];
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
-            // 新增：地支十神 (取藏干本氣)
-            let branchShishen = p.unknown ? "" : getBranchTenGod(dS, p.b);
+            // 藏干區塊
+            let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
 
             return `
                 <div class="pillar">
@@ -385,7 +446,7 @@
                     <div class="shishen">${stemShishen}</div>
                     <div class="stem">${sText}</div>
                     <div class="branch">${bText}</div>
-                    <div class="shishen-branch">${branchShishen}</div>
+                    ${hiddenStemsHTML}
                 </div>`;
         }).join('');
         document.getElementById('baziDisplay').innerHTML = html;
@@ -404,9 +465,10 @@
             
             currentDayunList.push({ seq: i, stem: cS, branch: cB });
             
-            // 計算大運的天干十神與地支十神
+            // 天干十神
             let sShishen = calculateShishen(dStem, cS);
-            let bShishen = getBranchTenGod(dStem, cB);
+            // 地支藏干顯示
+            let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
 
             html += `
                 <div class="dayun-col" id="dayun-${i-1}" onclick="selectDayun(${i-1})">
@@ -414,7 +476,7 @@
                     <span class="shishen-small">${sShishen}</span>
                     <span class="dayun-stem">${Tiangan[cS]}</span>
                     <span class="dayun-branch">${Dizhi[cB]}</span>
-                    <span class="shishen-small">${bShishen}</span>
+                    ${hiddenStemsHTML}
                     <div class="dayun-age-info">
                         <div class="dayun-age">${age}歲</div>
                         <div class="dayun-year">${bYear + age}年</div>
