@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤版(含藏干與十神)</title>
+    <title>八字神煞速查 | 羅盤全神煞版</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -12,10 +12,10 @@
             --border: #ddd;
             
             /* 神煞顏色定義 */
-            --color-noble: #e74c3c;
-            --color-active: #2980b9;
-            --color-peach: #9b59b6;
-            --color-bad: #7f8c8d;
+            --color-noble: #e74c3c; /* 吉星 (紅) */
+            --color-active: #2980b9; /* 次吉/功能 (藍) */
+            --color-peach: #9b59b6; /* 桃花/強烈 (紫) */
+            --color-bad: #7f8c8d;   /* 凶星 (灰) */
         }
 
         body { font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
@@ -197,7 +197,7 @@
     const Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     
-    // 地支藏干完整表 (包含本氣、中氣、餘氣)
+    // 地支藏干完整表
     const ZangGanFull = [
         [9],          // 子: 癸
         [5, 9, 7],    // 丑: 己癸辛
@@ -219,7 +219,7 @@
         yin:  ["比肩","傷官","食神","正財","偏財","正官","七殺","正印","偏印","劫財"]
     };
     
-    // 十神簡寫 (用於藏干顯示)
+    // 十神簡寫
     const ShishenShort = {
         yang: ["比","劫","食","傷","才","財","殺","官","梟","印"],
         yin:  ["比","傷","食","財","才","官","殺","印","梟","劫"]
@@ -238,7 +238,7 @@
         { dir: "西北", branches: [10, 11], mountains: "戌乾亥", class: "cell-nw" }
     ];
 
-    // 神煞規則表
+    // === 神煞規則表 (全集) ===
     const ShenshaRules = {
         stem: { // 天干查地支
             "天乙": { 
@@ -247,7 +247,13 @@
             },
             "文昌": { 0:[5], 1:[6], 2:[8], 3:[9], 4:[8], 5:[9], 6:[11], 7:[0], 8:[2], 9:[3] },
             "紅艷": { 0:[6], 1:[6], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
-            "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] }
+            "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] },
+            // 新增: 祿神, 羊刃, 金輿, 流霞, 學堂
+            "祿神": { 0:[2], 1:[3], 2:[5], 3:[6], 4:[5], 5:[6], 6:[8], 7:[9], 8:[11], 9:[0] },
+            "羊刃": { 0:[3], 1:[4], 2:[6], 3:[7], 4:[6], 5:[7], 6:[9], 7:[10], 8:[0], 9:[1] },
+            "金輿": { 0:[4], 1:[5], 2:[7], 3:[8], 4:[7], 5:[8], 6:[10], 7:[11], 8:[1], 9:[2] },
+            "流霞": { 0:[9], 1:[10], 2:[7], 3:[7], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] },
+            "學堂": { 0:[11], 1:[6], 2:[2], 3:[9], 4:[2], 5:[9], 6:[5], 7:[0], 8:[8], 9:[3] }
         },
         branch: { // 地支查地支
             "咸池": { map: [9,6,3,0,9,6,3,0,9,6,3,0] },
@@ -260,18 +266,21 @@
             "華蓋": { map: [4,1,10,7,4,1,10,7,4,1,10,7] },
             "亡神": { map: [11,8,5,2,11,8,5,2,11,8,5,2] },
             "劫煞": { map: [5,2,11,8,5,2,11,8,5,2,11,8] },
-            "災煞": { map: [6,3,0,9,6,3,0,9,6,3,0,9] }
+            "災煞": { map: [6,3,0,9,6,3,0,9,6,3,0,9] },
+            // 新增: 大耗
+            "大耗": { map: [6,7,8,9,10,11,0,1,2,3,4,5] }
         }
     };
     
     // 神煞顯示屬性
     const StarStyles = {
-        "天乙": { type: "tag-red", bg: "#ffebee" }, "文昌": { type: "tag-blue", bg: "#e8f5e9" },
-        "紅艷": { type: "tag-red", bg: "#ffebee" }, "沐浴": { type: "tag-red", bg: "#ffebee" },
+        "天乙": { type: "tag-red", bg: "#ffebee" }, "文昌": { type: "tag-blue", bg: "#e8f5e9" }, "祿神": { type: "tag-red", bg: "#ffebee" },
+        "紅艷": { type: "tag-purple", bg: "#f3e5f5" }, "沐浴": { type: "tag-purple", bg: "#f3e5f5" }, "金輿": { type: "tag-red", bg: "#ffebee" },
         "咸池": { type: "tag-purple", bg: "#f3e5f5" }, "紅鸞": { type: "tag-red", bg: "#ffebee" }, "天喜": { type: "tag-red", bg: "#ffebee" },
-        "驛馬": { type: "tag-blue", bg: "#e1f5fe" }, "將星": { type: "tag-red", bg: "#ffebee" }, "華蓋": { type: "tag-red", bg: "#ffebee" },
-        "孤辰": { type: "tag-gray", bg: "#eee" }, "寡宿": { type: "tag-gray", bg: "#eee" },
-        "亡神": { type: "tag-gray", bg: "#eee" }, "劫煞": { type: "tag-gray", bg: "#eee" }, "災煞": { type: "tag-gray", bg: "#eee" }
+        "驛馬": { type: "tag-blue", bg: "#e1f5fe" }, "將星": { type: "tag-red", bg: "#ffebee" }, "華蓋": { type: "tag-gray", bg: "#eee" },
+        "孤辰": { type: "tag-gray", bg: "#eee" }, "寡宿": { type: "tag-gray", bg: "#eee" }, "流霞": { type: "tag-gray", bg: "#eee" },
+        "亡神": { type: "tag-gray", bg: "#eee" }, "劫煞": { type: "tag-gray", bg: "#eee" }, "災煞": { type: "tag-gray", bg: "#eee" },
+        "羊刃": { type: "tag-purple", bg: "#f3e5f5" }, "大耗": { type: "tag-gray", bg: "#eee" }, "學堂": { type: "tag-blue", bg: "#e1f5fe" }
     };
 
     // 全域變數
@@ -356,7 +365,6 @@
         let age = currentYear - birthYear + 1;
 
         // 如果今年還沒過立春，對於命理年來說，還屬於上一年的氣，歲數要-1
-        // (也就是說，雖然過年了，但未過立春，虛歲還沒跳)
         if (now < liChunDate) {
             age -= 1;
         }
