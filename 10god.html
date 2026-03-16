@@ -319,7 +319,7 @@
 
 <script>
 /**
- * 程式夥伴 - JS 移植版 (串宮修正版 + 十神加總功能 + 藏干顯示 + 大運十神位置修正)
+ * 程式夥伴 - JS 移植版 (串宮修正版 + 十神加總功能 + 藏干顯示 + 大運十神位置修正 + 原局統計 + 大運納音)
  */
 
 // ==========================================
@@ -523,6 +523,25 @@ function runCalculation() {
     html += `<td colspan="3" style="background:#f9f9f9"></td></tr>`;
     html += `</table>`;
 
+    // --- 【修改處】原局命盤專屬十神總數統計 ---
+    let yjStemsToCount = [yStem, mStem, hStem]; // 原局天干 (不含日主)
+    let yjBranchesToCount = [yBranch, mBranch, dBranch, hBranch]; // 原局地支
+    let yjTgCounts = getTenGodsCount(dStem, yjStemsToCount, yjBranchesToCount);
+
+    html += `<div class="subtitle blue" style="margin-top: 15px;">【原局十神總結】(含地支全藏干)</div>`;
+    html += `<div class="ten-gods-summary">`;
+    const yjTgOrder = ["比肩", "劫財", "食神", "傷官", "偏財", "正財", "七殺", "正官", "偏印", "正印"];
+    yjTgOrder.forEach(tg => {
+        let count = yjTgCounts[tg] || 0;
+        let numColor = count > 0 ? "var(--color-red)" : "#bdc3c7";
+        html += `<div class="tg-item">
+            <span class="tg-name">${tg}</span>
+            <span class="tg-count" style="color: ${numColor}">${count}</span>
+        </div>`;
+    });
+    html += `</div>`;
+
+
     // 2. 大運
     html += `<div class="section-title dayun-header">【 大 運 程 】</div>`;
     html += `<div class="dayun-container">`;
@@ -541,13 +560,14 @@ function runCalculation() {
         html += `<div>${ageLabel}</div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyS, true)}</div>`;
         
-        // --- 【修改處】大運天干的十神移至天干上方 ---
+        // 大運天干的十神移至天干上方
         html += `<div style="font-size:0.85em; margin-bottom: 2px; color: var(--btn-blue); font-weight: bold;">${getTenGod(dStem, dyS)}</div>`;
         
-        html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}</div>`;
+        // --- 【修改處】大運干支下方加入納音 ---
+        html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.6em;font-weight:normal;color:#34495e;">${getNaYin(dyS, dyB)}</span></div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyB, false)}</div>`;
         
-        // --- 藏干顯示保持在下方 ---
+        // 藏干顯示保持在下方
         html += `<div style="font-size:0.8em; line-height: 1.2;">${getHiddenStemsHtml(dStem, dyB)}</div>`;
         
         html += `</div>`;
