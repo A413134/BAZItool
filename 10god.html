@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>天時子平八字 | 專業排盤 (串宮修正版+十神統計+藏干顯示)</title>
+    <title>天時子平八字 | 專業排盤 (五勝六忌+串宮修正+十神統計+藏干顯示)</title>
     <style>
         :root {
             --bg-color: #f5f7fa;
@@ -254,6 +254,25 @@
         .tg-item .tg-name { color: #7f8c8d; font-size: 0.9em; margin-bottom: 5px;}
         .tg-item .tg-count { font-weight: bold; font-size: 1.2em; }
 
+        /* 五勝六忌警告框 */
+        .sheng-ji-box {
+            background-color: #fff8e1;
+            color: #2c3e50;
+            border: 1px solid #ffe082;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        .sheng-ji-box ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+        }
+        .sheng-ji-box li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
         /* 顏色輔助 */
         .c-green { color: var(--color-green); }
         .c-purple { color: var(--color-purple); }
@@ -319,7 +338,7 @@
 
 <script>
 /**
- * 程式夥伴 - JS 移植版 (串宮修正版 + 十神加總功能 + 藏干顯示 + 大運十神位置修正 + 原局統計 + 大運納音)
+ * 程式夥伴 - JS 移植版 (五勝六忌+串宮修正版+十神加總+藏干顯示+大運納音)
  */
 
 // ==========================================
@@ -332,7 +351,7 @@ const TenGodsYang = "比肩,劫財,食神,傷官,偏財,正財,七殺,正官,偏
 const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏印,劫財".split(",");
 const BranchMainQi = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8]; // 子(9=癸)...
 
-// 十二地支完整藏干 (對應天干陣列的 Index)
+// 十二地支完整藏干
 const HiddenStems = [
     [9],             // 0: 子 (癸)
     [5, 9, 7],       // 1: 丑 (己,癸,辛)
@@ -352,6 +371,24 @@ const JieQiCVal = [5.4055, 3.87, 5.63, 4.81, 5.52, 5.678, 7.108, 7.5, 7.646, 8.3
 const NaYinList = ("海中金,爐中火,大林木,路旁土,劍鋒金,山頭火,澗下水,城頭土,白蠟金,楊柳木," + 
                   "泉中水,屋上土,霹靂火,松柏木,長流水,沙中金,山下火,平地木,壁上土,金箔金," + 
                   "覆燈火,天河水,大驛土,釵釧金,桑柘木,大溪水,沙中土,天上火,石榴木,大海水").split(",");
+
+// --- 五勝六忌資料庫 ---
+const ShengRules = [
+    { A: ["戊午", "己未"], B: ["丙子", "丁丑"], desc: "戊午己未天上火 勝 丙子丁丑澗下水" },
+    { A: ["戊辰", "己巳"], B: ["壬寅", "癸卯"], desc: "戊辰己巳大林木 勝 壬寅癸卯金箔金" },
+    { A: ["戊辰", "己巳"], B: ["庚戌", "辛亥"], desc: "戊辰己巳大林木 勝 庚戌辛亥釵釧金" },
+    { A: ["甲寅", "乙卯"], B: ["丙辰", "丁巳"], desc: "甲寅乙卯大溪水 勝 丙辰丁巳沙中土" },
+    { A: ["甲子", "乙丑"], B: ["甲辰", "乙巳"], desc: "甲子乙丑海中金 勝 甲辰乙巳覆燈火" }
+];
+
+const JiRules = [
+    { A: ["壬子", "癸丑"], B: ["壬申", "癸酉"], desc: "壬子癸丑桑柘木 忌 壬申癸酉劍鋒金" },
+    { A: ["甲戌", "乙亥"], B: ["丙午", "丁未"], desc: "甲戌乙亥山頭火 忌 丙午丁未天河水" },
+    { A: ["庚辰", "辛巳"], B: ["丙寅", "丁卯"], desc: "庚辰辛巳白蠟金 忌 丙寅丁卯爐中火" },
+    { A: ["甲子", "乙丑"], B: ["戊子", "己丑"], desc: "甲子乙丑海中金 忌 戊子己丑霹靂火" },
+    { A: ["丙辰", "丁巳"], B: ["戊辰", "己巳"], desc: "丙辰丁巳沙中土 忌 戊辰己巳大林木" },
+    { A: ["甲申", "乙酉"], B: ["戊申", "己酉"], desc: "甲申乙酉井泉水 忌 戊申己酉大驛土" }
+];
 
 function safeMod(n, m) {
     return ((n % m) + m) % m;
@@ -478,6 +515,19 @@ function runCalculation() {
     if ((timeDiffMinutes / 4320) > dyStartAge) dyStartAge += 1; 
     if (dyStartAge < 1) dyStartAge = 1;
 
+    // 定義原局四柱文字 (供五勝六忌使用)
+    let yGZ = Tiangan[yStem] + Dizhi[yBranch];
+    let mGZ = Tiangan[mStem] + Dizhi[mBranch];
+    let dGZ = Tiangan[dStem] + Dizhi[dBranch];
+    let hGZ = Tiangan[hStem] + Dizhi[hBranch];
+    
+    let natalPillars = [
+        {name: "年柱", gz: yGZ},
+        {name: "月柱", gz: mGZ},
+        {name: "日柱", gz: dGZ},
+        {name: "時柱", gz: hGZ}
+    ];
+
     // --- UI 渲染 ---
     let html = "";
     
@@ -523,9 +573,9 @@ function runCalculation() {
     html += `<td colspan="3" style="background:#f9f9f9"></td></tr>`;
     html += `</table>`;
 
-    // --- 【修改處】原局命盤專屬十神總數統計 ---
-    let yjStemsToCount = [yStem, mStem, hStem]; // 原局天干 (不含日主)
-    let yjBranchesToCount = [yBranch, mBranch, dBranch, hBranch]; // 原局地支
+    // --- 原局命盤十神總數統計 ---
+    let yjStemsToCount = [yStem, mStem, hStem]; 
+    let yjBranchesToCount = [yBranch, mBranch, dBranch, hBranch];
     let yjTgCounts = getTenGodsCount(dStem, yjStemsToCount, yjBranchesToCount);
 
     html += `<div class="subtitle blue" style="margin-top: 15px;">【原局十神總結】(含地支全藏干)</div>`;
@@ -541,10 +591,21 @@ function runCalculation() {
     });
     html += `</div>`;
 
+    // --- 【新增】原局五勝六忌判斷 ---
+    let natalMatches = findShengJiMatches(natalPillars);
+    if (natalMatches.length > 0) {
+        html += `<div class="subtitle red" style="margin-top: 15px;">【原局內部五勝六忌】</div>`;
+        html += `<div class="sheng-ji-box"><b>⚠️ 命盤中存在以下組合：</b><ul>`;
+        natalMatches.forEach(m => html += `<li>${m}</li>`);
+        html += `</ul></div>`;
+    }
 
     // 2. 大運
     html += `<div class="section-title dayun-header">【 大 運 程 】</div>`;
     html += `<div class="dayun-container">`;
+    
+    let dayunMatchesHtml = ""; // 儲存大運的勝忌結果
+
     for(let k=1; k<=11; k++) {
         let dyS, dyB;
         if (isForward) {
@@ -555,24 +616,38 @@ function runCalculation() {
             dyB = safeMod(mBranch - k, 12);
         }
         let ageLabel = (dyStartAge + (k-1)*10) + "歲";
+        let dyGZ_loop = Tiangan[dyS] + Dizhi[dyB];
         
         html += `<div class="dayun-col">`;
         html += `<div>${ageLabel}</div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyS, true)}</div>`;
         
-        // 大運天干的十神移至天干上方
+        // 大運天干的十神
         html += `<div style="font-size:0.85em; margin-bottom: 2px; color: var(--btn-blue); font-weight: bold;">${getTenGod(dStem, dyS)}</div>`;
-        
-        // --- 【修改處】大運干支下方加入納音 ---
+        // 大運干支與納音
         html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.6em;font-weight:normal;color:#34495e;">${getNaYin(dyS, dyB)}</span></div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyB, false)}</div>`;
-        
-        // 藏干顯示保持在下方
+        // 藏干顯示
         html += `<div style="font-size:0.8em; line-height: 1.2;">${getHiddenStemsHtml(dStem, dyB)}</div>`;
         
         html += `</div>`;
+
+        // 計算此柱大運與原局的五勝六忌 (excludeNatalOnly = true)
+        let dyPillarsTest = [...natalPillars, { name: `${ageLabel}大運`, gz: dyGZ_loop }];
+        let dyM = findShengJiMatches(dyPillarsTest, true);
+        if(dyM.length > 0) {
+            dayunMatchesHtml += `<div style="margin-bottom:8px;"><b>➤ ${ageLabel}大運 (${dyGZ_loop})：</b><ul>`;
+            dyM.forEach(m => dayunMatchesHtml += `<li>${m}</li>`);
+            dayunMatchesHtml += `</ul></div>`;
+        }
     }
     html += `</div>`;
+
+    // 顯示大運與原局的勝忌
+    if (dayunMatchesHtml) {
+        html += `<div class="subtitle red" style="margin-top: 15px;">【各柱大運與原局之五勝六忌】</div>`;
+        html += `<div class="sheng-ji-box">${dayunMatchesHtml}</div>`;
+    }
 
     // 3. 流年
     for(let age = viewStartAge; age <= viewEndAge; age++) {
@@ -652,9 +727,7 @@ function runCalculation() {
         html += `</div>`; // End 右側
         html += `</div>`; // End Grid
 
-        // ==========================================
-        // 十神數量統計 (含藏干)
-        // ==========================================
+        // 流年十神總結
         let stemsToCount = [yStem, mStem, hStem];
         let branchesToCount = [yBranch, mBranch, dBranch, hBranch];
         
@@ -681,6 +754,22 @@ function runCalculation() {
         });
         html += `</div>`;
 
+        // --- 【新增】流年五勝六忌判斷 ---
+        let lnPillars = [...natalPillars];
+        if (currDyStem !== -1) {
+            lnPillars.push({ name: "大運", gz: currDyGZ });
+        }
+        let lnGZ = Tiangan[loopStem] + Dizhi[loopBranch];
+        lnPillars.push({ name: "流年", gz: lnGZ });
+
+        // 只顯示與大運/流年有關的觸發，排除純原局內部的觸發(以保持版面乾淨)
+        let lnM = findShengJiMatches(lnPillars, true); 
+        if (lnM.length > 0) {
+            html += `<div class="sheng-ji-box" style="margin-top: 15px;"><b>⚠️ 流年/大運 五勝六忌觸發：</b><ul>`;
+            lnM.forEach(m => html += `<li>${m}</li>`);
+            html += `</ul></div>`;
+        }
+
         html += `</div>`; // End Block
     }
 
@@ -695,6 +784,41 @@ function clearData() {
 //    輔助函數
 // ==========================================
 
+// 五勝六忌配對判斷邏輯
+function findShengJiMatches(pillars, excludeNatalOnly = false) {
+    let results = [];
+    for (let i = 0; i < pillars.length; i++) {
+        for (let j = i + 1; j < pillars.length; j++) {
+            let p1 = pillars[i];
+            let p2 = pillars[j];
+
+            if (excludeNatalOnly) {
+                let isP1Natal = ["年柱", "月柱", "日柱", "時柱"].includes(p1.name);
+                let isP2Natal = ["年柱", "月柱", "日柱", "時柱"].includes(p2.name);
+                if (isP1Natal && isP2Natal) continue; // 若兩者都是原局，則跳過不顯示
+            }
+
+            // Check 五勝
+            ShengRules.forEach(rule => {
+                if ((rule.A.includes(p1.gz) && rule.B.includes(p2.gz))) {
+                    results.push(`<span class="c-green">【勝】</span> <b>[${p1.name}]${p1.gz}</b> 勝 <b>[${p2.name}]${p2.gz}</b> <span style="color:#7f8c8d; font-size:0.9em;">(${rule.desc})</span>`);
+                } else if ((rule.A.includes(p2.gz) && rule.B.includes(p1.gz))) {
+                    results.push(`<span class="c-green">【勝】</span> <b>[${p2.name}]${p2.gz}</b> 勝 <b>[${p1.name}]${p1.gz}</b> <span style="color:#7f8c8d; font-size:0.9em;">(${rule.desc})</span>`);
+                }
+            });
+
+            // Check 六忌
+            JiRules.forEach(rule => {
+                if ((rule.A.includes(p1.gz) && rule.B.includes(p2.gz)) ||
+                    (rule.A.includes(p2.gz) && rule.B.includes(p1.gz))) {
+                    results.push(`<span class="c-red">【忌】</span> <b>[${p1.name}]${p1.gz}</b> 與 <b>[${p2.name}]${p2.gz}</b> 犯忌 <span style="color:#7f8c8d; font-size:0.9em;">(${rule.desc})</span>`);
+                }
+            });
+        }
+    }
+    return results;
+}
+
 function getTenGod(dStem, targetStem) {
     if (dStem % 2 === 0) return TenGodsYang[safeMod(targetStem - dStem, 10)];
     return TenGodsYin[safeMod(targetStem - dStem, 10)];
@@ -704,7 +828,6 @@ function getTenGod(dStem, targetStem) {
 function getHiddenStemsHtml(dStem, branch) {
     if (branch === undefined || branch === -1) return "";
     let stems = HiddenStems[branch];
-    // 排列組合顯示如： 癸(傷官)<br>辛(劫財) 等
     return stems.map(s => `${Tiangan[s]}<span style="font-size:0.8em;color:#7f8c8d;margin-left:2px;">${getTenGod(dStem, s)}</span>`).join("<br>");
 }
 
