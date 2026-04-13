@@ -297,7 +297,7 @@
 
 <script>
 /**
- * 程式夥伴 - JS 移植版 (串宮修正版)
+ * 程式夥伴 - JS 移植版 (串宮修正版 + 小限公式優化)
  */
 
 // ==========================================
@@ -340,7 +340,7 @@ function runCalculation() {
     const resultArea = document.getElementById('resultArea');
     resultArea.innerHTML = ""; 
 
-    // --- 運算邏輯 (同前) ---
+    // --- 運算邏輯 ---
     let yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch;
     let offY = safeMod(y - 4, 60);
     yStem = offY % 10;
@@ -443,7 +443,6 @@ function runCalculation() {
     let html = "";
     
     // 1. 原局命盤
-    // 注意：這裡的原局命盤串宮是以「日干」查各柱「地支」的太歲
     let dTaiSuiBranch = getStemMapping(dStem);
     let daysToJie = (timeDiffMinutes / 1440).toFixed(1);
 
@@ -562,20 +561,20 @@ function runCalculation() {
              html += generateListRow("運支", Dizhi[currDyBranch], getShenSha(dTaiSuiBranch, currDyBranch, false));
         }
 
-        // 小限
-        let xxBranch;
-        if (isMale) xxBranch = safeMod(mingBranch + (currentAge - 1), 12);
-        else xxBranch = safeMod(mingBranch - (currentAge - 1), 12);
+        // ==========================================
+        // 優化：小限計算 (嚴格吻合圖片公式)
+        // ==========================================
         
-        let xxStartStem;
-        switch (yStem % 5) {
-             case 0: xxStartStem = 2; break;
-             case 1: xxStartStem = 4; break;
-             case 2: xxStartStem = 6; break;
-             case 3: xxStartStem = 8; break;
-             case 4: xxStartStem = 0; break;
-        }
-        let xxStem = safeMod(xxStartStem + safeMod(xxBranch - 2, 12), 10);
+        // 1. 小限地支：(命宮地支 + 生年地支 - 流年地支)
+        let xxBranch = safeMod(mingBranch + yBranch - loopBranch, 12);
+
+        // 2. 小限天干：五虎遁年法 (以「流年天干」起寅)
+        // 該年寅月的天干起始值
+        let startStem = (loopStem % 5) * 2 + 2; 
+        // 計算小限地支距離寅的距離 (寅為索引2)
+        let stemDist = safeMod(xxBranch - 2, 12); 
+        let xxStem = safeMod(startStem + stemDist, 10);
+        // ==========================================
 
         html += generateListRow("小限", Tiangan[xxStem] + Dizhi[xxBranch], getShenSha(dTaiSuiBranch, xxBranch, false));
 
@@ -618,9 +617,6 @@ function getNaYin(s, b) {
 // === 核心修正處：串宮壓運天干對照表 ===
 function getStemMapping(s) {
     // 根據串宮壓運法：
-    // 甲(0)->寅(2), 乙(1)->卯(3), 丙(2)->巳(5), 丁(3)->午(6)
-    // 戊(4)->戌(10) [修正], 己(5)->丑(1) [修正]
-    // 庚(6)->申(8), 辛(7)->酉(9), 壬(8)->亥(11), 癸(9)->子(0)
     const map = [2, 3, 5, 6, 10, 1, 8, 9, 11, 0];
     return map[s];
 }
@@ -715,7 +711,4 @@ function getPrevJieQi(d) {
 </script>
 
 </body>
-
 </html>
-
-
