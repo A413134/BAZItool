@@ -338,7 +338,7 @@
 
 <script>
 /**
- * 程式夥伴 - JS 移植版 (五勝六忌+串宮修正版+十神加總+藏干顯示+大運納音)
+ * 程式夥伴 - JS 移植版 (五勝六忌+串宮修正版+十神加總+藏干顯示+大運納音+小限優化)
  * 【更新】原局命盤改為：時、日、月、年（太歲入局維持不變）
  */
 
@@ -710,20 +710,17 @@ function runCalculation() {
              html += generateListRow("運支", `${Dizhi[currDyBranch]} <span style="font-size:0.8em;font-weight:normal;color:#7f8c8d">(藏:${dyzStems})</span>`, getShenSha(dTaiSuiBranch, currDyBranch, false));
         }
 
-        // 小限
-        let xxBranch;
-        if (isMale) xxBranch = safeMod(mingBranch + (currentAge - 1), 12);
-        else xxBranch = safeMod(mingBranch - (currentAge - 1), 12);
-        
-        let xxStartStem;
-        switch (yStem % 5) {
-             case 0: xxStartStem = 2; break;
-             case 1: xxStartStem = 4; break;
-             case 2: xxStartStem = 6; break;
-             case 3: xxStartStem = 8; break;
-             case 4: xxStartStem = 0; break;
-        }
-        let xxStem = safeMod(xxStartStem + safeMod(xxBranch - 2, 12), 10);
+        // ==========================================
+        // 優化：小限計算 (嚴格吻合圖片公式)
+        // ==========================================
+        // 1. 小限地支：(命宮地支 + 生年地支 - 流年地支)
+        let xxBranch = safeMod(mingBranch + yBranch - loopBranch, 12);
+
+        // 2. 小限天干：五虎遁年法 (以「流年天干」起寅)
+        let startStem = (loopStem % 5) * 2 + 2; // 該年寅月的天干起始值
+        let stemDist = safeMod(xxBranch - 2, 12); // 小限地支距離寅的距離 (寅為2)
+        let xxStem = safeMod(startStem + stemDist, 10);
+        // ==========================================
 
         html += generateListRow("小限", Tiangan[xxStem] + Dizhi[xxBranch], getShenSha(dTaiSuiBranch, xxBranch, false));
         html += `</div>`; // End 右側
@@ -969,4 +966,3 @@ function getPrevJieQi(d) {
 
 </body>
 </html>
-```
