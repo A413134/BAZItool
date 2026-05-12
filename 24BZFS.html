@@ -43,6 +43,7 @@
         .stem { font-size: 24px; font-weight: bold; color: #e74c3c; min-height: 36px; line-height: 1.2;}
         .branch { font-size: 24px; font-weight: bold; color: #2c3e50; min-height: 36px; line-height: 1.2;}
         .unknown-text { color: #aaa; font-size: 20px; }
+        .nayin-text { font-size: 12px; color: #8e44ad; font-weight: bold; margin-bottom: 2px; }
 
         /* 藏干顯示區 */
         .zanggan-box { display: flex; flex-direction: column; margin-top: 5px; border-top: 1px dashed #eee; padding-top: 4px; gap: 2px; }
@@ -63,23 +64,31 @@
         .dayun-col.selected .dayun-stem, .dayun-col.selected .dayun-branch { color: #fff; }
         .dayun-col.selected .zg-shishen { color: #bbb; }
         .dayun-col.selected .zg-stem { color: #eee; }
+        .dayun-col.selected .nayin-small { color: #d7bde2; }
 
         .dayun-seq { font-size: 12px; color: #999; margin-bottom: 2px; }
         .shishen-small { font-size: 11px; color: #888; margin-bottom: 0px; min-height: 15px;}
         .dayun-stem { font-size: 20px; color: #e74c3c; font-weight: bold; }
         .dayun-branch { font-size: 20px; color: #2c3e50; font-weight: bold; }
+        .nayin-small { font-size: 11px; color: #8e44ad; font-weight: bold; margin-bottom: 2px; }
         .dayun-age-info { margin-top: 8px; border-top: 1px dashed #eee; width: 100%; text-align: center; padding-top: 5px; }
         .dayun-age { font-size: 13px; font-weight: bold; color: #555; }
         .dayun-year { font-size: 11px; color: #999; }
 
         /* 流年列 */
         .liunian-bar { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; width: 100%; overflow-x: auto; }
-        .liunian-flex { display: flex; gap: 5px; min-width: max-content; }
-        .liunian-btn { padding: 6px 12px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; text-align: center; }
+        .liunian-flex { display: flex; gap: 8px; min-width: max-content; padding-bottom: 5px; }
+        
+        /* 更新流年按鈕樣式，轉為微型柱 */
+        .liunian-btn { 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 8px 5px; border: 1px solid #ccc; background: #fff; 
+            border-radius: 6px; cursor: pointer; text-align: center; 
+            min-width: 70px; transition: all 0.2s;
+        }
         .liunian-btn:hover { background: #e8f5e9; border-color: #27ae60; }
-        .liunian-btn.active { background: #27ae60; color: white; border-color: #27ae60; font-weight: bold; }
-        .liunian-gz { font-size: 14px; font-weight: bold; display: block;}
-        .liunian-y { font-size: 11px; opacity: 0.8; }
+        .liunian-btn.active { border: 2px solid #27ae60; background: #f0fdf4; transform: scale(1.05); box-shadow: 0 2px 6px rgba(39,174,96,0.2); }
+        .liunian-y { font-size: 12px; color: #555; font-weight: bold; background: #eee; width: 100%; border-radius: 3px; margin-bottom: 3px;}
 
         /* 結果展示區 */
         .result-box { display: none; margin-top: 30px; }
@@ -197,6 +206,16 @@
     const Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     
+    // 六十甲子納音表
+    const NaYinList = [
+        "海中金","爐中火","大林木","路旁土","劍鋒金",
+        "山頭火","澗下水","城頭土","白蠟金","楊柳木",
+        "泉中水","屋上土","霹靂火","松柏木","長流水",
+        "沙中金","山下火","平地木","壁上土","金箔金",
+        "覆燈火","天河水","大驛土","釵釧金","桑柘木",
+        "大溪水","沙中土","天上火","石榴木","大海水"
+    ];
+    
     // 地支藏干完整表
     const ZangGanFull = [
         [9],          // 子: 癸
@@ -246,12 +265,12 @@
                 2: [11,9], 3: [11,9], 8: [3,5], 9: [3,5], 7: [6,2]
             },
             "文昌": { 0:[5], 1:[6], 2:[8], 3:[9], 4:[8], 5:[9], 6:[11], 7:[0], 8:[2], 9:[3] },
-            "紅艷": { 0:[6], 1:[6], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
+            "紅艷": { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
             "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] },
             "祿神": { 0:[2], 1:[3], 2:[5], 3:[6], 4:[5], 5:[6], 6:[8], 7:[9], 8:[11], 9:[0] },
             "羊刃": { 0:[3], 1:[4], 2:[6], 3:[7], 4:[6], 5:[7], 6:[9], 7:[10], 8:[0], 9:[1] },
             "金輿": { 0:[4], 1:[5], 2:[7], 3:[8], 4:[7], 5:[8], 6:[10], 7:[11], 8:[1], 9:[2] },
-            "流霞": { 0:[9], 1:[10], 2:[7], 3:[7], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] },
+            "流霞": { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] },
             "學堂": { 0:[11], 1:[6], 2:[2], 3:[9], 4:[2], 5:[9], 6:[5], 7:[0], 8:[8], 9:[3] }
         },
         branch: { 
@@ -278,8 +297,16 @@
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7];
 
     // === 2. 核心邏輯 (Core Logic) ===
+    
+    // 納音計算
+    function getNaYin(stemIdx, branchIdx) {
+        if(stemIdx < 0 || branchIdx < 0) return "";
+        let diff = (stemIdx - branchIdx + 12) % 12;
+        let idx = stemIdx + 10 * (diff / 2);
+        return NaYinList[Math.floor(idx / 2)];
+    }
 
-    // 【新增】判斷來源並回傳專屬顏色設定 (天干與地支區分12種顏色)
+    // 判斷來源並回傳專屬顏色設定 (天干與地支區分12種顏色)
     function getSrcStyle(src) {
         // 流年
         if (src.includes("流年干")) return { text: "#2ecc71", bg: "#eafaf1", border: "#2ecc71", name: "流年干" };
@@ -435,6 +462,7 @@
             let bText = p.unknown ? '<span class="unknown-text">?</span>' : Dizhi[p.b];
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
             let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
+            let nayinText = p.unknown ? "" : getNaYin(p.s, p.b);
 
             return `
                 <div class="pillar">
@@ -442,6 +470,7 @@
                     <div class="shishen">${stemShishen}</div>
                     <div class="stem">${sText}</div>
                     <div class="branch">${bText}</div>
+                    <div class="nayin-text">${nayinText}</div>
                     ${hiddenStemsHTML}
                 </div>`;
         }).join('');
@@ -464,6 +493,7 @@
             
             let sShishen = calculateShishen(dStem, cS);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
+            let dyNayin = getNaYin(cS, cB);
 
             html += `
                 <div class="dayun-col" id="dayun-${i-1}" onclick="selectDayun(${i-1})">
@@ -471,6 +501,7 @@
                     <span class="shishen-small">${sShishen}</span>
                     <span class="dayun-stem">${Tiangan[cS]}</span>
                     <span class="dayun-branch">${Dizhi[cB]}</span>
+                    <span class="nayin-small">${dyNayin}</span>
                     ${hiddenStemsHTML}
                     <div class="dayun-age-info">
                         <div class="dayun-age">${age}歲</div>
@@ -497,6 +528,7 @@
         const list = document.getElementById('liunianList');
         bar.style.display = "block";
         list.innerHTML = "";
+        const dStem = currentBaziData.dStem; // 用以計算十神
 
         for(let i=0; i<10; i++) {
             let year = dy.startYear + i;
@@ -505,7 +537,22 @@
             
             let btn = document.createElement('div');
             btn.className = "liunian-btn";
-            btn.innerHTML = `<span class="liunian-gz">${Tiangan[s]}${Dizhi[b]}</span><span class="liunian-y">${year}</span>`;
+            
+            let stemShishen = calculateShishenShort(dStem, s);
+            let nayin = getNaYin(s, b);
+            let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
+
+            // 流年按鈕微型柱狀結構
+            btn.innerHTML = `
+                <div class="liunian-y">${year}</div>
+                <div class="shishen-small" style="margin-top:2px;">${stemShishen}</div>
+                <div style="font-size:16px; font-weight:bold; margin:2px 0; line-height:1.2;">
+                    <span style="color:#e74c3c">${Tiangan[s]}</span><span style="color:#2c3e50">${Dizhi[b]}</span>
+                </div>
+                <div class="nayin-small">${nayin}</div>
+                ${hiddenStemsHTML}
+            `;
+            
             btn.onclick = function() {
                 document.querySelectorAll('.liunian-btn').forEach(b=>b.classList.remove('active'));
                 this.classList.add('active');
@@ -593,7 +640,7 @@
                 <div class="shensha-grid">${pItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
             </div>`;
 
-            // B. 大運查原局 (主動：區分大運干與大運支)
+            // B. 大運查原局 (主動：顯示具體被照入的12地支)
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
             let activeRules = [];
             
@@ -610,7 +657,7 @@
                     globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
                     return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
                         <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
-                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}</span></div>
+                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
                     </div>`;
                 }).join('');
                 container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
@@ -649,7 +696,7 @@
                 <div class="shensha-grid">${lnpItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
             </div>`;
 
-            // B. 流年查原局 (主動：區分流年干與流年支)
+            // B. 流年查原局 (主動：顯示具體被照入的12地支)
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
             let lnActiveRules = [];
 
@@ -666,7 +713,7 @@
                     globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
                     return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
                         <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
-                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}</span></div>
+                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
                     </div>`;
                 }).join('');
                 container.innerHTML += `<div class="category-row" style="border: 1px solid ${liunianGroupStyle.border};">
