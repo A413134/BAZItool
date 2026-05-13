@@ -44,6 +44,7 @@
         .branch { font-size: 24px; font-weight: bold; color: #2c3e50; min-height: 36px; line-height: 1.2;}
         .unknown-text { color: #aaa; font-size: 20px; }
         .nayin-text { font-size: 12px; color: #8e44ad; font-weight: bold; margin-bottom: 2px; }
+        .kw-text { font-size: 12px; color: #7f8c8d; font-weight: bold; margin-bottom: 2px; }
 
         /* 藏干顯示區 */
         .zanggan-box { display: flex; flex-direction: column; margin-top: 5px; border-top: 1px dashed #eee; padding-top: 4px; gap: 2px; }
@@ -65,12 +66,14 @@
         .dayun-col.selected .zg-shishen { color: #bbb; }
         .dayun-col.selected .zg-stem { color: #eee; }
         .dayun-col.selected .nayin-small { color: #d7bde2; }
+        .dayun-col.selected .kw-small { color: #bdc3c7; }
 
         .dayun-seq { font-size: 12px; color: #999; margin-bottom: 2px; }
         .shishen-small { font-size: 11px; color: #888; margin-bottom: 0px; min-height: 15px;}
         .dayun-stem { font-size: 20px; color: #e74c3c; font-weight: bold; }
         .dayun-branch { font-size: 20px; color: #2c3e50; font-weight: bold; }
         .nayin-small { font-size: 11px; color: #8e44ad; font-weight: bold; margin-bottom: 2px; }
+        .kw-small { font-size: 11px; color: #7f8c8d; font-weight: bold; margin-bottom: 2px; }
         .dayun-age-info { margin-top: 8px; border-top: 1px dashed #eee; width: 100%; text-align: center; padding-top: 5px; }
         .dayun-age { font-size: 13px; font-weight: bold; color: #555; }
         .dayun-year { font-size: 11px; color: #999; }
@@ -306,6 +309,20 @@
         return NaYinList[Math.floor(idx / 2)];
     }
 
+    // 空亡計算 (干支回傳空亡陣列)
+    function getKongWang(stem, branch) {
+        if(stem < 0 || branch < 0) return [];
+        let diff = (branch - stem + 12) % 12;
+        return [(10 + diff) % 12, (11 + diff) % 12];
+    }
+    
+    // 空亡文字
+    function getKongWangText(stem, branch) {
+        let kw = getKongWang(stem, branch);
+        if(kw.length === 0) return "";
+        return "空亡: " + Dizhi[kw[0]] + Dizhi[kw[1]];
+    }
+
     // 判斷來源並回傳專屬顏色設定 (天干與地支區分12種顏色)
     function getSrcStyle(src) {
         // 流年
@@ -370,12 +387,17 @@
         return rules;
     }
 
-    function getBranchRules(branchIdx) {
+    // 擴充帶有空亡推算的 Branch Rules
+    function getBranchRules(branchIdx, stemIdx = -1) {
         if (branchIdx < 0) return [];
         let rules = [];
         for (let name in ShenshaRules.branch) {
             let target = ShenshaRules.branch[name].map[branchIdx];
             rules.push({ name, targets: [target] });
+        }
+        if (stemIdx >= 0) {
+            let kw = getKongWang(stemIdx, branchIdx);
+            rules.push({ name: "空亡", targets: kw });
         }
         return rules;
     }
@@ -463,6 +485,7 @@
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
             let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
             let nayinText = p.unknown ? "" : getNaYin(p.s, p.b);
+            let kwText = p.unknown ? "" : getKongWangText(p.s, p.b);
 
             return `
                 <div class="pillar">
@@ -471,6 +494,7 @@
                     <div class="stem">${sText}</div>
                     <div class="branch">${bText}</div>
                     <div class="nayin-text">${nayinText}</div>
+                    <div class="kw-text">${kwText}</div>
                     ${hiddenStemsHTML}
                 </div>`;
         }).join('');
@@ -494,6 +518,7 @@
             let sShishen = calculateShishen(dStem, cS);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
             let dyNayin = getNaYin(cS, cB);
+            let dyKwText = getKongWangText(cS, cB);
 
             html += `
                 <div class="dayun-col" id="dayun-${i-1}" onclick="selectDayun(${i-1})">
@@ -502,6 +527,7 @@
                     <span class="dayun-stem">${Tiangan[cS]}</span>
                     <span class="dayun-branch">${Dizhi[cB]}</span>
                     <span class="nayin-small">${dyNayin}</span>
+                    <span class="kw-small">${dyKwText}</span>
                     ${hiddenStemsHTML}
                     <div class="dayun-age-info">
                         <div class="dayun-age">${age}歲</div>
@@ -528,7 +554,7 @@
         const list = document.getElementById('liunianList');
         bar.style.display = "block";
         list.innerHTML = "";
-        const dStem = currentBaziData.dStem; // 用以計算十神
+        const dStem = currentBaziData.dStem; 
 
         for(let i=0; i<10; i++) {
             let year = dy.startYear + i;
@@ -540,9 +566,9 @@
             
             let stemShishen = calculateShishenShort(dStem, s);
             let nayin = getNaYin(s, b);
+            let lnKwText = getKongWangText(s, b);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
 
-            // 流年按鈕微型柱狀結構
             btn.innerHTML = `
                 <div class="liunian-y">${year}</div>
                 <div class="shishen-small" style="margin-top:2px;">${stemShishen}</div>
@@ -550,6 +576,7 @@
                     <span style="color:#e74c3c">${Tiangan[s]}</span><span style="color:#2c3e50">${Dizhi[b]}</span>
                 </div>
                 <div class="nayin-small">${nayin}</div>
+                <div class="kw-small">${lnKwText}</div>
                 ${hiddenStemsHTML}
             `;
             
@@ -603,12 +630,12 @@
             </div>`;
         };
 
-        // 1. 原局查找
-        addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
-        addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch));
-        addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch));
+        // 1. 原局查找 (加入 stemIdx 讓其自帶空亡推算)
+        addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch, d.yStem));
+        addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch, d.mStem));
+        addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch, d.dStem));
         addGroup("日干", Tiangan[d.dStem], getStemRules(d.dStem));
-        if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch));
+        if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch, d.hStem));
         if (d.hStem !== -1) addGroup("時干", Tiangan[d.hStem], getStemRules(d.hStem));
 
         // 2. 大運互動
@@ -616,14 +643,14 @@
             const dy = currentDayunList[dyIdx];
             let dayunGroupStyle = getSrcStyle("大運支");
             
-            // A. 原局查大運 (被動：用年月日時的顏色去標示)
+            // A. 原局查大運 (被動：大運的地支剛好是原局的空亡等神煞)
             let passiveRules = [
-                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日支"})),
+                ...getBranchRules(d.yBranch, d.yStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
+                ...getBranchRules(d.mBranch, d.mStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
+                ...getBranchRules(d.dBranch, d.dStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日支"})),
                 ...getStemRules(d.dStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日干"})),
                 ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
+                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch, d.hStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
             
             let pItems = passiveRules.map(r => {
@@ -665,6 +692,9 @@
                     <div class="shensha-grid">${aItems}</div>
                 </div>`;
             }
+            
+            // C. 大運自帶空亡 (保證大運自身的空亡也能直接上羅盤)
+            addGroup("大運支(自帶)", "", [{name: "空亡", targets: getKongWang(dy.stem, dy.branch)}]);
         }
 
         // 3. 流年互動
@@ -672,14 +702,14 @@
             const ln = currentLiunian;
             let liunianGroupStyle = getSrcStyle("流年支");
             
-            // A. 原局查流年 (被動：用年月日時的顏色標示)
+            // A. 原局查流年 (被動)
             let lnPassiveRules = [
-                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
+                ...getBranchRules(d.yBranch, d.yStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
+                ...getBranchRules(d.mBranch, d.mStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
+                ...getBranchRules(d.dBranch, d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
                 ...getStemRules(d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日干"})),
                 ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
+                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch, d.hStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
 
             let lnpItems = lnPassiveRules.map(r => {
@@ -721,6 +751,9 @@
                     <div class="shensha-grid">${lnaItems}</div>
                 </div>`;
             }
+            
+            // C. 流年自帶空亡 (保證流年自身的空亡也能直接上羅盤)
+            addGroup("流年支(自帶)", "", [{name: "空亡", targets: getKongWang(ln.stem, ln.branch)}]);
         }
         
         renderCompassGrid();
