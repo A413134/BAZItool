@@ -31,6 +31,13 @@
         button { background-color: #2c3e50; color: white; border: none; padding: 0 30px; height: 40px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #34495e; }
 
+        /* --- 神煞設定面板 --- */
+        .btn-settings { margin-top: 15px; background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; width: 100%; max-width: 200px; display: block; margin-left: auto; margin-right: auto; }
+        .btn-settings:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .settings-panel { margin-top: 15px; padding: 15px 20px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; }
+        .setting-item { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #444; cursor: pointer; user-select: none; width: 85px;}
+        .setting-item input { width: 16px; height: 16px; margin: 0; cursor: pointer; }
+
         /* 八字盤面 */
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 0 10px; }
         .age-badge { background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; }
@@ -82,7 +89,6 @@
         .liunian-bar { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; width: 100%; overflow-x: auto; }
         .liunian-flex { display: flex; gap: 8px; min-width: max-content; padding-bottom: 5px; }
         
-        /* 更新流年按鈕樣式，轉為微型柱 */
         .liunian-btn { 
             display: flex; flex-direction: column; align-items: center; 
             padding: 8px 5px; border: 1px solid #ccc; background: #fff; 
@@ -173,6 +179,10 @@
         </div>
         <button onclick="calculate()">開始排盤</button>
     </div>
+
+    <!-- 神煞自定義設定按鈕與面板 -->
+    <button class="btn-settings" onclick="toggleSettings()">⚙️ 神煞顯示設定 (開關)</button>
+    <div id="settingsPanel" class="settings-panel" style="display: none;"></div>
 
     <div id="result" class="result-box">
         <div class="chart-header">
@@ -292,12 +302,49 @@
         }
     };
 
+    // --- 神煞設定系統 (Settings Config) ---
+    const allShensha = ["天乙","文昌","紅艷","沐浴","祿神","羊刃","金輿","流霞","學堂","咸池","紅鸞","天喜","驛馬","孤辰","寡宿","將星","華蓋","亡神","劫煞","災煞","大耗"];
+    let shenshaConfig = {};
+    allShensha.forEach(name => shenshaConfig[name] = true);
+
+    function initSettings() {
+        const panel = document.getElementById('settingsPanel');
+        let html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">';
+        allShensha.forEach(name => {
+            html += `<label class="setting-item">
+                        <input type="checkbox" checked onchange="toggleShensha('${name}', this.checked)">
+                        <span>${name}</span>
+                     </label>`;
+        });
+        html += '</div>';
+        panel.innerHTML = html;
+    }
+
+    function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleShensha(name, isChecked) {
+        shenshaConfig[name] = isChecked;
+        // 若已排盤則即時更新神煞面板與羅盤
+        if (currentBaziData && currentBaziData.yStem !== undefined) {
+            let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
+            updateShenshaDisplay(activeDayunIdx >= 0 ? activeDayunIdx : null);
+        }
+    }
+
     // 全域變數
     let globalShenshaList = [];
     let currentBaziData = {};
     let currentDayunList = [];
     let currentLiunian = null; 
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7];
+
+    window.onload = () => {
+        initSettings();
+        calculate();
+    }
 
     // === 2. 核心邏輯 (Core Logic) ===
     
@@ -309,7 +356,7 @@
         return NaYinList[Math.floor(idx / 2)];
     }
 
-    // 空亡計算 (干支回傳空亡陣列)
+    // 空亡計算 (干支回傳空亡陣列) - 數學邏輯完全正確
     function getKongWang(stem, branch) {
         if(stem < 0 || branch < 0) return [];
         let diff = (branch - stem + 12) % 12;
@@ -323,7 +370,7 @@
         return "空亡: " + Dizhi[kw[0]] + Dizhi[kw[1]];
     }
 
-    // 判斷來源並回傳專屬顏色設定 (天干與地支區分12種顏色)
+    // 判斷來源並回傳專屬顏色設定
     function getSrcStyle(src) {
         // 流年
         if (src.includes("流年干")) return { text: "#2ecc71", bg: "#eafaf1", border: "#2ecc71", name: "流年干" };
@@ -387,17 +434,13 @@
         return rules;
     }
 
-    // 擴充帶有空亡推算的 Branch Rules
-    function getBranchRules(branchIdx, stemIdx = -1) {
+    // 移除空亡寫入神煞表與羅盤的邏輯
+    function getBranchRules(branchIdx) {
         if (branchIdx < 0) return [];
         let rules = [];
         for (let name in ShenshaRules.branch) {
             let target = ShenshaRules.branch[name].map[branchIdx];
             rules.push({ name, targets: [target] });
-        }
-        if (stemIdx >= 0) {
-            let kw = getKongWang(stemIdx, branchIdx);
-            rules.push({ name: "空亡", targets: kw });
         }
         return rules;
     }
@@ -485,6 +528,8 @@
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
             let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
             let nayinText = p.unknown ? "" : getNaYin(p.s, p.b);
+            
+            // 空亡仍然顯示於八字命盤
             let kwText = p.unknown ? "" : getKongWangText(p.s, p.b);
 
             return `
@@ -518,6 +563,8 @@
             let sShishen = calculateShishen(dStem, cS);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
             let dyNayin = getNaYin(cS, cB);
+            
+            // 空亡仍然顯示於大運
             let dyKwText = getKongWangText(cS, cB);
 
             html += `
@@ -566,6 +613,8 @@
             
             let stemShishen = calculateShishenShort(dStem, s);
             let nayin = getNaYin(s, b);
+            
+            // 空亡仍然顯示於流年
             let lnKwText = getKongWangText(s, b);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
 
@@ -613,11 +662,12 @@
         globalShenshaList = [];
         const d = currentBaziData;
 
-        // 原局共用新增群組函數
+        // 原局共用新增群組函數 (加入過濾器判斷)
         const addGroup = (srcName, srcVal, rules) => {
-            if(!rules.length) return;
+            let validRules = rules.filter(r => shenshaConfig[r.name]);
+            if(!validRules.length) return;
             let srcStyle = getSrcStyle(srcName);
-            let items = rules.map(r => {
+            let items = validRules.map(r => {
                 r.targets.forEach(t => globalShenshaList.push({ name: r.name, branchIdx: t, style: srcStyle, source: srcName }));
                 return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
                     <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
@@ -630,12 +680,12 @@
             </div>`;
         };
 
-        // 1. 原局查找 (加入 stemIdx 讓其自帶空亡推算)
-        addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch, d.yStem));
-        addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch, d.mStem));
-        addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch, d.dStem));
+        // 1. 原局查找 (已移除自動空亡推算)
+        addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
+        addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch));
+        addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch));
         addGroup("日干", Tiangan[d.dStem], getStemRules(d.dStem));
-        if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch, d.hStem));
+        if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch));
         if (d.hStem !== -1) addGroup("時干", Tiangan[d.hStem], getStemRules(d.hStem));
 
         // 2. 大運互動
@@ -643,16 +693,19 @@
             const dy = currentDayunList[dyIdx];
             let dayunGroupStyle = getSrcStyle("大運支");
             
-            // A. 原局查大運 (被動：大運的地支剛好是原局的空亡等神煞)
+            // A. 原局查大運 (被動)
             let passiveRules = [
-                ...getBranchRules(d.yBranch, d.yStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch, d.mStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch, d.dStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日支"})),
+                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
+                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
+                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日支"})),
                 ...getStemRules(d.dStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日干"})),
                 ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch, d.hStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
+                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
             
+            // 套用過濾器
+            passiveRules = passiveRules.filter(r => shenshaConfig[r.name]);
+
             let pItems = passiveRules.map(r => {
                 let srcStyle = getSrcStyle(r.src);
                 globalShenshaList.push({ name: r.name, branchIdx: dy.branch, style: srcStyle, source: `大運(${r.src})` });
@@ -662,10 +715,13 @@
                 </div>`;
             }).join('');
             
-            container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
-                <div class="category-header" style="background-color:${dayunGroupStyle.border}; color:#fff;"><span>原局 查 大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}]</span></div>
-                <div class="shensha-grid">${pItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
-            </div>`;
+            if (pItems || passiveRules.length === 0) {
+                 // 如果該項目全部被過濾，讓區塊顯示隱藏提示，或顯示無主要神煞
+                container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
+                    <div class="category-header" style="background-color:${dayunGroupStyle.border}; color:#fff;"><span>原局 查 大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}]</span></div>
+                    <div class="shensha-grid">${pItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
+                </div>`;
+            }
 
             // B. 大運查原局 (主動：顯示具體被照入的12地支)
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
@@ -677,6 +733,9 @@
             getBranchRules(dy.branch).forEach(r => pillars.forEach(p => {
                 if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
             }));
+
+            // 套用過濾器
+            activeRules = activeRules.filter(r => shenshaConfig[r.name]);
 
             if(activeRules.length > 0) {
                 let aItems = activeRules.map(r => {
@@ -692,9 +751,6 @@
                     <div class="shensha-grid">${aItems}</div>
                 </div>`;
             }
-            
-            // C. 大運自帶空亡 (保證大運自身的空亡也能直接上羅盤)
-            addGroup("大運支(自帶)", "", [{name: "空亡", targets: getKongWang(dy.stem, dy.branch)}]);
         }
 
         // 3. 流年互動
@@ -704,13 +760,16 @@
             
             // A. 原局查流年 (被動)
             let lnPassiveRules = [
-                ...getBranchRules(d.yBranch, d.yStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch, d.mStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch, d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
+                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
+                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
+                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
                 ...getStemRules(d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日干"})),
                 ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch, d.hStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
+                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
+
+            // 套用過濾器
+            lnPassiveRules = lnPassiveRules.filter(r => shenshaConfig[r.name]);
 
             let lnpItems = lnPassiveRules.map(r => {
                 let srcStyle = getSrcStyle(r.src);
@@ -737,6 +796,9 @@
                 if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年支"});
             }));
 
+            // 套用過濾器
+            lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
+
             if(lnActiveRules.length > 0) {
                 let lnaItems = lnActiveRules.map(r => {
                     let srcStyle = getSrcStyle(r.src); 
@@ -751,9 +813,6 @@
                     <div class="shensha-grid">${lnaItems}</div>
                 </div>`;
             }
-            
-            // C. 流年自帶空亡 (保證流年自身的空亡也能直接上羅盤)
-            addGroup("流年支(自帶)", "", [{name: "空亡", targets: getKongWang(ln.stem, ln.branch)}]);
         }
         
         renderCompassGrid();
