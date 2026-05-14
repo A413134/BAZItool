@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>八字神煞速查 | 羅盤流年全功能版</title>
+    <!-- 引入 html2canvas 用於截圖匯出功能 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -13,7 +15,7 @@
         }
 
         body { font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         h1 { text-align: center; color: var(--primary); margin-bottom: 25px; font-size: 24px; }
 
         /* 輸入區塊 */
@@ -31,18 +33,26 @@
         button { background-color: #2c3e50; color: white; border: none; padding: 0 30px; height: 40px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #34495e; }
 
-        /* --- 神煞設定面板 --- */
-        .btn-settings { margin-top: 15px; background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; width: 100%; max-width: 200px; display: block; margin-left: auto; margin-right: auto; }
-        .btn-settings:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        /* --- 操作按鈕列 (設定與截圖) --- */
+        .action-bar { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .btn-action { background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; height: auto; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
+        .btn-action:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-export { background: #27ae60; border-color: #27ae60; color: white; }
+        .btn-export:hover { background: #219a52; border-color: #219a52; }
+        
         .settings-panel { margin-top: 15px; padding: 15px 20px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; }
         .setting-item { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #444; cursor: pointer; user-select: none; width: 85px;}
         .setting-item input { width: 16px; height: 16px; margin: 0; cursor: pointer; }
 
+        /* 結果展示區 */
+        .result-box { display: none; margin-top: 15px; position: relative; background: #fff; padding-top: 10px; }
+
         /* 八字盤面 */
-        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 0 10px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .chart-header h3 { margin: 0; color: var(--primary); font-size: 18px;}
         .age-badge { background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; }
 
-        .bazi-chart { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-top: 10px; margin-bottom: 20px; border: 2px solid #333; border-radius: 8px; padding: 15px; background: #fff; }
+        .bazi-chart { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-top: 15px; margin-bottom: 20px; border: 2px solid #333; border-radius: 8px; padding: 15px; background: #fff; }
         .pillar { display: flex; flex-direction: column; gap: 2px; }
         .pillar-head { font-size: 14px; color: #777; font-weight: bold; margin-bottom: 5px;}
         
@@ -99,37 +109,72 @@
         .liunian-btn.active { border: 2px solid #27ae60; background: #f0fdf4; transform: scale(1.05); box-shadow: 0 2px 6px rgba(39,174,96,0.2); }
         .liunian-y { font-size: 12px; color: #555; font-weight: bold; background: #eee; width: 100%; border-radius: 3px; margin-bottom: 3px;}
 
-        /* 結果展示區 */
-        .result-box { display: none; margin-top: 30px; }
+        /* 神煞清單 */
         .category-row { margin-bottom: 15px; border-radius: 8px; overflow: hidden; background: #fff;}
         .category-header { padding: 8px 15px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-        
         .shensha-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; padding: 10px; }
         .shensha-item { border-radius: 6px; padding: 6px 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
         .location-badge { font-size: 11px; padding: 2px 5px; border-radius: 4px; margin-left: 5px; font-weight: bold; }
 
-        /* --- 九宮格 24山 樣式 --- */
-        .compass-section { margin-top: 40px; border-top: 2px dashed #ddd; padding-top: 20px; }
-        .compass-title { text-align: center; font-size: 20px; margin-bottom: 20px; font-weight: bold; color: #2c3e50; }
-        .compass-subtitle { text-align: center; font-size: 14px; color: #666; margin-top: -15px; margin-bottom: 20px; }
-        .compass-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 600px; margin: 0 auto; aspect-ratio: 1/1; }
+        /* --- 九宮格 24山 樣式 (極致緊湊、一頁滿版設計) --- */
+        .compass-section { margin-top: 25px; border-top: 2px dashed #ddd; padding-top: 15px; }
+        .compass-title { text-align: center; font-size: 18px; margin-bottom: 10px; font-weight: bold; color: #2c3e50; }
+        .compass-subtitle { text-align: center; font-size: 13px; color: #666; margin-top: -5px; margin-bottom: 15px; }
+        
+        .compass-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; /* 縮小網格間距 */
+            max-width: 680px; /* 從850px縮小，保證不超出單頁寬度 */
+            margin: 0 auto; 
+        }
 
-        .compass-cell { border: 2px solid #ccc; border-radius: 8px; background: #fff; position: relative; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 140px; }
+        .compass-cell { 
+            border: 2px solid #ccc; 
+            border-radius: 8px; 
+            background: #fff; 
+            position: relative; 
+            padding: 8px 6px; /* 縮減內留白 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 110px; /* 降低最低高度要求 */
+            height: 100%;      
+            box-sizing: border-box;
+        }
         .cell-n { border-color: #2c3e50; } .cell-s { border-color: #e74c3c; }
         .cell-e, .cell-se { border-color: #27ae60; } .cell-w, .cell-nw { border-color: #f1c40f; }
         .cell-ne, .cell-sw, .cell-c { border-color: #95a5a6; }
 
-        .mountains-label { font-size: 12px; color: #999; margin-top: 5px; font-family: "Courier New", monospace; letter-spacing: 2px; }
-        .direction-label { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #333; }
-        .cell-content { flex-grow: 1; width: 100%; display: flex; flex-direction: column; gap: 4px; margin-top: 5px; overflow-y: auto; max-height: 180px;}
+        .mountains-label { font-size: 11px; color: #999; margin-top: 3px; font-family: "Courier New", monospace; letter-spacing: 1px; }
+        .direction-label { font-size: 15px; font-weight: bold; margin-bottom: 2px; color: #333; }
+        
+        .cell-content { 
+            flex-grow: 1; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 3px; /* 神煞標籤上下緊湊排列 */
+            margin-top: 5px; 
+        }
 
-        .compass-star { font-size: 12px; padding: 4px 6px; border-radius: 4px; text-align: center; display: flex; justify-content: space-between; align-items: center; }
-        .star-br { font-size: 10px; padding: 1px 4px; border-radius: 3px; font-weight:bold; }
-        .count-badge { color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 10px; margin-left: 6px; font-weight: bold; }
+        /* 縮小標籤內的字體與邊距，節省垂直空間 */
+        .compass-star { font-size: 11.5px; padding: 3px 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .star-br { font-size: 10px; padding: 1px 3px; border-radius: 3px; font-weight:bold; }
+        .count-badge { color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 8px; margin-left: 4px; font-weight: bold; }
         .cell-c { background: #f9f9f9; justify-content: center; }
         
         .legend-box { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:15px; font-size:12px; justify-content:center; padding:12px; background:#fff; border-radius:8px; border:1px solid #eee; }
         .legend-item { font-weight:bold; padding:3px 8px; border-radius:4px; border:1px solid; }
+
+        @media (max-width: 600px) {
+            .action-bar { flex-direction: column; gap: 10px; }
+            .btn-action { width: 100%; justify-content: center; }
+            .compass-grid { gap: 6px; }
+            .compass-cell { padding: 8px 4px; min-height: 100px;}
+            .compass-star { font-size: 10px; flex-direction: column; align-items: stretch; gap: 2px; padding: 3px;}
+            .star-br { align-self: flex-end; }
+        }
     </style>
 </head>
 <body>
@@ -180,10 +225,14 @@
         <button onclick="calculate()">開始排盤</button>
     </div>
 
-    <!-- 神煞自定義設定按鈕與面板 -->
-    <button class="btn-settings" onclick="toggleSettings()">⚙️ 神煞顯示設定 (開關)</button>
+    <!-- 神煞自定義設定按鈕與截圖按鈕移至結果區外 -->
+    <div class="action-bar" id="actionBar" style="display: none;">
+        <button class="btn-action" onclick="toggleSettings()">⚙️ 神煞顯示設定 (開關)</button>
+        <button class="btn-action btn-export" onclick="exportImage()" id="exportBtn">📷 一鍵截圖儲存</button>
+    </div>
     <div id="settingsPanel" class="settings-panel" style="display: none;"></div>
 
+    <!-- 盤面結果區塊 (此區塊為截圖目標，不會拍到上方按鈕) -->
     <div id="result" class="result-box">
         <div class="chart-header">
             <h3>八字命盤</h3>
@@ -219,45 +268,27 @@
     const Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     
-    // 六十甲子納音表
     const NaYinList = [
-        "海中金","爐中火","大林木","路旁土","劍鋒金",
-        "山頭火","澗下水","城頭土","白蠟金","楊柳木",
-        "泉中水","屋上土","霹靂火","松柏木","長流水",
-        "沙中金","山下火","平地木","壁上土","金箔金",
-        "覆燈火","天河水","大驛土","釵釧金","桑柘木",
-        "大溪水","沙中土","天上火","石榴木","大海水"
+        "海中金","爐中火","大林木","路旁土","劍鋒金", "山頭火","澗下水","城頭土","白蠟金","楊柳木",
+        "泉中水","屋上土","霹靂火","松柏木","長流水", "沙中金","山下火","平地木","壁上土","金箔金",
+        "覆燈火","天河水","大驛土","釵釧金","桑柘木", "大溪水","沙中土","天上火","石榴木","大海水"
     ];
     
-    // 地支藏干完整表
     const ZangGanFull = [
-        [9],          // 子: 癸
-        [5, 9, 7],    // 丑: 己癸辛
-        [0, 2, 4],    // 寅: 甲丙戊
-        [1],          // 卯: 乙
-        [4, 1, 9],    // 辰: 戊乙癸
-        [2, 4, 6],    // 巳: 丙戊庚
-        [3, 5],       // 午: 丁己
-        [5, 3, 1],    // 未: 己丁乙
-        [6, 8, 4],    // 申: 庚壬戊
-        [7],          // 酉: 辛
-        [4, 7, 3],    // 戌: 戊辛丁
-        [8, 0]        // 亥: 壬甲
+        [9], [5, 9, 7], [0, 2, 4], [1], [4, 1, 9], [2, 4, 6], 
+        [3, 5], [5, 3, 1], [6, 8, 4], [7], [4, 7, 3], [8, 0]
     ];
 
-    // 十神名稱
     const ShishenNames = {
         yang: ["比肩","劫財","食神","傷官","偏財","正財","七殺","正官","偏印","正印"],
         yin:  ["比肩","傷官","食神","正財","偏財","正官","七殺","正印","偏印","劫財"]
     };
     
-    // 十神簡寫
     const ShishenShort = {
         yang: ["比","劫","食","傷","才","財","殺","官","梟","印"],
         yin:  ["比","傷","食","財","才","官","殺","印","梟","劫"]
     };
 
-    // 24山九宮格
     const GridConfig = [
         { dir: "東南", branches: [4, 5],   mountains: "辰巽巳", class: "cell-se" },
         { dir: "正南", branches: [6],      mountains: "丙午丁", class: "cell-s" },
@@ -270,13 +301,9 @@
         { dir: "西北", branches: [10, 11], mountains: "戌乾亥", class: "cell-nw" }
     ];
 
-    // === 神煞規則表 (全集) ===
     const ShenshaRules = {
         stem: { 
-            "天乙": { 
-                0: [1,7], 4: [1,7], 6: [1,7], 1: [0,8], 5: [0,8], 
-                2: [11,9], 3: [11,9], 8: [3,5], 9: [3,5], 7: [6,2]
-            },
+            "天乙": { 0: [1,7], 4: [1,7], 6: [1,7], 1: [0,8], 5: [0,8], 2: [11,9], 3: [11,9], 8: [3,5], 9: [3,5], 7: [6,2] },
             "文昌": { 0:[5], 1:[6], 2:[8], 3:[9], 4:[8], 5:[9], 6:[11], 7:[0], 8:[2], 9:[3] },
             "紅艷": { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
             "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] },
@@ -302,7 +329,6 @@
         }
     };
 
-    // --- 神煞設定系統 (Settings Config) ---
     const allShensha = ["天乙","文昌","紅艷","沐浴","祿神","羊刃","金輿","流霞","學堂","咸池","紅鸞","天喜","驛馬","孤辰","寡宿","將星","華蓋","亡神","劫煞","災煞","大耗"];
     let shenshaConfig = {};
     allShensha.forEach(name => shenshaConfig[name] = true);
@@ -311,10 +337,7 @@
         const panel = document.getElementById('settingsPanel');
         let html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">';
         allShensha.forEach(name => {
-            html += `<label class="setting-item">
-                        <input type="checkbox" checked onchange="toggleShensha('${name}', this.checked)">
-                        <span>${name}</span>
-                     </label>`;
+            html += `<label class="setting-item"><input type="checkbox" checked onchange="toggleShensha('${name}', this.checked)"><span>${name}</span></label>`;
         });
         html += '</div>';
         panel.innerHTML = html;
@@ -327,14 +350,12 @@
 
     function toggleShensha(name, isChecked) {
         shenshaConfig[name] = isChecked;
-        // 若已排盤則即時更新神煞面板與羅盤
         if (currentBaziData && currentBaziData.yStem !== undefined) {
             let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
             updateShenshaDisplay(activeDayunIdx >= 0 ? activeDayunIdx : null);
         }
     }
 
-    // 全域變數
     let globalShenshaList = [];
     let currentBaziData = {};
     let currentDayunList = [];
@@ -346,9 +367,37 @@
         calculate();
     }
 
-    // === 2. 核心邏輯 (Core Logic) ===
-    
-    // 納音計算
+    // === 匯出截圖功能 (因已移出 result-box，所以截圖不會包含該按鈕) ===
+    function exportImage() {
+        const btn = document.getElementById('exportBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = "⏳ 產生中...";
+        btn.style.pointerEvents = "none";
+        
+        const target = document.getElementById('result');
+
+        setTimeout(() => {
+            html2canvas(target, {
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `八字神煞盤面_${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("截圖失敗", err);
+                alert("產生截圖失敗，請稍後再試！");
+            }).finally(() => {
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = "auto";
+            });
+        }, 300);
+    }
+
+    // === 核心邏輯 (Core Logic) ===
     function getNaYin(stemIdx, branchIdx) {
         if(stemIdx < 0 || branchIdx < 0) return "";
         let diff = (stemIdx - branchIdx + 12) % 12;
@@ -356,29 +405,23 @@
         return NaYinList[Math.floor(idx / 2)];
     }
 
-    // 空亡計算 (干支回傳空亡陣列) - 數學邏輯完全正確
     function getKongWang(stem, branch) {
         if(stem < 0 || branch < 0) return [];
         let diff = (branch - stem + 12) % 12;
         return [(10 + diff) % 12, (11 + diff) % 12];
     }
     
-    // 空亡文字
     function getKongWangText(stem, branch) {
         let kw = getKongWang(stem, branch);
         if(kw.length === 0) return "";
         return "空亡: " + Dizhi[kw[0]] + Dizhi[kw[1]];
     }
 
-    // 判斷來源並回傳專屬顏色設定
     function getSrcStyle(src) {
-        // 流年
         if (src.includes("流年干")) return { text: "#2ecc71", bg: "#eafaf1", border: "#2ecc71", name: "流年干" };
         if (src.includes("流年支") || src.includes("流年(")) return { text: "#27ae60", bg: "#d5f5e3", border: "#27ae60", name: "流年支" };
-        // 大運
         if (src.includes("大運干")) return { text: "#e74c3c", bg: "#fdedec", border: "#e74c3c", name: "大運干" };
         if (src.includes("大運支") || src.includes("大運(")) return { text: "#c0392b", bg: "#fadbd8", border: "#c0392b", name: "大運支" };
-        // 原局
         if (src.includes("年干")) return { text: "#e67e22", bg: "#fdf2e9", border: "#e67e22", name: "年干" };
         if (src.includes("年支")) return { text: "#d35400", bg: "#fae5d3", border: "#d35400", name: "年支" };
         if (src.includes("月干")) return { text: "#1abc9c", bg: "#e8f8f5", border: "#1abc9c", name: "月干" };
@@ -387,7 +430,6 @@
         if (src.includes("日支")) return { text: "#2980b9", bg: "#d4e6f1", border: "#2980b9", name: "日支" };
         if (src.includes("時干")) return { text: "#9b59b6", bg: "#f5eef8", border: "#9b59b6", name: "時干" };
         if (src.includes("時支")) return { text: "#8e44ad", bg: "#f4ecf8", border: "#8e44ad", name: "時支" };
-        
         return { text: "#7f8c8d", bg: "#f2f4f4", border: "#bdc3c7", name: "其他" };
     }
 
@@ -434,7 +476,6 @@
         return rules;
     }
 
-    // 移除空亡寫入神煞表與羅盤的邏輯
     function getBranchRules(branchIdx) {
         if (branchIdx < 0) return [];
         let rules = [];
@@ -497,7 +538,9 @@
 
         currentLiunian = null;
         document.getElementById('liunianDisplay').style.display = 'none';
+        
         updateShenshaDisplay(null);
+        document.getElementById('actionBar').style.display = 'flex'; // 顯示操作按鈕列
         document.getElementById('result').style.display = 'block';
     }
 
@@ -528,8 +571,6 @@
             let stemShishen = p.unknown ? "" : (p.isDay ? "日主" : calculateShishen(dS, p.s));
             let hiddenStemsHTML = p.unknown ? "" : renderHiddenStemsHTML(dS, p.b);
             let nayinText = p.unknown ? "" : getNaYin(p.s, p.b);
-            
-            // 空亡仍然顯示於八字命盤
             let kwText = p.unknown ? "" : getKongWangText(p.s, p.b);
 
             return `
@@ -563,8 +604,6 @@
             let sShishen = calculateShishen(dStem, cS);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, cB);
             let dyNayin = getNaYin(cS, cB);
-            
-            // 空亡仍然顯示於大運
             let dyKwText = getKongWangText(cS, cB);
 
             html += `
@@ -613,8 +652,6 @@
             
             let stemShishen = calculateShishenShort(dStem, s);
             let nayin = getNaYin(s, b);
-            
-            // 空亡仍然顯示於流年
             let lnKwText = getKongWangText(s, b);
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
 
@@ -662,7 +699,6 @@
         globalShenshaList = [];
         const d = currentBaziData;
 
-        // 原局共用新增群組函數 (加入過濾器判斷)
         const addGroup = (srcName, srcVal, rules) => {
             let validRules = rules.filter(r => shenshaConfig[r.name]);
             if(!validRules.length) return;
@@ -680,7 +716,7 @@
             </div>`;
         };
 
-        // 1. 原局查找 (已移除自動空亡推算)
+        // 1. 原局查找
         addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
         addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch));
         addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch));
@@ -693,7 +729,6 @@
             const dy = currentDayunList[dyIdx];
             let dayunGroupStyle = getSrcStyle("大運支");
             
-            // A. 原局查大運 (被動)
             let passiveRules = [
                 ...getBranchRules(d.yBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
                 ...getBranchRules(d.mBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
@@ -703,7 +738,6 @@
                 ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
             
-            // 套用過濾器
             passiveRules = passiveRules.filter(r => shenshaConfig[r.name]);
 
             let pItems = passiveRules.map(r => {
@@ -716,14 +750,12 @@
             }).join('');
             
             if (pItems || passiveRules.length === 0) {
-                 // 如果該項目全部被過濾，讓區塊顯示隱藏提示，或顯示無主要神煞
                 container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
                     <div class="category-header" style="background-color:${dayunGroupStyle.border}; color:#fff;"><span>原局 查 大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}]</span></div>
                     <div class="shensha-grid">${pItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
                 </div>`;
             }
 
-            // B. 大運查原局 (主動：顯示具體被照入的12地支)
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
             let activeRules = [];
             
@@ -734,7 +766,6 @@
                 if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
             }));
 
-            // 套用過濾器
             activeRules = activeRules.filter(r => shenshaConfig[r.name]);
 
             if(activeRules.length > 0) {
@@ -758,7 +789,6 @@
             const ln = currentLiunian;
             let liunianGroupStyle = getSrcStyle("流年支");
             
-            // A. 原局查流年 (被動)
             let lnPassiveRules = [
                 ...getBranchRules(d.yBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
                 ...getBranchRules(d.mBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
@@ -768,7 +798,6 @@
                 ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
             ];
 
-            // 套用過濾器
             lnPassiveRules = lnPassiveRules.filter(r => shenshaConfig[r.name]);
 
             let lnpItems = lnPassiveRules.map(r => {
@@ -785,7 +814,6 @@
                 <div class="shensha-grid">${lnpItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
             </div>`;
 
-            // B. 流年查原局 (主動：顯示具體被照入的12地支)
             let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
             let lnActiveRules = [];
 
@@ -796,7 +824,6 @@
                 if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年支"});
             }));
 
-            // 套用過濾器
             lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
 
             if(lnActiveRules.length > 0) {
@@ -823,13 +850,10 @@
         el.innerHTML = "";
         let map = Array.from({length:12}, () => ({}));
 
-        // 將神煞推入九宮格，以「神煞名稱」為唯一 Key 達成總數相加
         globalShenshaList.forEach(item => {
             let key = item.name; 
             let entry = map[item.branchIdx][key] || { data: item, count: 0, styles: [] };
             entry.count++;
-            
-            // 收集所有獨立的樣式 (避免同來源重複推送)
             if (!entry.styles.some(s => s.name === item.style.name)) {
                 entry.styles.push(item.style);
             }
@@ -845,16 +869,13 @@
                 return Object.values(map[bIdx]).map(e => {
                     let s = e.data;
                     let styles = e.styles;
-                    
                     let bgStr, borderStr, textCol;
                     
                     if (styles.length === 1) {
-                        // 單一引動來源
                         bgStr = styles[0].bg;
                         borderStr = `1px solid ${styles[0].border}`;
                         textCol = styles[0].text;
                     } else {
-                        // 多個引動來源：用多色線性漸層呈現背景
                         let stops = [];
                         let pct = 100 / styles.length;
                         styles.forEach((st, idx) => {
@@ -862,19 +883,16 @@
                             stops.push(`${st.bg} ${(idx + 1) * pct}%`);
                         });
                         bgStr = `linear-gradient(to right, ${stops.join(', ')})`;
-                        borderStr = `1px solid #aaa`; // 多色時邊框統一為灰色
+                        borderStr = `1px solid #aaa`; 
                         textCol = "#333";
                     }
 
-                    // 如果有多個來源，在名稱前面加上對應來源顏色的小圓點
                     let colorDots = "";
                     if (styles.length > 1) {
                         colorDots = styles.map(st => `<span title="${st.name}" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:${st.border}; margin-right:3px; vertical-align:middle;"></span>`).join('');
                     }
 
                     let tagStyle = `border: ${borderStr}; box-shadow: 0 1px 2px rgba(0,0,0,0.1); background: ${bgStr}; color: ${textCol};`;
-
-                    // 徽章顏色：如果是單一顏色跟隨主題色，多色則為灰色
                     let badgeBg = styles.length === 1 ? styles[0].border : '#777';
 
                     return `<div class="compass-star" style="${tagStyle}; margin-bottom:4px;">
