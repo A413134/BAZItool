@@ -124,8 +124,8 @@
         .compass-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 8px; /* 縮小網格間距 */
-            max-width: 680px; /* 從850px縮小，保證不超出單頁寬度 */
+            gap: 8px; 
+            max-width: 680px; 
             margin: 0 auto; 
         }
 
@@ -134,11 +134,11 @@
             border-radius: 8px; 
             background: #fff; 
             position: relative; 
-            padding: 8px 6px; /* 縮減內留白 */
+            padding: 8px 6px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            min-height: 110px; /* 降低最低高度要求 */
+            min-height: 110px; 
             height: 100%;      
             box-sizing: border-box;
         }
@@ -154,11 +154,10 @@
             width: 100%; 
             display: flex; 
             flex-direction: column; 
-            gap: 3px; /* 神煞標籤上下緊湊排列 */
+            gap: 3px; 
             margin-top: 5px; 
         }
 
-        /* 縮小標籤內的字體與邊距，節省垂直空間 */
         .compass-star { font-size: 11.5px; padding: 3px 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .star-br { font-size: 10px; padding: 1px 3px; border-radius: 3px; font-weight:bold; }
         .count-badge { color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 8px; margin-left: 4px; font-weight: bold; }
@@ -230,6 +229,7 @@
         <button class="btn-action" onclick="toggleSettings()">⚙️ 神煞顯示設定 (開關)</button>
         <button class="btn-action btn-export" onclick="exportImage()" id="exportBtn">📷 一鍵截圖儲存</button>
     </div>
+    
     <div id="settingsPanel" class="settings-panel" style="display: none;"></div>
 
     <!-- 盤面結果區塊 (此區塊為截圖目標，不會拍到上方按鈕) -->
@@ -329,9 +329,16 @@
         }
     };
 
+    // --- 神煞設定系統 (Settings Config) ---
     const allShensha = ["天乙","文昌","紅艷","沐浴","祿神","羊刃","金輿","流霞","學堂","咸池","紅鸞","天喜","驛馬","孤辰","寡宿","將星","華蓋","亡神","劫煞","災煞","大耗"];
     let shenshaConfig = {};
     allShensha.forEach(name => shenshaConfig[name] = true);
+    
+    // --- 交互顯示設定 (Interaction Config) ---
+    let interactionConfig = {
+        dayunActive: true,
+        liunianActive: true
+    };
 
     function initSettings() {
         const panel = document.getElementById('settingsPanel');
@@ -340,6 +347,14 @@
             html += `<label class="setting-item"><input type="checkbox" checked onchange="toggleShensha('${name}', this.checked)"><span>${name}</span></label>`;
         });
         html += '</div>';
+        
+        // 增加大運/流年交互顯示開關
+        html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">交互顯示設定</div>';
+        html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">';
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('dayunActive', this.checked)"><span>大運照入原局</span></label>`;
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('liunianActive', this.checked)"><span>流年照入原局</span></label>`;
+        html += '</div>';
+        
         panel.innerHTML = html;
     }
 
@@ -350,6 +365,15 @@
 
     function toggleShensha(name, isChecked) {
         shenshaConfig[name] = isChecked;
+        refreshDisplay();
+    }
+    
+    function toggleInteraction(key, isChecked) {
+        interactionConfig[key] = isChecked;
+        refreshDisplay();
+    }
+    
+    function refreshDisplay() {
         if (currentBaziData && currentBaziData.yStem !== undefined) {
             let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
             updateShenshaDisplay(activeDayunIdx >= 0 ? activeDayunIdx : null);
@@ -367,7 +391,7 @@
         calculate();
     }
 
-    // === 匯出截圖功能 (因已移出 result-box，所以截圖不會包含該按鈕) ===
+    // === 匯出截圖功能 ===
     function exportImage() {
         const btn = document.getElementById('exportBtn');
         const originalText = btn.innerHTML;
@@ -756,31 +780,33 @@
                 </div>`;
             }
 
-            let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
-            let activeRules = [];
-            
-            getStemRules(dy.stem).forEach(r => pillars.forEach(p => {
-                if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運干"});
-            }));
-            getBranchRules(dy.branch).forEach(r => pillars.forEach(p => {
-                if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
-            }));
+            if (interactionConfig.dayunActive) {
+                let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
+                let activeRules = [];
+                
+                getStemRules(dy.stem).forEach(r => pillars.forEach(p => {
+                    if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運干"});
+                }));
+                getBranchRules(dy.branch).forEach(r => pillars.forEach(p => {
+                    if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
+                }));
 
-            activeRules = activeRules.filter(r => shenshaConfig[r.name]);
+                activeRules = activeRules.filter(r => shenshaConfig[r.name]);
 
-            if(activeRules.length > 0) {
-                let aItems = activeRules.map(r => {
-                    let srcStyle = getSrcStyle(r.src); 
-                    globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
-                    return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
-                        <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
-                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
+                if(activeRules.length > 0) {
+                    let aItems = activeRules.map(r => {
+                        let srcStyle = getSrcStyle(r.src); 
+                        globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
+                        return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
+                            <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
+                            <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
+                        </div>`;
+                    }).join('');
+                    container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
+                        <div class="category-header" style="background-color:${dayunGroupStyle.border}; color:#fff; opacity:0.9;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入原局</span></div>
+                        <div class="shensha-grid">${aItems}</div>
                     </div>`;
-                }).join('');
-                container.innerHTML += `<div class="category-row" style="border: 1px solid ${dayunGroupStyle.border};">
-                    <div class="category-header" style="background-color:${dayunGroupStyle.border}; color:#fff; opacity:0.9;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入原局</span></div>
-                    <div class="shensha-grid">${aItems}</div>
-                </div>`;
+                }
             }
         }
 
@@ -814,31 +840,33 @@
                 <div class="shensha-grid">${lnpItems || '<span style="color:#888;margin:auto;font-size:13px;">無主要神煞</span>'}</div>
             </div>`;
 
-            let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
-            let lnActiveRules = [];
+            if (interactionConfig.liunianActive) {
+                let pillars = [{n:"年支",i:d.yBranch}, {n:"月支",i:d.mBranch}, {n:"日支",i:d.dBranch}, {n:"時支",i:d.hBranch}];
+                let lnActiveRules = [];
 
-            getStemRules(ln.stem).forEach(r => pillars.forEach(p => {
-                if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年干"});
-            }));
-            getBranchRules(ln.branch).forEach(r => pillars.forEach(p => {
-                if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年支"});
-            }));
+                getStemRules(ln.stem).forEach(r => pillars.forEach(p => {
+                    if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年干"});
+                }));
+                getBranchRules(ln.branch).forEach(r => pillars.forEach(p => {
+                    if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年支"});
+                }));
 
-            lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
+                lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
 
-            if(lnActiveRules.length > 0) {
-                let lnaItems = lnActiveRules.map(r => {
-                    let srcStyle = getSrcStyle(r.src); 
-                    globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
-                    return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
-                        <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
-                        <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
+                if(lnActiveRules.length > 0) {
+                    let lnaItems = lnActiveRules.map(r => {
+                        let srcStyle = getSrcStyle(r.src); 
+                        globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
+                        return `<div class="shensha-item" style="border-left: 4px solid ${srcStyle.border}; background-color: ${srcStyle.bg};">
+                            <div><span class="shensha-name" style="color:${srcStyle.text}; font-weight:bold;">${r.name}</span></div>
+                            <div><span style="font-size:11px;color:#666">${r.src}入</span><span class="location-badge" style="background:${srcStyle.border}; color:#fff;">${r.loc}(${Dizhi[r.i]})</span></div>
+                        </div>`;
+                    }).join('');
+                    container.innerHTML += `<div class="category-row" style="border: 1px solid ${liunianGroupStyle.border};">
+                        <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff; opacity:0.9;"><span>流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] 照入原局</span></div>
+                        <div class="shensha-grid">${lnaItems}</div>
                     </div>`;
-                }).join('');
-                container.innerHTML += `<div class="category-row" style="border: 1px solid ${liunianGroupStyle.border};">
-                    <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff; opacity:0.9;"><span>流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] 照入原局</span></div>
-                    <div class="shensha-grid">${lnaItems}</div>
-                </div>`;
+                }
             }
         }
         
