@@ -881,11 +881,14 @@ function runCalculation() {
             dyS = safeMod(mStem - k, 10);
             dyB = safeMod(mBranch - k, 12);
         }
+        
         let ageLabel = (dyStartAge + (k-1)*10) + "歲";
+        let startYear = RealBaziYear + (dyStartAge + (k-1)*10) - 1; // 自動推算起運年份
         let dyGZ_loop = Tiangan[dyS] + Dizhi[dyB];
         
         html += `<div class="dayun-col">`;
-        html += `<div>${ageLabel}</div>`;
+        html += `<div style="font-weight:bold;">${ageLabel}</div>`;
+        html += `<div style="font-size:0.85em; color:#7f8c8d; padding-top:0; margin-top:-5px;">${startYear}年</div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyS, true)}</div>`;
         html += `<div style="font-size:0.85em; margin-bottom: 2px; color: var(--btn-blue); font-weight: bold;">${getTenGod(dStem, dyS)}</div>`;
         html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.6em;font-weight:normal;color:#34495e;">${getNaYin(dyS, dyB)}</span></div>`;
