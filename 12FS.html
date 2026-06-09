@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>玄學筆記</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">        
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#FFFFFF">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f6f9; /* 柔和的淺灰背景 */
+            font-family: "PingFang TC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        
+        .main-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            padding: 30px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #0d6efd;
+            border-radius: 3px;
+        }
+
+        /* 調整結果區塊的視覺設計 */
+        .angle-box {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-left: 5px solid #0d6efd; /* 左側藍色點綴 */
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .angle-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-left-color: #0b5ed7;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 6px;
+        }
+        
+        /* 讓 input 框看起來更有質感 */
+        .form-control {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            text-align: center;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <section class="py-4 py-md-5">
+        <div class="container">
+            <div class="main-card">
+                <form id="bazi-form" class="mb-0">
+                    <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                            <h2 class="section-title">放風水起盤系統</h2>
+                        </div>
+                        <div class="col-12 col-md-8 pb-3">
+                            <label class="form-label text-muted small">請選擇起盤日期與時間</label>
+                            <input id="datetime" class="form-control" type="text" placeholder="點擊選擇時間..." required />
+                        </div>
+                        <div class="col-12 col-md-8 pb-2">
+                            <button class="btn btn-primary w-100" type="submit">立即起盤</button>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="dtime" value="a"/>
+                    <input type="hidden" name="year" value="a"/>
+                    <input type="hidden" name="month" value="a"/>
+                    <input type="hidden" name="day" value="a"/>
+                    <input type="hidden" name="hour" value="a"/>
+                    <input type="hidden" name="jieqi" value="a"/>
+                </form>
+
+                <div id="result-section" class="d-none mt-5">
+                    <div class="text-center mb-5 p-3 rounded" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                        <div class="text-muted small mb-1">所選時間</div>
+                        <div id="display-time" class="fs-6 mb-2 text-secondary"></div>
+                        <div class="text-muted small mb-1">四柱八字</div>
+                        <div id="display-bazi" class="fs-4 fw-bold text-primary"></div>
+                    </div>
+
+                    <div class="col-12 text-center pb-3">
+                        <h4 class="fw-bold" style="color: #495057;">最佳放風水角度</h4>
+                    </div>
+                    <div class="row g-3" id="angles-grid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/zh-tw.js"></script>
+    
+    <script>
+        const qS = (obj) => document.querySelector(obj);
+        
+        // 初始化 Flatpickr 日期選擇器
+        flatpickr("#datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            locale: "zh_tw",
+            time_24hr: true,
+            defaultMinute: 0
+        });
+
+        // 12 地支標準陣列
+        const dizhiList = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+        function dateToLunar() {    
+            let datetimeValue = qS('#datetime').value;
+            if (!datetimeValue) return null;
+
+            // 因為 Flatpickr 格式為 Y-m-d H:i，可直接被 Date 解析，但保險起見把空白換成 'T' 確保跨瀏覽器相容
+            let parsedDateStr = datetimeValue.replace(' ', 'T') + ':00';
+            let solarDate = new Date(parsedDateStr);
+            let lunarDate = Lunar.fromDate(solarDate);
+
+            // 更新隱藏表單的值
+            qS('input[name = "dtime"]').value = formatDatetimeLocal(solarDate);
+            qS('input[name = "year"]').value = lunarDate.getYearInGanZhiExact();
+            qS('input[name = "month"]').value = lunarDate.getMonthInGanZhi();
+            qS('input[name = "day"]').value = lunarDate.getDayInGanZhi();
+            qS('input[name = "hour"]').value = lunarDate.getTimeInGanZhi();
+            qS('input[name = "jieqi"]').value = JSON.stringify(lunarDate.getJieQiTable());
+
+            return { solarDate, lunarDate };
+        }
+
+        function formatDatetimeLocal(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const min = date.getMinutes().toString().padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${min}:00`;
+        }
+
+        function formatDisplayTime(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const min = date.getMinutes().toString().padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${min}:00`;
+        }
+
+        // 當表單提交 (點擊起盤) 時觸發
+        qS('#bazi-form').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            let data = dateToLunar();
+            if (!data) return;
+
+            let { solarDate, lunarDate } = data;
+
+            // 1. 顯示所選時間
+            qS('#display-time').innerText = formatDisplayTime(solarDate);
+
+            // 2. 顯示四柱八字
+            let baziStr = `${lunarDate.getYearInGanZhiExact()}年 ${lunarDate.getMonthInGanZhi()}月 ${lunarDate.getDayInGanZhi()}日 ${lunarDate.getTimeInGanZhi()}時`;
+            qS('#display-bazi').innerText = baziStr;
+
+            // 3. 計算並顯示放風水角度
+            renderAngles(solarDate);
+
+            // 顯示結果區塊
+            qS('#result-section').classList.remove('d-none');
+        });
+
+        // 動態渲染 12 地支角度
+        function renderAngles(solarDate) {
+            let gridHtml = '';
+            
+            // 這裡獲取角度的「偏移量」
+            let offset = calculateFengShuiOffset(solarDate); 
+
+            dizhiList.forEach((dz, index) => {
+                // 標準正北子山為 0 度，每個地支遞增 30 度
+                let baseDegree = index * 30;
+                
+                // 加上偏移量並確保在 0-359 度之間
+                let finalDegree = (baseDegree + offset) % 360;
+                if (finalDegree < 0) {
+                    finalDegree += 360;
+                }
+
+                // UI 優化：將地支與度數分開對齊
+                gridHtml += `
+                <div class="col-6 mb-2">
+                    <div class="angle-box">
+                        <span class="text-secondary">${dz}山</span>
+                        <span class="text-primary fw-bold">${finalDegree}°</span>
+                    </div>
+                </div>`;
+            });
+
+            qS('#angles-grid').innerHTML = gridHtml;
+        }
+
+        // 核心邏輯：計算角度偏移量 (保持不變)
+        function calculateFengShuiOffset(date) {
+            let targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+            let anchorDate = new Date(2026, 5, 25, 12, 0, 0); 
+            let diffTime = targetDate - anchorDate;
+            let diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
+            let currentOffset = 4 + diffDays;
+            return currentOffset;
+        }
+
+        // 讓日期改變時也同步寫入隱藏欄位
+        qS('#datetime').addEventListener('change', dateToLunar);
+    </script>
+</body>
+</html>
