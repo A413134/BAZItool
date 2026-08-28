@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字分析命盤 (完整十神與相刑受生版)</title>
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff; --container-bg: #f5f7fa; --border-color: #e2e8f0;
+            --text-main: #333333; --text-light: #718096; --card-header: #4a5568;
+            --pill-bg: #e6f2ff; --pill-text: #ed64a6; --btn-bg: #1a202c;
+            --color-fire: #e53e3e; --color-water: #3182ce; --color-earth: #975a16;
+            --color-wood: #38a169; --color-metal: #718096;
+            --check-green: #38a169; --cross-red: #e53e3e;
+        }
+        body { font-family: sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .input-section { background: var(--container-bg); border-radius: 12px; padding: 15px 30px; display: flex; justify-content: center; gap: 30px; margin: 0 auto; flex-wrap: wrap; }
+        .input-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .input-group.row-mode { flex-direction: row; align-items: center; justify-content: center; width: 100%; gap: 15px; border-bottom: 1px dashed #cbd5e0; padding-bottom: 15px; margin-bottom: 5px; }
+        
+        .input-title { font-weight: bold; font-size: 14px; }
+        .select-box { padding: 4px 8px; border: 1px solid #cbd5e0; border-radius: 4px; width: 70px; text-align: center; }
+        .input-box { padding: 4px 8px; border: 1px solid #cbd5e0; border-radius: 4px; width: 60px; text-align: center; }
+        
+        .calc-btn { background: var(--btn-bg); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .calc-btn:hover { background: #2d3748; }
+        .small-btn { padding: 6px 12px; font-size: 14px; border-radius: 6px; width: auto; }
+        
+        .chart-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .card { border: 1px solid var(--border-color); border-radius: 12px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
+        .card-header { background: var(--card-header); color: white; text-align: center; padding: 8px 0; font-weight: bold; font-size: 15px; letter-spacing: 2px; }
+        .card-body { padding: 20px 10px; display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
+        .pill { background: var(--pill-bg); color: var(--pill-text); padding: 4px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 20px; }
+        
+        .char-row { display: grid; grid-template-columns: 1fr auto 1fr; width: 100%; align-items: center; margin: 10px 0; }
+        .main-char { font-size: 64px; font-weight: bold; line-height: 1; text-align: center; padding: 0 10px; }
+        .side-text { font-size: 10px; color: var(--text-main); line-height: 1.6; }
+        .side-text.left { text-align: right; }
+        .side-text.right { text-align: left; }
+        .arrow { font-size: 12px; color: #a0aec0; margin: 15px 0; font-weight: bold; }
+        .footer-text { font-size: 12px; color: var(--text-light); margin-top: auto; border-top: 1px dashed #e2e8f0; padding-top: 15px; width: 90%; text-align: center; }
+        
+        .check { color: var(--check-green); font-weight: bold; margin-left: 2px; }
+        .cross { color: var(--cross-red); font-weight: bold; margin-left: 2px; }
+        .summary-bar { background: var(--container-bg); border-radius: 8px; padding: 12px 30px; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="input-section">
+        <div class="input-group row-mode">
+            <div class="input-title">公曆輸入</div>
+            <div>
+                <input type="number" id="g-year" class="input-box" value="1990"> 年
+                <input type="number" id="g-month" class="input-box" value="1" min="1" max="12"> 月
+                <input type="number" id="g-day" class="input-box" value="1" min="1" max="31"> 日
+                <input type="number" id="g-hour" class="input-box" value="12" min="0" max="23"> 時
+            </div>
+            <button class="calc-btn small-btn" onclick="convertDateToBazi()">轉換為八字</button>
+        </div>
+
+        <div class="input-group">
+            <div class="input-title">時柱</div>
+            <select id="time-stem" class="select-box"></select>
+            <select id="time-branch" class="select-box"></select>
+        </div>
+        <div class="input-group">
+            <div class="input-title">日柱</div>
+            <select id="day-stem" class="select-box"></select>
+            <select id="day-branch" class="select-box"></select>
+        </div>
+        <div class="input-group">
+            <div class="input-title">月柱</div>
+            <select id="month-stem" class="select-box"></select>
+            <select id="month-branch" class="select-box"></select>
+        </div>
+        <div class="input-group">
+            <div class="input-title">年柱</div>
+            <select id="year-stem" class="select-box"></select>
+            <select id="year-branch" class="select-box"></select>
+        </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculateBazi()">計算並分析命盤</button>
+
+    <div class="chart-grid" id="chart-grid">
+        <!-- 動態生成 -->
+    </div>
+
+    <div class="summary-bar">
+        <div>總計 <span class="check">✔</span>: <span id="count-check">0</span> (受惠生/比和)</div>
+        <div>總計 <span class="cross">✘</span>: <span id="count-cross">0</span> (相刑/相沖/相剋/空亡)</div>
+    </div>
+</div>
+
+<script>
+    const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+    const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+    
+    // 五行屬性
+    const elements = {
+        '甲':'wood','乙':'wood','寅':'wood','卯':'wood',
+        '丙':'fire','丁':'fire','巳':'fire','午':'fire',
+        '戊':'earth','己':'earth','辰':'earth','戌':'earth','丑':'earth','未':'earth',
+        '庚':'metal','辛':'metal','申':'metal','酉':'metal',
+        '壬':'water','癸':'water','亥':'water','子':'water'
+    };
+    
+    // 陰陽屬性 (1為陽, 0為陰 - 地支以本氣藏干為準計算十神)
+    const polarities = {
+        '甲':1,'乙':0,'丙':1,'丁':0,'戊':1,'己':0,'庚':1,'辛':0,'壬':1,'癸':0,
+        '子':0,'丑':0,'寅':1,'卯':0,'辰':1,'巳':1,'午':0,'未':0,'申':1,'酉':0,'戌':1,'亥':1
+    };
+
+    const colors = {'wood':'var(--color-wood)','fire':'var(--color-fire)','earth':'var(--color-earth)','metal':'var(--color-metal)','water':'var(--color-water)'};
+
+    const stemClash = {'甲':'庚','庚':'甲','乙':'辛','辛':'乙','丙':'壬','壬':'丙','丁':'癸','癸':'丁'};
+    const branchClash = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'};
+
+    // 計算十神
+    function getTenGod(dm, target) {
+        let dmElem = elements[dm];
+        let tgElem = elements[target];
+        let samePol = polarities[dm] === polarities[target];
+        
+        if (dmElem === tgElem) return samePol ? '比肩' : '劫財';
+        
+        if ((dmElem==='wood'&&tgElem==='fire') || (dmElem==='fire'&&tgElem==='earth') || (dmElem==='earth'&&tgElem==='metal') || (dmElem==='metal'&&tgElem==='water') || (dmElem==='water'&&tgElem==='wood')) {
+            return samePol ? '食神' : '傷官'; // 我生
+        }
+        if ((dmElem==='wood'&&tgElem==='earth') || (dmElem==='earth'&&tgElem==='water') || (dmElem==='water'&&tgElem==='fire') || (dmElem==='fire'&&tgElem==='metal') || (dmElem==='metal'&&tgElem==='wood')) {
+            return samePol ? '偏財' : '正財'; // 我剋
+        }
+        if ((tgElem==='wood'&&dmElem==='earth') || (tgElem==='earth'&&dmElem==='water') || (tgElem==='water'&&dmElem==='fire') || (tgElem==='fire'&&dmElem==='metal') || (tgElem==='metal'&&dmElem==='wood')) {
+            return samePol ? '七殺' : '正官'; // 剋我
+        }
+        if ((tgElem==='wood'&&dmElem==='fire') || (tgElem==='fire'&&dmElem==='earth') || (tgElem==='earth'&&dmElem==='metal') || (tgElem==='metal'&&dmElem==='water') || (tgElem==='water'&&dmElem==='wood')) {
+            return samePol ? '偏印' : '正印'; // 生我
+        }
+        return '';
+    }
+
+    // 判斷相刑
+    function getXingCrosses(b1, b2) {
+        if (b1 === '已') b1 = '巳';
+        if (b2 === '已') b2 = '巳';
+
+        if ((b1 === '寅' && b2 === '巳') || (b1 === '巳' && b2 === '寅')) {
+            return 3; 
+        }
+        const xingList = [
+            '子卯', '卯子',
+            '寅申', '申寅', '巳申', '申巳',
+            '丑戌', '戌丑', '戌未', '未戌', '丑未', '未丑',
+            '辰辰', '午午', '酉酉', '亥亥'
+        ];
+        if (xingList.includes(b1 + b2)) return 1;
+        
+        return 0;
+    }
+
+    function isOvercoming(a, b) {
+        const eA = elements[a], eB = elements[b];
+        return (eA==='wood'&&eB==='earth')||(eA==='earth'&&eB==='water')||(eA==='water'&&eB==='fire')||(eA==='fire'&&eB==='metal')||(eA==='metal'&&eB==='wood');
+    }
+
+    function isGenerating(a, b) {
+        const eA = elements[a], eB = elements[b];
+        return (eA==='wood'&&eB==='fire')||(eA==='fire'&&eB==='earth')||(eA==='earth'&&eB==='metal')||(eA==='metal'&&eB==='water')||(eA==='water'&&eB==='wood');
+    }
+
+    function isSame(a, b) {
+        return elements[a] === elements[b];
+    }
+
+    function getVoidBranches(stem, branch) {
+        const sIdx = stems.indexOf(stem);
+        const bIdx = branches.indexOf(branch);
+        const offset = (bIdx - sIdx + 12) % 12;
+        const v1 = (offset + 10) % 12;
+        const v2 = (offset + 11) % 12;
+        return [branches[v1], branches[v2]];
+    }
+
+    function initSelects() {
+        const stemSelects = ['time-stem', 'day-stem', 'month-stem', 'year-stem'];
+        const branchSelects = ['time-branch', 'day-branch', 'month-branch', 'year-branch'];
+        
+        stemSelects.forEach(id => {
+            const el = document.getElementById(id);
+            stems.forEach(s => el.add(new Option(s, s)));
+        });
+        branchSelects.forEach(id => {
+            const el = document.getElementById(id);
+            branches.forEach(b => el.add(new Option(b, b)));
+        });
+
+        document.getElementById('time-stem').value = '癸'; document.getElementById('time-branch').value = '巳';
+        document.getElementById('day-stem').value = '甲'; document.getElementById('day-branch').value = '寅';
+        document.getElementById('month-stem').value = '甲'; document.getElementById('month-branch').value = '申';
+        document.getElementById('year-stem').value = '己'; document.getElementById('year-branch').value = '巳';
+    }
+
+    function convertDateToBazi() {
+        if (typeof Solar === 'undefined') {
+            alert('日曆轉換庫尚未載入完成，請稍候。');
+            return;
+        }
+        try {
+            let y = parseInt(document.getElementById('g-year').value);
+            let m = parseInt(document.getElementById('g-month').value);
+            let d = parseInt(document.getElementById('g-day').value);
+            let h = parseInt(document.getElementById('g-hour').value);
+            
+            let solar = Solar.fromYmdHms(y, m, d, h, 0, 0);
+            let lunar = solar.getLunar();
+            let bazi = lunar.getEightChar();
+            
+            let yGz = bazi.getYear();
+            let mGz = bazi.getMonth();
+            let dGz = bazi.getDay();
+            let tGz = bazi.getTime();
+            
+            document.getElementById('year-stem').value = yGz[0]; document.getElementById('year-branch').value = yGz[1];
+            document.getElementById('month-stem').value = mGz[0]; document.getElementById('month-branch').value = mGz[1];
+            document.getElementById('day-stem').value = dGz[0]; document.getElementById('day-branch').value = dGz[1];
+            document.getElementById('time-stem').value = tGz[0]; document.getElementById('time-branch').value = tGz[1];
+            
+            calculateBazi();
+        } catch (error) {
+            alert("日期格式錯誤或超出計算範圍。");
+        }
+    }
+
+    function calculateBazi() {
+        const data = [
+            { label: '時柱', s: document.getElementById('time-stem').value, b: document.getElementById('time-branch').value },
+            { label: '日柱', s: document.getElementById('day-stem').value, b: document.getElementById('day-branch').value },
+            { label: '月柱', s: document.getElementById('month-stem').value, b: document.getElementById('month-branch').value },
+            { label: '年柱', s: document.getElementById('year-stem').value, b: document.getElementById('year-branch').value }
+        ];
+
+        data.forEach(p => p.voids = getVoidBranches(p.s, p.b));
+
+        const dayMaster = document.getElementById('day-stem').value;
+        let html = '';
+
+        data.forEach((pillar, i) => {
+            let stemAttrHtml = ''; 
+            let branchAttrHtml = '';
+
+            data.forEach((otherPillar, j) => {
+                if (i === j) return;
+                let otherName = otherPillar.label[0];
+                
+                let isMonthBranchAttack = (otherName === '月');
+                let extraCross = isMonthBranchAttack ? '<span class="cross">✘</span>' : '';
+                let isAdjacent = Math.abs(i - j) === 1;
+
+                // === 天干交互 ===
+                if (stemClash[pillar.s] === otherPillar.s) stemAttrHtml += `沖${otherName}干 <span class="cross">✘</span><br>`;
+                
+                if (isAdjacent) {
+                    if (isOvercoming(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干剋 <span class="cross">✘</span><br>`;
+                    if (isGenerating(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干生 <span class="check">✔</span><br>`;
+                    if (isSame(otherPillar.s, pillar.s)) stemAttrHtml += `比和${otherName}干 <span class="check">✔</span><br>`;
+                }
+                
+                // === 地支交互 ===
+                if (branchClash[pillar.b] === otherPillar.b) branchAttrHtml += `沖${otherName}支 <span class="cross">✘</span>${extraCross}<br>`;
+                if (otherPillar.voids.includes(pillar.b)) branchAttrHtml += `落入空亡 <span class="cross">✘</span><br>`;
+
+                if (isAdjacent) {
+                    let xingCount = getXingCrosses(otherPillar.b, pillar.b);
+                    if (xingCount > 0) {
+                        let xingIcons = '<span class="cross">✘</span>'.repeat(xingCount);
+                        branchAttrHtml += `與${otherName}支刑 ${xingIcons}<br>`;
+                    }
+
+                    if (isOvercoming(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支剋 <span class="cross">✘</span>${extraCross}<br>`;
+                    if (isGenerating(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支生 <span class="check">✔</span><br>`;
+                    if (isSame(otherPillar.b, pillar.b)) branchAttrHtml += `比和${otherName}支 <span class="check">✔</span><br>`;
+                }
+            });
+
+            // === 本柱上下交互 ===
+            if (isOvercoming(pillar.b, pillar.s)) stemAttrHtml += `地支剋 <span class="cross">✘</span><br>`;
+            if (isOvercoming(pillar.s, pillar.b)) branchAttrHtml += `天干剋 <span class="cross">✘</span><br>`;
+            
+            if (isGenerating(pillar.b, pillar.s)) stemAttrHtml += `被地支生 <span class="check">✔</span><br>`;
+            if (isGenerating(pillar.s, pillar.b)) branchAttrHtml += `被天干生 <span class="check">✔</span><br>`;
+            
+            if (isSame(pillar.b, pillar.s)) {
+                stemAttrHtml += `比和地支 <span class="check">✔</span><br>`;
+                branchAttrHtml += `比和天干 <span class="check">✔</span><br>`;
+            }
+
+            let arrow = '—';
+            if (isOvercoming(pillar.b, pillar.s)) arrow = '↑剋';
+            else if (isOvercoming(pillar.s, pillar.b)) arrow = '↓剋';
+            else if (isGenerating(pillar.b, pillar.s)) arrow = '↑生';
+            else if (isGenerating(pillar.s, pillar.b)) arrow = '↓生';
+            else if (isSame(pillar.s, pillar.b)) arrow = '↕比和';
+
+            // 計算十神
+            let stemGod = (pillar.label === '日柱') ? '日元' : getTenGod(dayMaster, pillar.s);
+            let branchGod = getTenGod(dayMaster, pillar.b);
+
+            html += `
+                <div class="card">
+                    <div class="card-header">${pillar.label}</div>
+                    <div class="card-body">
+                        <!-- 天干十神 -->
+                        <div class="pill">${stemGod}</div>
+                        
+                        <div class="char-row">
+                            <div class="side-text left"></div>
+                            <div class="main-char" style="color: ${colors[elements[pillar.s]]}">${pillar.s}</div>
+                            <div class="side-text right">${stemAttrHtml || ''}</div>
+                        </div>
+                        
+                        <div class="arrow">${arrow}</div>
+                        
+                        <div class="char-row">
+                            <div class="side-text left"></div>
+                            <div class="main-char" style="color: ${colors[elements[pillar.b]]}">${pillar.b}</div>
+                            <div class="side-text right">${branchAttrHtml || ''}</div>
+                        </div>
+
+                        <!-- 地支十神 -->
+                        <div class="pill" style="margin-top:15px; margin-bottom:5px;">${branchGod}</div>
+
+                        <div class="footer-text">旬空：${pillar.voids.join('')}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('chart-grid').innerHTML = html;
+
+        const crosses = document.querySelectorAll('#chart-grid .cross');
+        const checks = document.querySelectorAll('#chart-grid .check');
+        document.getElementById('count-cross').textContent = crosses.length;
+        document.getElementById('count-check').textContent = checks.length;
+    }
+
+    window.onload = () => {
+        initSelects();
+        document.getElementById('g-year').value = new Date().getFullYear();
+        document.getElementById('g-month').value = new Date().getMonth() + 1;
+        document.getElementById('g-day').value = new Date().getDate();
+        calculateBazi();
+    };
+</script>
+
+</body>
+</html>
+
+```
