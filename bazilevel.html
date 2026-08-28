@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>八字分析命盤 (手機優化版)</title>
+    <title>八字分析命盤 (年齡區段標示版)</title>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <style>
         :root {
@@ -52,8 +52,9 @@
         .arrow { font-size: 13px; color: #a0aec0; margin: 15px 0; font-weight: bold; }
         .footer-text { font-size: 12px; color: var(--text-light); margin-top: auto; border-top: 1px dashed #e2e8f0; padding-top: 15px; width: 90%; text-align: center; }
         
-        .check { color: var(--check-green); font-weight: bold; margin-left: 2px; }
-        .cross { color: var(--cross-red); font-weight: bold; margin-left: 2px; }
+        /* 強制綠色勾勾，避免被 iOS 解析成黑色 Emoji */
+        .check { color: var(--check-green); -webkit-text-fill-color: var(--check-green); font-weight: bold; margin-left: 2px; }
+        .cross { color: var(--cross-red); -webkit-text-fill-color: var(--cross-red); font-weight: bold; margin-left: 2px; }
         .summary-bar { background: var(--container-bg); border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-top: 10px; flex-wrap: wrap; gap: 10px;}
 
         /* ================= 嚴格的手機版優化 (RWD) ================= */
@@ -140,8 +141,9 @@
     </div>
 
     <div class="summary-bar">
-        <div>總計 <span class="check">✔</span>: <span id="count-check">0</span> (受惠生/比和)</div>
-        <div>總計 <span class="cross">✘</span>: <span id="count-cross">0</span> (相刑/相沖/相剋/空亡)</div>
+        <!-- 加入 &#xFE0E; 強制顯示為文字模式 -->
+        <div>總計 <span class="check">✔&#xFE0E;</span>: <span id="count-check">0</span> (受惠生/比和)</div>
+        <div>總計 <span class="cross">✘&#xFE0E;</span>: <span id="count-cross">0</span> (相刑/相沖/相剋/空亡)</div>
     </div>
 </div>
 
@@ -299,48 +301,55 @@
         data.forEach((pillar, i) => {
             let stemAttrHtml = ''; 
             let branchAttrHtml = '';
+            
+            // 年齡區段判定
+            let ageText = '';
+            if (pillar.label === '年柱') ageText = '1-17歲';
+            else if (pillar.label === '月柱') ageText = '18-34歲';
+            else if (pillar.label === '日柱') ageText = '35-51歲';
+            else if (pillar.label === '時柱') ageText = '52-100歲';
 
             data.forEach((otherPillar, j) => {
                 if (i === j) return;
                 let otherName = otherPillar.label[0];
                 
                 let isMonthBranchAttack = (otherName === '月');
-                let extraCross = isMonthBranchAttack ? '<span class="cross">✘</span>' : '';
+                let extraCross = isMonthBranchAttack ? '<span class="cross">✘&#xFE0E;</span>' : '';
                 let isAdjacent = Math.abs(i - j) === 1;
 
-                if (stemClash[pillar.s] === otherPillar.s) stemAttrHtml += `沖${otherName}干 <span class="cross">✘</span><br>`;
+                if (stemClash[pillar.s] === otherPillar.s) stemAttrHtml += `沖${otherName}干 <span class="cross">✘&#xFE0E;</span><br>`;
                 
                 if (isAdjacent) {
-                    if (isOvercoming(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干剋 <span class="cross">✘</span><br>`;
-                    if (isGenerating(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干生 <span class="check">✔</span><br>`;
-                    if (isSame(otherPillar.s, pillar.s)) stemAttrHtml += `比和${otherName}干 <span class="check">✔</span><br>`;
+                    if (isOvercoming(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干剋 <span class="cross">✘&#xFE0E;</span><br>`;
+                    if (isGenerating(otherPillar.s, pillar.s)) stemAttrHtml += `被${otherName}干生 <span class="check">✔&#xFE0E;</span><br>`;
+                    if (isSame(otherPillar.s, pillar.s)) stemAttrHtml += `比和${otherName}干 <span class="check">✔&#xFE0E;</span><br>`;
                 }
                 
-                if (branchClash[pillar.b] === otherPillar.b) branchAttrHtml += `沖${otherName}支 <span class="cross">✘</span>${extraCross}<br>`;
-                if (otherPillar.voids.includes(pillar.b)) branchAttrHtml += `落入空亡 <span class="cross">✘</span><br>`;
+                if (branchClash[pillar.b] === otherPillar.b) branchAttrHtml += `沖${otherName}支 <span class="cross">✘&#xFE0E;</span>${extraCross}<br>`;
+                if (otherPillar.voids.includes(pillar.b)) branchAttrHtml += `落入空亡 <span class="cross">✘&#xFE0E;</span><br>`;
 
                 if (isAdjacent) {
                     let xingCount = getXingCrosses(otherPillar.b, pillar.b);
                     if (xingCount > 0) {
-                        let xingIcons = '<span class="cross">✘</span>'.repeat(xingCount);
+                        let xingIcons = '<span class="cross">✘&#xFE0E;</span>'.repeat(xingCount);
                         branchAttrHtml += `與${otherName}支刑 ${xingIcons}<br>`;
                     }
 
-                    if (isOvercoming(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支剋 <span class="cross">✘</span>${extraCross}<br>`;
-                    if (isGenerating(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支生 <span class="check">✔</span><br>`;
-                    if (isSame(otherPillar.b, pillar.b)) branchAttrHtml += `比和${otherName}支 <span class="check">✔</span><br>`;
+                    if (isOvercoming(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支剋 <span class="cross">✘&#xFE0E;</span>${extraCross}<br>`;
+                    if (isGenerating(otherPillar.b, pillar.b)) branchAttrHtml += `被${otherName}支生 <span class="check">✔&#xFE0E;</span><br>`;
+                    if (isSame(otherPillar.b, pillar.b)) branchAttrHtml += `比和${otherName}支 <span class="check">✔&#xFE0E;</span><br>`;
                 }
             });
 
-            if (isOvercoming(pillar.b, pillar.s)) stemAttrHtml += `地支剋 <span class="cross">✘</span><br>`;
-            if (isOvercoming(pillar.s, pillar.b)) branchAttrHtml += `天干剋 <span class="cross">✘</span><br>`;
+            if (isOvercoming(pillar.b, pillar.s)) stemAttrHtml += `地支剋 <span class="cross">✘&#xFE0E;</span><br>`;
+            if (isOvercoming(pillar.s, pillar.b)) branchAttrHtml += `天干剋 <span class="cross">✘&#xFE0E;</span><br>`;
             
-            if (isGenerating(pillar.b, pillar.s)) stemAttrHtml += `被地支生 <span class="check">✔</span><br>`;
-            if (isGenerating(pillar.s, pillar.b)) branchAttrHtml += `被天干生 <span class="check">✔</span><br>`;
+            if (isGenerating(pillar.b, pillar.s)) stemAttrHtml += `被地支生 <span class="check">✔&#xFE0E;</span><br>`;
+            if (isGenerating(pillar.s, pillar.b)) branchAttrHtml += `被天干生 <span class="check">✔&#xFE0E;</span><br>`;
             
             if (isSame(pillar.b, pillar.s)) {
-                stemAttrHtml += `比和地支 <span class="check">✔</span><br>`;
-                branchAttrHtml += `比和天干 <span class="check">✔</span><br>`;
+                stemAttrHtml += `比和地支 <span class="check">✔&#xFE0E;</span><br>`;
+                branchAttrHtml += `比和天干 <span class="check">✔&#xFE0E;</span><br>`;
             }
 
             let arrow = '—';
@@ -355,7 +364,9 @@
 
             html += `
                 <div class="card">
-                    <div class="card-header">${pillar.label}</div>
+                    <div class="card-header">
+                        ${pillar.label} <span style="font-size: 12px; font-weight: normal; letter-spacing: 0;">(${ageText})</span>
+                    </div>
                     <div class="card-body">
                         <div class="pill">${stemGod}</div>
                         
