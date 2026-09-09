@@ -713,7 +713,7 @@ const JiRules = [
 ];
 
 // ----------------------------------------------------
-// 完整版 40 關煞判斷規則 (包含 AB 組拆分與正確映射)
+// 完整版 40 關煞判斷規則 (包含 AB 組拆分與條件修正)
 // ----------------------------------------------------
 const gsRules = [
     { name: "1. 白虎關", type: "nayin_day", mapping: { "火":[0], "金":[3], "水":[6], "土":[6], "木":[9] } },
@@ -1202,7 +1202,8 @@ function runCalculation() {
     html += `<div class="section-title dayun-header">【 大 運 程 】</div>`;
     html += `<div class="dayun-container">`;
     
-    let dayunMatchesHtml = ""; 
+    let dayunShengJiHtml = ""; 
+    let dayunGuanShaHtml = ""; 
 
     for(let k=1; k<=11; k++) {
         let dyS, dyB;
@@ -1229,28 +1230,38 @@ function runCalculation() {
         html += `</div>`;
 
         let dyPillarsTest = [...natalPillars, { name: `大運`, gz: dyGZ_loop, stem: dyS, branch: dyB, nayinWx: getNaYin(dyS, dyB).slice(-1) }];
-        let dyM = findShengJiMatches(dyPillarsTest, true);
         
-        // 【大運關煞判斷】 (排除原命已觸發)
+        // 分開處理大運五勝六忌
+        let dyM = findShengJiMatches(dyPillarsTest, true);
+        if(dyM.length > 0) {
+            dayunShengJiHtml += `<li style="margin-bottom:12px;"><b>[${ageLabel}大運] ${dyGZ_loop}：</b><ul style="margin-top:4px;">`;
+            dyM.forEach(m => dayunShengJiHtml += `<li>${m}</li>`);
+            dayunShengJiHtml += `</ul></li>`;
+        }
+        
+        // 分開處理大運關煞
         let dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest);
         let dyGsListNew = dyGsListAll.filter(g => !natalGsList.includes(g));
-
-        if(dyM.length > 0 || dyGsListNew.length > 0) {
-            dayunMatchesHtml += `<li style="margin-bottom:8px;"><b>[${ageLabel}大運] ${dyGZ_loop}：</b><ul style="margin-top:4px;">`;
-            if (dyGsListNew.length > 0) {
-                let dyGsDisplay = dyGsListNew.map(g => `<span class="tag-gs" style="color:white; display:inline-block; padding:2px 6px; border-radius:4px;" onclick="showGuanShaInfo('${g}')">${g}</span>`).join(' ');
-                dayunMatchesHtml += `<li><span style="color:#c0392b; font-weight:bold;">觸發關煞：</span> ${dyGsDisplay}</li>`;
-            }
-            dyM.forEach(m => dayunMatchesHtml += `<li>${m}</li>`);
-            dayunMatchesHtml += `</ul></li>`;
+        if(dyGsListNew.length > 0) {
+            dayunGuanShaHtml += `<li style="margin-bottom:12px;"><b>[${ageLabel}大運] ${dyGZ_loop}：</b><div style="margin-top:6px;">`;
+            let dyGsDisplay = dyGsListNew.map(g => `<span class="tag-gs" style="color:white; display:inline-block; padding:3px 8px; border-radius:4px; font-size:0.9em; margin-right:6px;" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+            dayunGuanShaHtml += dyGsDisplay;
+            dayunGuanShaHtml += `</div></li>`;
         }
     }
     html += `</div>`;
 
-    if (dayunMatchesHtml) {
+    if (dayunShengJiHtml) {
         html += `<div class="sheng-ji-box">
-                    <div class="sheng-ji-header">⚠️ 各柱大運新增之 五勝六忌 / 關煞 (點擊關煞看詳情)</div>
-                    <ul style="list-style-type: none; padding-left: 0;">${dayunMatchesHtml}</ul>
+                    <div class="sheng-ji-header">⚠️ 大運新增觸發：五勝六忌</div>
+                    <ul style="list-style-type: none; padding-left: 0;">${dayunShengJiHtml}</ul>
+                 </div>`;
+    }
+
+    if (dayunGuanShaHtml) {
+        html += `<div class="sheng-ji-box guansha">
+                    <div class="sheng-ji-header">⚠️ 大運新增觸發：關煞 (點擊可看詳情)</div>
+                    <ul style="list-style-type: none; padding-left: 0;">${dayunGuanShaHtml}</ul>
                  </div>`;
     }
 
