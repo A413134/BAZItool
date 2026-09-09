@@ -406,7 +406,16 @@
         }
         .tag-sheng { background-color: var(--color-green); }
         .tag-ji { background-color: var(--color-red); }
-        .tag-gs { background-color: #c0392b; margin-bottom: 5px; }
+        
+        /* 關煞標籤點擊效果 */
+        .tag-gs { 
+            background-color: #c0392b; 
+            margin-bottom: 5px; 
+            cursor: pointer; 
+            border-bottom: 1px dashed rgba(255,255,255,0.7);
+            transition: background-color 0.2s;
+        }
+        .tag-gs:hover { background-color: #e74c3c; }
         
         .sheng-ji-desc {
             display: block;
@@ -423,6 +432,63 @@
         .t-bold { font-weight: bold; }
         .t-large { font-size: 1.1em; }
 
+        /* Modal 彈窗樣式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #bdc3c7;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .modal-close:hover { color: #e74c3c; }
+        .modal-title {
+            color: var(--primary-blue);
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eef1f5;
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-weight: bold;
+        }
+        .modal-body ul {
+            padding-left: 22px;
+            color: #34495e;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .modal-body li {
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -438,15 +504,15 @@
     <div id="date-inputs" class="input-section">
         <div class="input-group">
             <label>出生年 (西元)</label>
-            <input type="number" id="inpYear" value="1990">
+            <input type="number" id="inpYear" value="1983">
         </div>
         <div class="input-group">
             <label>出生月</label>
-            <input type="number" id="inpMonth" value="1">
+            <input type="number" id="inpMonth" value="3">
         </div>
         <div class="input-group">
             <label>出生日</label>
-            <input type="number" id="inpDay" value="1">
+            <input type="number" id="inpDay" value="27">
         </div>
         <div class="input-group">
             <label>出生時 (0-23)</label>
@@ -489,8 +555,8 @@
         <div class="input-group">
             <label>性別</label>
             <select id="inpGender">
-                <option value="女" selected>女</option>
-                <option value="男">男</option>
+                <option value="男" selected>男</option>
+                <option value="女">女</option>
             </select>
         </div>
         <div class="input-group">
@@ -518,7 +584,88 @@
     <div id="resultArea"></div>
 </div>
 
+<!-- Modal 彈窗區塊 -->
+<div class="modal-overlay" id="gsModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal(event)">&times;</button>
+        <div class="modal-title" id="gsModalTitle">關煞定義</div>
+        <div class="modal-body" id="gsModalBody"></div>
+    </div>
+</div>
+
 <script>
+// ==========================================
+//    關煞定義解釋庫
+// ==========================================
+const gsDescriptions = {
+    "1. 白虎關": `<ul><li>病应：血毒血糖、血脂、貧血、白血病、免疫系統疾病。</li><li>病应：腹部疾病。</li><li>易有破損瘀傷。</li><li>大運/流年見白虎：易有手術之应，易有突发事情，令人措手不及，考驗应变能力。</li><li>大運/流年：OT 或要工餘時進修 (变相OT)。</li><li>原命白虎宜做「見血」工作。</li></ul>`,
+    "2. 鐵蛇關": `<ul><li>皮膚病、过敏、出疹，生蛇，蚊叮虫咬、香港腳、湿疹。</li><li>只能硬食，頂硬上 (生活上，各方面都易有呢個情況)。</li></ul>`,
+    "3. 直難關 (年支版)": `<ul><li>困難的星星，難以發揮出力量，又名直頭星。</li><li>凡事多困難，主多啾唧 (即多哭泣)。</li><li>必定要面对困難、硬食、迎难而上。</li><li>橫衝直撞，不懂轉弯，容易遇挫折，不停試錯，遍体鱗傷。</li><li>為人較頑固、會強人所难，易得罪人，易与人起衝突，人緣較差，姻缘较差。</li><li>因為習慣磨難，所以內心較強大。</li><li>好堅毅堅持、近乎白咭的 Stubborn、明知不可而為之。</li><li>合做研究工作、控制狂；自閉症、強迫症，易有瘾。</li><li>易受按摩，針灸、走罐之類的痛的治療。</li></ul>`,
+    "3b. 直難關 (月支版)": `<ul><li>困難的星星，難以發揮出力量，又名直頭星。</li><li>凡事多困難，主多啾唧 (即多哭泣)。</li><li>必定要面对困難、硬食、迎难而上。</li><li>橫衝直撞，不懂轉弯，容易遇挫折，不停試錯，遍体鱗傷。</li><li>為人較頑固、會強人所难，易得罪人，易与人起衝突，人緣較差，姻缘较差。</li><li>因為習慣磨難，所以內心較強大。</li><li>好堅毅堅持、近乎白咭的 Stubborn、明知不可而為之。</li><li>合做研究工作、控制狂；自閉症、強迫症，易有瘾。</li><li>易受按摩，針灸、走罐之類的痛的治療。</li></ul>`,
+    "4/5. 夜啼關 (AB配對成功)": `<ul><li>原命：灵異体質/怕黑，長大後失眠、精神差、夢遊。</li><li>工作：dirty工作、清洁、环保，返工地点易选工廈，宜返偏門、夜班。</li><li>疑心重，姻緣較差，積極性低。</li><li>流年：出外時較易遇靈異事件，易出奇难雜症 (~邪病)。</li></ul>`,
+    "4. 夜啼關": `<ul><li>原命：灵異体質/怕黑，長大後失眠、精神差、夢遊。</li><li>工作：dirty工作、清洁、环保，返工地点易选工廈，宜返偏門、夜班。</li><li>疑心重，姻緣較差，積極性低。</li><li>流年：出外時較易遇靈異事件，易出奇难雜症 (~邪病)。</li></ul>`,
+    "6. 桃花煞": `<ul><li>走動多。</li><li>家庭背景複雜，eg 離異，家暴。</li><li>社交動物、較乱。</li><li>流年見桃花易出感情錯乱，借錢，離鄉別井。</li><li>应水病、水土不服、婦科、胸部病。</li><li>月柱：工作接觸人多，Sales。</li></ul>`,
+    "7. 雷公打腦": `<ul><li>雷火之厄、雷击，觸電、燒傷。</li><li>神經緊張、腦神經痛、筋腱痛、易抽筋。</li><li>工作压力大、经常OT。</li><li>頭痛、頸痛。</li><li>小朋友會驚青啲。</li><li>不善於表达，不善辭令 (public speaking)。</li><li>发炎、发烧，小兒麻痺。</li><li>撞傷頭頸，易PK。</li><li>工作：24小時 on call 的工作。</li><li>年柱：与長輩不和。</li><li>失眠、痛症，关節炎。</li></ul>`,
+    "8. 紅艷煞": `<ul><li>感情混乱麻煩，不可告人的关係。</li><li>天生就 Charm、易吸引到狂風浪蝶。</li><li>走苦情路線，自怨自憐。</li><li>合做娛樂圈。</li><li>有財氣、有貴人。</li><li>易有空氣傳播疾病 (呼吸系統)。</li></ul>`,
+    "9. 流霞煞": `<ul><li>霞 -> 晚霞 -> 红 -> 流血。</li><li>血光、流產。</li><li>主要病应：貧血、內出血，便血、大腸瘜肉；女士血崩，子宫肌瘤，难產；心血管病，中風、血压高/低、血友病。</li><li>原命：除体質外，仲主破財，儲到錢會突然要用，横災之应，入不敷支。</li><li>輕症：paper cut，流牙血，爆拆、小損傷。</li><li>化解：自主破財，針灸。</li></ul>`,
+    "10. 千日關": `<ul><li>不适合被父母照顧，宜交托家人，最好離开原生家庭养育，否則孩童易高燒或腦膜炎。</li><li>或長大後易有頭暈暈車浪、幽門螺旋菌、胃病。</li><li>大運/流年：唔痴家。</li></ul>`,
+    "11. 取命關 (要中2粒)": `<ul><li>高處墮下傷頭、腳、PK。</li><li>頭痛，腳痛、膝痛。</li><li>易受驚嚇，細膽。</li><li>高估自己的能力 (先吉後凶)、有頭威無尾陣。</li><li>通常殺你一個措手不及，最有信心嗰吓先出事。</li><li>中此煞的人會較自以為是，越自大越賴野。</li><li>不宜衝動行事，宜畏首畏尾，小心駛得萬年船。</li></ul>`,
+    "12/13. 閻王關 (AB配對成功)": `<ul><li>術數指標，灵異指標、撞邪。</li><li>偏門行業。</li><li>陰氣偏重。</li><li>宜有宗教信仰，沉迷宗教。</li><li>情緒病、精神病指標、易自尋短見。</li></ul>`,
+    "12. 閻王關": `<ul><li>術數指標，灵異指標、撞邪。</li><li>偏門行業。</li><li>陰氣偏重。</li><li>宜有宗教信仰，沉迷宗教。</li><li>情緒病、精神病指標、易自尋短見。</li></ul>`,
+    "14. 雞飛關 (要中2粒)": `<ul><li>為人膽小怕事，做事沒信心，玻璃心，怕失敗。</li><li>只可以做沒人做过的事，因為無比較無傷害，易走向做創新的事。</li><li>可以学門手藝，因為要先有手藝根基先可以演变出新野。</li><li>大運/流年：做舊/傳統世界會惹是非被非議，可於此時學新手藝。</li><li>心急，急於創出自己一套新嘢，會全情投入，廢寢忘餐。</li><li>多為藝術家，因為不斷創新，創作家工作，eg. designer, 作家, programmer。</li><li>很自然地就不跟主流，不喜欢 follow 現有框架。</li><li>病应：木病 -> 肝膽、筋腱、痛症、消化系統。</li><li>學术數就要學独家野、秘方野。</li></ul>`,
+    "15. 落井關": `<ul><li>居室外牆入水、水喉有問題、倒灌、忘關水、冷氣机滴水。</li><li>水腫，淋巴腫塞、泌尿系統、鼻水、淚水/口水。</li><li>愛飲酒、損腎氣。</li><li>毅力較弱、半途而廢，自動投降，無鬥志。</li><li>大運流年：向下流、物質享受自己減以应对此劫，否則會係其他地方奪去你嘅野迫你向下流。</li><li>原命：唔好用最靚啲野，用次等。</li><li>月柱：工作上顛沛流離，較適合做 piece rate work，被同輩奚落。</li><li>年柱：家道中落，被窮养，被父母奚落。</li><li>時柱：買靚野但好快貶值、被子女奚落、投資失利。</li><li>易犯水險。</li></ul>`,
+    "16. 急腳煞": `<ul><li>(比急腳关大力)</li><li>急急子，坐言起行，Chur住去。迫自己快，迫身边人快，但件事就真係會表面咗，粗疏。</li><li>反应快、回应快，但有時太快會出事，太武断，會誤判。</li><li>脾氣忍唔到，無耐性。</li><li>唔會排隊唔會等。</li><li>命中要学習戒急忍耐，訓練韌性。</li></ul>`,
+    "17. 斷腸關": `<ul><li>哭斷腸，易傷心，易情绪低落，多愁善感，自閉、抑鬱指標。</li><li>人際关係較疏離，但对人較冷漠 / 別人觉得佢冷漠。</li><li>共情感重，容易受外界負面情绪影响。</li><li>如生活圈較多情绪有問題的人會較好。</li><li>情感較压抑。</li><li>遇此煞宜揾個宗教依靠 (要经常 deal with 有情緒問題的人們，如德蘭修女)。</li><li>合做偏門工作. eg.殯儀, 心理医生, 社工、義工, 身心灵治療、精神科、救死扶傷 NGO。</li><li>流年：親人離世，伴侣关係較差多屈結。</li></ul>`,
+    "18. 和尚關 (要中2粒)": `<ul><li>对宗教有傾斜意向、術数/宗教指標。</li><li>思想出世脱俗。</li><li>爱孤獨，哲学腦 emotional，追求以宗教安穩情绪。</li><li>孤僻、禪修、single bowl。</li><li>Prefer独立工作。</li><li>流年見和尚：寂寂無名，無人賞識、与伴侶疏離 (eg. long d. 恋、日夜錯开)。</li></ul>`,
+    "19. 天狗關": `<ul><li>口舌是非吵架星。</li><li>家嘈屋閉。</li><li>易与人有磨擦 -> 做是非行業可用 eg. KOL、網媒。</li><li>皮膚差，紅腫潰爛 -> 做皮膚科医生。</li><li>疤痕之应 -> 紋身師、紋眉。</li></ul>`,
+    "20. 五鬼關": `<ul><li>死氣沉沉，陰氣重。</li><li>為人較不願意爭取，不願意努力，工作動力較差，無目標、迷失。</li><li>有精神困擾、厭世 (會自殺)、無力感重。</li><li>年柱/月柱：內向，不願社交、爱宅在家，較靜態。</li><li>見殯儀館、墓地、寺廟之類孤寡氣重之地，具敏感体質。</li><li>不懼怕去大酒店、寺廟庵堂 -> 年/月柱見五鬼，易走進忌諱行業。</li><li>原命無的話，純大運流年力度大好多。</li><li>時柱：興趣較靜態/独自進行，性情孤独、夜瞓、喜愛夜蒲。</li><li>年月柱：夜班/工作压力大失眠 -> 走位：揾要返夜的工 (eg美股)、有宗教信仰。</li><li>大運/流年見五鬼：該時期會較意志消沉、挫敗感重、提不起勁；可能遇白事 -> 影响情绪消極。</li></ul>`,
+    "21. 撞命關": `<ul><li>爭拗，易与家人有衝突，与家人关係較差。</li><li>自幼家人一起背祖離鄉可应关，与家人关係就唔差。</li><li>自幼由他人湊 (eg跟爺嫲住，一星期先返家一次)。</li><li>工作上，社交上會遇到一啲好照顧自己的長輩 (父母 substitute)。</li><li>月柱：朋友去晒外国 (不是没朋友，只是不在身边)、兄弟較疏離。</li><li>影响手腳筋腱关節之应，撞瘀手腳。</li><li>月柱/年柱：父母关係較应。</li><li>時柱：子女緣薄，eg 無子女。</li></ul>`,
+    "22. 埋兒關": `<ul><li>長輩緣薄、与父母貼錯門神。</li><li>想搬離父母，避免家庭聚會。</li><li>原命埋兒 + 大運/流年吉兒 -> 上司會提攜 (吉应)。</li><li>原命無埋兒 + 大運/流年埋兒 -> 父母关係差 / 上司关係差 / 被投閒置散。</li></ul>`,
+    "23. 鬼門關": `<ul><li>好有性格，討厭跟主流/大隊、專登 against 主流。</li><li>不愛隨波逐流 -> 衣着非常独特，奇裝異服。</li><li>各方面的喜好，選擇都要非主流。</li><li>陰陽怪氣，包拗頸。</li><li>多為自由職業/打散工 (不想被社會規範)。</li><li>大運/流年：會觉得伴侣讲咩都唔啱听，可能想換一個；单身者，可能會遇到個同以前好唔同的对象 / 灵異体質 / 有精神情绪問題 / 有怪僻 / 宗教異端。</li></ul>`,
+    "24. 短命關": `<ul><li>失眠 夜鬼、日夜顛倒，晚間工作、shift。OT至10pm失眠，爛玩。</li><li>噪音。</li><li>心緒不寧，思慮過多，個腦停唔到。</li><li>大運/流年：特別夜收工，特別多應酬，可以多啲放工後去街应數，或者煲劇打机搞到自己夜瞓。</li><li>改頭換面. eg. 剪短髮，大幅度整容，衣著style改变。</li><li>日柱：擇偶考慮會突变，或拍拖pattern突变。</li></ul>`,
+    "25. 劫煞關": `<ul><li>破財，洗劫一空，大駛。</li><li>不利投資。</li><li>流年遇劫煞，可租樓化解。</li></ul>`,
+    "26. 天吊關": `<ul><li>痠麻痛、宜針灸處理 慢性发炎。</li><li>如果三白眼/鬥雞眼，脑部問題高危，易有抽筋、羊癇、自律神經問題、hormone issue。</li><li>活在自己世界，不理別人，性格內向，凡事置身事外。</li><li>自得其樂，宅男，逃避現實。</li><li>不合 team work，宜独立工作，remote工作。</li><li>大運流年天吊：除病应，可以应孤寂。</li><li>大運流年：會沉迷兴趣+散財、無心工作；如兴趣即工作，工作會突飛猛進，仲揾到錢。</li></ul>`,
+    "27. 湯火煞": `<ul><li>燙傷，曬傷 會留疤 (联想到医美)、发烧体質/心血管問題。</li><li>喉嚨潰爛. eg生痱滋。</li><li>別人會安排难處理的工作給此人，突发事情，24小時 on call。</li><li>因衝動心急而坏事，宜走穩陣路線。</li><li>時柱：有流產之厄、鍾意 R著数 貪小便宜。</li><li>月柱：會易有股中問題，宜多留意，易因小失大。</li></ul>`,
+    "28. 金鎖匙": `<ul><li>破財，失物盗賊。</li><li>經常買好多野又唔用。</li><li>不合投资、流年見此煞尤其易投資損手。</li><li>理財觀念差。</li><li>爱好敗家玩意、追棒名牌。</li><li>今朝有酒今朝醉，豪爽。</li><li>古時會立小妾，花天酒地。</li><li>流年見此煞就去吓旅行，上堂 (拎張cert 冇咩用 但洗錢)。</li><li>可以从事 luxury goods 行業。</li></ul>`,
+    "29. 浴盆關": `<ul><li>肝功能較弱，較易有脂肪肝，肝硬化 -> 面色较黃，有斑。</li><li>較易有细菌感染，尤其係四肢，关節。</li><li>怕悶 愛結伴。</li><li>易受朋輩影响，豬朋狗友、三教九流 -> 易有破財之应。</li><li>流年見浴盆宜審慎交友。</li><li>病应：肝氣 -> 外連筋腱。</li></ul>`,
+    "30. 將軍箭 (要中2粒)": `<ul><li>出門遇險，不利離鄉別井，會被欺压、多病，橫禍之应 動刀。</li><li>曾有命主原命有2-3粒就年幼時意外身亡。</li><li>宜留守家鄉 (出生地)，廣州出世去咗北京都算，出国的話就更大力。</li><li>之应期：秋冬特別应。</li><li>一箭像流死，二箭不滿把歲亡，三箭為人能死，四箭過得十二秋。</li><li>工作上利靜不利動。</li><li>長輩緣薄，易与父母起衝突。工作上树敵 被放暗箭。</li><li>伴侶之父母不喜伴侣，即男方父母不喜女方，或女方父母不喜男方。</li><li>易有職業病，因工作关係而產生的傷病，甚至返过夜班轉返日班但晚上瞓唔到。</li><li>有時流年將軍箭不易察覺. eg 返咗份工 搬位後成日病，有可能會係流年將軍箭嘅力推咗佢坐去病位/冷氣出風位。</li><li>可用針灸应劫。</li></ul>`,
+    "31. 血刃關": `<ul><li>易出痘痘，皮膚相对差、出疹、肝火旺。</li><li>易有血光、刀傷、小傷口，打針留意糖尿。</li><li>血压問題。</li><li>女士留意 period 問題、流產/应力生產。</li><li>男士：痔瘡。</li><li>衝動，易做錯決定，脾氣差。</li><li>大運流年：躁狂、情緒失控，易发脾氣易鬧人。</li></ul>`,
+    "32. 基敗關 (要中2粒)": `<ul><li>如注意！盤腔、血崩、婦科，男士留意前列腺、痔瘡/腳患。</li><li>影响遺產傳承。</li><li>如無病应，則財庫失守，原命中基敗，儲唔到錢。</li><li>流年大運：失財於讀書學習，但通常都係自学，学咗啲無用嘅嘢/电騙。</li><li>家中漏水、牆身卜起。</li><li>家中/office附近不停有裝修 (聲煞)。</li></ul>`,
+    "33. 下情關": `<ul><li>破壞父母关係，与父母关係疏離有隔膜。</li><li>有可能应於父母離異，或父母早逝。</li><li>与長輩極少联络，甚至不祭祖。</li><li>如果应得咁甘，反而有上司前輩助力。</li><li>大運/流年：与父母/上司关係差，有爭執，不得上司助力，手術動刀，血光。</li></ul>`,
+    "34. 百日關 (要中2粒)": `<ul><li>不懂拒絕人，人地叫佢試乜都試，易近墨者黑。</li><li>經常遇到啲點著佢嘅人，听埋晒啲無用/無建設性的意見。</li><li>自己一手包辦。</li><li>個人衛生較差，先天較易过敏，免疫力較差。</li><li>不愛改变 prefer穩定，有特定 Schedule。</li><li>好命的，會較快悟出不变会对自理有利。</li><li>工作辛苦：不拒绝上司要求，食豬頭骨。</li><li>(女命) 留級、愛情長跑 (齋拍拖唔结婚生仔)。</li></ul>`,
+    "35. 斷橋關": `<ul><li>同水無关。</li><li>臍帶勒頸。</li><li>窒息 哮喘、心肺功能，呼吸系統較弱、睡眠窒息 先天問題， 失眠。</li><li>長大後，易与人起爭執、爭拗中又被說服，但心不服，形成精神压力，情緒問題、易焦慮 周身痛。</li><li>大運流年：压力、情绪來襲，周身痛 身心俱疲 返早推更抵夜，容易遇溺。</li></ul>`,
+    "36. 四柱關": `<ul><li>犯土煞，宜 starch。</li><li>脾胃弱，消化(極肥/極瘦)、濕氣重 難驅走，反应較慢(腦筋及手腳)。</li><li>易受外界干擾，較單純，平衡力較差，易PK。學習能力較弱，要將勤補拙。</li><li>較自卑，家中多雜物。</li><li>流年：肥胖 遇裝修噪音。</li></ul>`,
+    "37. 水火關": `<ul><li>强迫症，不喜欢别人移動自己啲嘢。</li><li>不喜改变，每日同一款早餐。</li><li>睇唔過眼地方 dirty/乱。</li><li>自成一套，难同人夾 -> 姻缘自然差。</li><li>返工易与同事起衝突，太多細微野有自己概定做法。</li><li>宜独立工作。</li><li>与人夾唔到而收得埋。</li><li>流年：該年同人特別唔夾，疏遠人群。</li><li>腸胃弱，大腸瘜肉、食物中毒。</li><li>大運流年：特別會有人搞乱你啲嘢，屋企office隔離左右不停裝修。</li></ul>`,
+    "38. 深水關": `<ul><li>遺傳病，慢性病，長期病。</li><li>与家族緣份薄与祖辈有刑剋，長大後較大机會搬離家，与父母关係疏離。</li><li>与父母信仰(政治)取態不同。</li><li>父母離異/父或母早逝(<-15歲)。</li><li>大運流年：与長輩 上司鬧交，矛盾，与政府有官非，或政府修例对事主有负面影响。</li></ul>`,
+    "39. 四季關": `<ul><li>先天無資源，要自食其力。</li><li>either 被命運折磨到失去晒鬥志，堅持到嘅就會出頭。</li><li>轉季就病、風邪病，易受天氣影响(身体同心情)、衛氣差。</li><li>工作不長久，成日想轉，最好做 project based 工作，最好做有季節性工作、宜返shift。</li><li>生活上都不喜欢長期做同样的事 困喺同一個地方。</li><li>感情易受考驗，因為想轉，想間中就淡季OFF。</li></ul>`,
+    "40. 急腳關": `<ul><li>腳部問題 扁平足、姆趾外翻。</li><li>工作上被連累、或無法的起心肝去做，一直拖延。</li><li>做事事倍功半。</li></ul>`,
+    "41. 金鎖關 (掌訣)": `<ul><li>(鎖喉)</li><li>影响金病，肺喉呼吸系統、氣虛，慢性咽喉炎，睡眠窒息症、吞咽問題、聲帶問題。</li><li>窒息，血氣問題 -> 毒素積聚 -> 代謝差，慢性疲勞 免疫系統問題。</li><li>皮膚問題、頸椎問題、甲狀腺。</li><li>面对压力時，會覺得條氣/心口頂住。</li><li>Public speech時 會结结巴巴、開唔到口咁。</li><li>表达有障礙，可以係兒時遇到某些事而以至失語/表达問題。</li><li>如纳音有金 會連爆，即金錢引爆纳音金。</li><li>如何判定嚴重程度？睇叠象 原命主中金鎖+鐵蛇 同損金氣，則金病病情會較重。</li></ul>`
+};
+
+// 打開關煞定義 Modal
+function showGuanShaInfo(gsName) {
+    let desc = gsDescriptions[gsName];
+    if (!desc) {
+        // Fallback for names that might not exactly match the dictionary keys
+        for (let key in gsDescriptions) {
+            if (gsName.includes(key) || key.includes(gsName.replace(/[0-9.]/g, '').trim())) {
+                desc = gsDescriptions[key];
+                break;
+            }
+        }
+    }
+    
+    if (desc) {
+        document.getElementById('gsModalTitle').innerText = `【 ${gsName} 】定義解釋`;
+        document.getElementById('gsModalBody').innerHTML = desc;
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
+
+function closeModal(event) {
+    document.getElementById('gsModal').style.display = 'none';
+}
+
 // ==========================================
 //    全域變數與初始化
 // ==========================================
@@ -566,12 +713,13 @@ const JiRules = [
 ];
 
 // ----------------------------------------------------
-// 完整版 40 關煞判斷規則 (包含 AB 組拆分與條件修正)
+// 完整版 40 關煞判斷規則 (包含 AB 組拆分與正確映射)
 // ----------------------------------------------------
 const gsRules = [
     { name: "1. 白虎關", type: "nayin_day", mapping: { "火":[0], "金":[3], "水":[6], "土":[6], "木":[9] } },
     { name: "2. 鐵蛇關", type: "nayin_day", mapping: { "火":[7,8], "金":[10], "水":[1,2], "土":[1,2], "木":[4] } }, 
     { name: "3. 直難關 (年支版)", type: "day_stem", mapping: { 0:[4,10,1,7], 1:[4,10,1,7], 4:[4,10,1,7], 5:[4,10,1,7], 2:[2,8,5,11], 6:[2,8,5,11] } },
+    { name: "3b. 直難關 (月支版)", type: "month_branch", mapping: { 2:[6], 3:[6], 4:[7], 5:[7], 6:[3,10], 7:[3,10], 8:[5,8], 9:[5,8], 10:[2,11], 11:[2,11], 0:[4,9], 1:[4,9] } },
     { name: "夜啼關A", type: "day_branch", mapping: { 0:[7], 6:[7], 3:[7], 9:[7], 2:[9], 8:[9], 5:[9], 11:[9], 4:[1], 10:[1], 1:[1], 7:[1] } }, 
     { name: "夜啼關B", type: "month_branch", mapping: { 2:[6], 3:[6], 4:[6], 5:[9], 6:[9], 7:[9], 8:[0], 9:[0], 10:[0], 11:[3], 0:[3], 1:[3] } },
     { name: "6. 桃花煞", type: "day_branch", mapping: { 2:[3], 6:[3], 10:[3], 5:[6], 9:[6], 1:[6], 8:[9], 0:[9], 4:[9], 11:[0], 3:[0], 7:[0] } },
@@ -598,7 +746,7 @@ const gsRules = [
     { name: "27. 湯火煞", type: "day_branch", mapping: { 0:[6], 6:[6], 3:[6], 9:[6], 4:[7], 10:[7], 1:[7], 7:[7], 2:[2], 8:[2], 5:[2], 11:[2] } },
     { name: "28. 金鎖匙", type: "month_branch", mapping: { 2:[8], 8:[8], 3:[9], 9:[9], 4:[10], 10:[10], 5:[11], 11:[11], 6:[0,5], 0:[0,5], 1:[1], 7:[1] } },
     { name: "29. 浴盆關", type: "month_branch", mapping: { 2:[4], 3:[4], 4:[4], 5:[7], 6:[7], 7:[7], 8:[10], 9:[10], 10:[10], 11:[1], 0:[1], 1:[1] } },
-    { name: "30. 將軍箭 (見寅/午/戌)", type: "month_branch", mapping: { 0:[2,6,10], 1:[2,6,10], 2:[2,6,10], 3:[2,6,10], 4:[2,6,10], 5:[2,6,10], 6:[2,6,10], 7:[2,6,10], 8:[2,6,10], 9:[2,6,10], 10:[2,6,10], 11:[2,6,10] } },
+    { name: "30. 將軍箭 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[9,10,4], 3:[9,10,4], 4:[9,10,4], 5:[7,3,0], 6:[7,3,0], 7:[7,3,0], 8:[6,2,10], 9:[6,2,10], 10:[6,2,10], 11:[11,8,5], 0:[11,8,5], 1:[11,8,5] } },
     { name: "31. 血刃關", type: "month_branch", mapping: { 0:[6], 1:[0], 2:[1], 3:[7], 4:[2], 5:[8], 6:[3], 7:[9], 8:[4], 9:[10], 10:[5], 11:[11] } },
     { name: "32. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4,5], 6:[0,4,5], 7:[0,4,5], 8:[1,8,9], 9:[1,8,9], 10:[1,8,9], 11:[2,3,6], 0:[2,3,6], 1:[2,3,6] } },
     { name: "33. 下情關", type: "month_branch", mapping: { 2:[2,9,0], 3:[2,9,0], 4:[2,9,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[1,8], 9:[1,8], 10:[1,8], 11:[0,6], 0:[0,6], 1:[0,6] } },
@@ -702,7 +850,7 @@ function findDateFromGanzhi(baseYear, targetMBranch, targetDStem, targetDBranch,
 }
 
 // 關煞判斷核心函式 (已修正規避基準柱，全面解決「自己撞自己」的問題)
-function evaluateAllGuanSha(basePillars, targetPillars, mingBranch) {
+function evaluateAllGuanSha(basePillars, targetPillars) {
     let triggered = [];
     let dayPillar = basePillars.find(p => p.name === '日柱') || {};
     let monthPillar = basePillars.find(p => p.name === '月柱') || {};
@@ -728,9 +876,8 @@ function evaluateAllGuanSha(basePillars, targetPillars, mingBranch) {
             // 從搜尋池中排除「觸發基準的該柱地支」，避免自己撞自己
             let searchPool = targetPillars.map(p => p.branch);
             
-            // 修正：僅 day_branch, day_stem 排除日支；month_branch 排除月支。
-            // 鐵蛇與白虎關為 nayin_day 需包含全盤掃描
-            if (rule.type === "day_branch" || rule.type === "day_stem") {
+            // 包含 day_stem, day_branch, nayin_day 皆排除日支；month_branch 排除月支。
+            if (rule.type === "day_branch" || rule.type === "day_stem" || rule.type === "nayin_day") {
                 searchPool = targetPillars.filter(p => p.name !== '日柱').map(p => p.branch);
             } else if (rule.type === "month_branch") {
                 searchPool = targetPillars.filter(p => p.name !== '月柱').map(p => p.branch);
@@ -761,8 +908,8 @@ function evaluateAllGuanSha(basePillars, targetPillars, mingBranch) {
         else finalTriggers.push(t);
     });
 
-    if (hasYeTiA && hasYeTiB) finalTriggers.push("4. 夜啼關");
-    if (hasYanWangA && hasYanWangB) finalTriggers.push("12. 閻王關");
+    if (hasYeTiA && hasYeTiB) finalTriggers.push("4/5. 夜啼關 (AB配對成功)");
+    if (hasYanWangA && hasYanWangB) finalTriggers.push("12/13. 閻王關 (AB配對成功)");
     
     // 【特殊掌訣計算】：41. 金鎖關 (地元部)
     let genderStr = document.getElementById('inpGender').value;
@@ -782,20 +929,6 @@ function evaluateAllGuanSha(basePillars, targetPillars, mingBranch) {
         if (hasJinSuo) {
             finalTriggers.push("41. 金鎖關 (掌訣)");
         }
-    }
-
-    // 【特殊命宮計算】：42. 直難關 (七政命宮版)
-    // 以月份地支對應命宮星曜
-    let zhiNanTargets = [];
-    if (monthBranch === 2 || monthBranch === 3) zhiNanTargets = [6];
-    else if (monthBranch === 4 || monthBranch === 5) zhiNanTargets = [7];
-    else if (monthBranch === 6 || monthBranch === 7) zhiNanTargets = [3, 10];
-    else if (monthBranch === 8 || monthBranch === 9) zhiNanTargets = [5, 8];
-    else if (monthBranch === 10 || monthBranch === 11) zhiNanTargets = [2, 11];
-    else if (monthBranch === 0 || monthBranch === 1) zhiNanTargets = [4, 9];
-
-    if (mingBranch !== undefined && zhiNanTargets.includes(mingBranch)) {
-        finalTriggers.push("3b. 直難關 (七政命宮版)");
     }
 
     // 回傳唯一不重複的關煞名稱
@@ -1043,11 +1176,15 @@ function runCalculation() {
     html += `</div>`;
 
     // --- 【原局關煞統計】 ---
-    let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars, mingBranch);
+    let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars);
+    
+    // 【處理關煞點擊彈窗功能】
+    let gsDisplayHtml = natalGsList.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+
     if (natalGsList.length > 0) {
         html += `<div class="sheng-ji-box guansha">
-            <div class="sheng-ji-header">⚠️ 原局關煞統計</div>
-            <div>${natalGsList.map(g => `<span class="sheng-ji-tag tag-gs">${g}</span>`).join('')}</div>
+            <div class="sheng-ji-header">⚠️ 原局關煞統計 (點擊可看詳情)</div>
+            <div>${gsDisplayHtml}</div>
         </div>`;
     }
 
@@ -1095,13 +1232,14 @@ function runCalculation() {
         let dyM = findShengJiMatches(dyPillarsTest, true);
         
         // 【大運關煞判斷】 (排除原命已觸發)
-        let dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest, mingBranch);
+        let dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest);
         let dyGsListNew = dyGsListAll.filter(g => !natalGsList.includes(g));
 
         if(dyM.length > 0 || dyGsListNew.length > 0) {
             dayunMatchesHtml += `<li style="margin-bottom:8px;"><b>[${ageLabel}大運] ${dyGZ_loop}：</b><ul style="margin-top:4px;">`;
             if (dyGsListNew.length > 0) {
-                dayunMatchesHtml += `<li><span style="color:#c0392b; font-weight:bold;">觸發關煞：</span> ${dyGsListNew.join(', ')}</li>`;
+                let dyGsDisplay = dyGsListNew.map(g => `<span class="tag-gs" style="color:white; display:inline-block; padding:2px 6px; border-radius:4px;" onclick="showGuanShaInfo('${g}')">${g}</span>`).join(' ');
+                dayunMatchesHtml += `<li><span style="color:#c0392b; font-weight:bold;">觸發關煞：</span> ${dyGsDisplay}</li>`;
             }
             dyM.forEach(m => dayunMatchesHtml += `<li>${m}</li>`);
             dayunMatchesHtml += `</ul></li>`;
@@ -1111,7 +1249,7 @@ function runCalculation() {
 
     if (dayunMatchesHtml) {
         html += `<div class="sheng-ji-box">
-                    <div class="sheng-ji-header">⚠️ 各柱大運新增之 五勝六忌 / 關煞</div>
+                    <div class="sheng-ji-header">⚠️ 各柱大運新增之 五勝六忌 / 關煞 (點擊關煞看詳情)</div>
                     <ul style="list-style-type: none; padding-left: 0;">${dayunMatchesHtml}</ul>
                  </div>`;
     }
@@ -1232,14 +1370,16 @@ function runCalculation() {
         }
 
         // 【流年關煞判斷】(排除大運與原命已發生的)
-        let dyGsListAll = currDyStem !== -1 ? evaluateAllGuanSha(natalPillars, lnPillarsTest.slice(0, 5), mingBranch) : natalGsList;
-        let lnGsListAll = evaluateAllGuanSha(natalPillars, lnPillarsTest, mingBranch);
+        let dyGsListAll = currDyStem !== -1 ? evaluateAllGuanSha(natalPillars, lnPillarsTest.slice(0, 5)) : natalGsList;
+        let lnGsListAll = evaluateAllGuanSha(natalPillars, lnPillarsTest);
         let lnGsListNew = lnGsListAll.filter(g => !dyGsListAll.includes(g));
 
         if (lnGsListNew.length > 0) {
+            let lnGsDisplay = lnGsListNew.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+            
             html += `<div style="margin-top: 15px; padding: 12px 18px; background: #fff5f5; border: 1px dashed #e74c3c; border-radius: 6px;">
-                <div style="color: #c0392b; font-weight: bold; margin-bottom: 8px;">⚠️ 當局流年新增觸發關煞：</div>
-                <div>${lnGsListNew.map(g => `<span style="display:inline-block; padding:3px 8px; background:#e74c3c; color:white; border-radius:4px; font-size:0.9em; margin-right:6px;">${g}</span>`).join('')}</div>
+                <div style="color: #c0392b; font-weight: bold; margin-bottom: 8px;">⚠️ 當局流年新增觸發關煞 (點擊可看詳情)：</div>
+                <div>${lnGsDisplay}</div>
             </div>`;
         }
 
