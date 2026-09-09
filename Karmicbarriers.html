@@ -571,7 +571,7 @@ const JiRules = [
 const gsRules = [
     { name: "1. 白虎關", type: "nayin_day", mapping: { "火":[0], "金":[3], "水":[6], "土":[6], "木":[9] } },
     { name: "2. 鐵蛇關", type: "nayin_day", mapping: { "火":[7,8], "金":[10], "水":[1,2], "土":[1,2], "木":[4] } }, 
-    { name: "3. 直難關", type: "day_stem", mapping: { 0:[4,10,1,7], 1:[4,10,1,7], 4:[4,10,1,7], 5:[4,10,1,7], 2:[2,8,5,11], 6:[2,8,5,11] } },
+    { name: "3. 直難關 (年支版)", type: "day_stem", mapping: { 0:[4,10,1,7], 1:[4,10,1,7], 4:[4,10,1,7], 5:[4,10,1,7], 2:[2,8,5,11], 6:[2,8,5,11] } },
     { name: "夜啼關A", type: "day_branch", mapping: { 0:[7], 6:[7], 3:[7], 9:[7], 2:[9], 8:[9], 5:[9], 11:[9], 4:[1], 10:[1], 1:[1], 7:[1] } }, 
     { name: "夜啼關B", type: "month_branch", mapping: { 2:[6], 3:[6], 4:[6], 5:[9], 6:[9], 7:[9], 8:[0], 9:[0], 10:[0], 11:[3], 0:[3], 1:[3] } },
     { name: "6. 桃花煞", type: "day_branch", mapping: { 2:[3], 6:[3], 10:[3], 5:[6], 9:[6], 1:[6], 8:[9], 0:[9], 4:[9], 11:[0], 3:[0], 7:[0] } },
@@ -598,7 +598,7 @@ const gsRules = [
     { name: "27. 湯火煞", type: "day_branch", mapping: { 0:[6], 6:[6], 3:[6], 9:[6], 4:[7], 10:[7], 1:[7], 7:[7], 2:[2], 8:[2], 5:[2], 11:[2] } },
     { name: "28. 金鎖匙", type: "month_branch", mapping: { 2:[8], 8:[8], 3:[9], 9:[9], 4:[10], 10:[10], 5:[11], 11:[11], 6:[0,5], 0:[0,5], 1:[1], 7:[1] } },
     { name: "29. 浴盆關", type: "month_branch", mapping: { 2:[4], 3:[4], 4:[4], 5:[7], 6:[7], 7:[7], 8:[10], 9:[10], 10:[10], 11:[1], 0:[1], 1:[1] } },
-    { name: "30. 將軍箭 (見寅/午/戌)", type: "month_branch", mapping: { 2:[9,10,4], 3:[9,10,4], 4:[9,10,4], 5:[7,0,3], 6:[7,0,3], 7:[7,0,3], 8:[6,2,10], 9:[6,2,10], 10:[6,2,10], 11:[5,8,11], 0:[5,8,11], 1:[5,8,11] } },
+    { name: "30. 將軍箭 (見寅/午/戌)", type: "month_branch", mapping: { 0:[2,6,10], 1:[2,6,10], 2:[2,6,10], 3:[2,6,10], 4:[2,6,10], 5:[2,6,10], 6:[2,6,10], 7:[2,6,10], 8:[2,6,10], 9:[2,6,10], 10:[2,6,10], 11:[2,6,10] } },
     { name: "31. 血刃關", type: "month_branch", mapping: { 0:[6], 1:[0], 2:[1], 3:[7], 4:[2], 5:[8], 6:[3], 7:[9], 8:[4], 9:[10], 10:[5], 11:[11] } },
     { name: "32. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4,5], 6:[0,4,5], 7:[0,4,5], 8:[1,8,9], 9:[1,8,9], 10:[1,8,9], 11:[2,3,6], 0:[2,3,6], 1:[2,3,6] } },
     { name: "33. 下情關", type: "month_branch", mapping: { 2:[2,9,0], 3:[2,9,0], 4:[2,9,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[1,8], 9:[1,8], 10:[1,8], 11:[0,6], 0:[0,6], 1:[0,6] } },
@@ -702,7 +702,7 @@ function findDateFromGanzhi(baseYear, targetMBranch, targetDStem, targetDBranch,
 }
 
 // 關煞判斷核心函式 (已修正規避基準柱，全面解決「自己撞自己」的問題)
-function evaluateAllGuanSha(basePillars, targetPillars) {
+function evaluateAllGuanSha(basePillars, targetPillars, mingBranch) {
     let triggered = [];
     let dayPillar = basePillars.find(p => p.name === '日柱') || {};
     let monthPillar = basePillars.find(p => p.name === '月柱') || {};
@@ -728,8 +728,9 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
             // 從搜尋池中排除「觸發基準的該柱地支」，避免自己撞自己
             let searchPool = targetPillars.map(p => p.branch);
             
-            // 修正：包含 day_stem 與 nayin_day 等所有以日柱為基準的判斷，皆需排除日柱本身的地支
-            if (rule.type === "day_branch" || rule.type === "day_stem" || rule.type === "nayin_day") {
+            // 修正：僅 day_branch, day_stem 排除日支；month_branch 排除月支。
+            // 鐵蛇與白虎關為 nayin_day 需包含全盤掃描
+            if (rule.type === "day_branch" || rule.type === "day_stem") {
                 searchPool = targetPillars.filter(p => p.name !== '日柱').map(p => p.branch);
             } else if (rule.type === "month_branch") {
                 searchPool = targetPillars.filter(p => p.name !== '月柱').map(p => p.branch);
@@ -737,7 +738,6 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
 
             if (rule.count) {
                 // 如果需要中 2 粒：判斷該搜尋池中，符合目標地支的「總數量」是否達標
-                // filter length 不會排除重複值，中兩個相同地支也會判定為 2 粒
                 let count = searchPool.filter(b => targets.includes(b)).length;
                 if (count >= rule.count) {
                     triggered.push(rule.name);
@@ -761,11 +761,10 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
         else finalTriggers.push(t);
     });
 
-    if (hasYeTiA && hasYeTiB) finalTriggers.push("4/5. 夜啼關 (AB配對成功)");
-    if (hasYanWangA && hasYanWangB) finalTriggers.push("12/13. 閻王關 (AB配對成功)");
+    if (hasYeTiA && hasYeTiB) finalTriggers.push("4. 夜啼關");
+    if (hasYanWangA && hasYanWangB) finalTriggers.push("12. 閻王關");
     
     // 【特殊掌訣計算】：41. 金鎖關 (地元部)
-    // 規則：戌位(10)開始子年，順時針數年月日時支。男命落辰戌(4,10)，女命落丑未(1,7)為金鎖。
     let genderStr = document.getElementById('inpGender').value;
     let isMale = (genderStr === "男");
     let yB = basePillars.find(p => p.name === '年柱')?.branch;
@@ -783,6 +782,20 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
         if (hasJinSuo) {
             finalTriggers.push("41. 金鎖關 (掌訣)");
         }
+    }
+
+    // 【特殊命宮計算】：42. 直難關 (七政命宮版)
+    // 以月份地支對應命宮星曜
+    let zhiNanTargets = [];
+    if (monthBranch === 2 || monthBranch === 3) zhiNanTargets = [6];
+    else if (monthBranch === 4 || monthBranch === 5) zhiNanTargets = [7];
+    else if (monthBranch === 6 || monthBranch === 7) zhiNanTargets = [3, 10];
+    else if (monthBranch === 8 || monthBranch === 9) zhiNanTargets = [5, 8];
+    else if (monthBranch === 10 || monthBranch === 11) zhiNanTargets = [2, 11];
+    else if (monthBranch === 0 || monthBranch === 1) zhiNanTargets = [4, 9];
+
+    if (mingBranch !== undefined && zhiNanTargets.includes(mingBranch)) {
+        finalTriggers.push("3b. 直難關 (七政命宮版)");
     }
 
     // 回傳唯一不重複的關煞名稱
@@ -1030,7 +1043,7 @@ function runCalculation() {
     html += `</div>`;
 
     // --- 【原局關煞統計】 ---
-    let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars);
+    let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars, mingBranch);
     if (natalGsList.length > 0) {
         html += `<div class="sheng-ji-box guansha">
             <div class="sheng-ji-header">⚠️ 原局關煞統計</div>
@@ -1082,7 +1095,7 @@ function runCalculation() {
         let dyM = findShengJiMatches(dyPillarsTest, true);
         
         // 【大運關煞判斷】 (排除原命已觸發)
-        let dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest);
+        let dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest, mingBranch);
         let dyGsListNew = dyGsListAll.filter(g => !natalGsList.includes(g));
 
         if(dyM.length > 0 || dyGsListNew.length > 0) {
@@ -1219,8 +1232,8 @@ function runCalculation() {
         }
 
         // 【流年關煞判斷】(排除大運與原命已發生的)
-        let dyGsListAll = currDyStem !== -1 ? evaluateAllGuanSha(natalPillars, lnPillarsTest.slice(0, 5)) : natalGsList;
-        let lnGsListAll = evaluateAllGuanSha(natalPillars, lnPillarsTest);
+        let dyGsListAll = currDyStem !== -1 ? evaluateAllGuanSha(natalPillars, lnPillarsTest.slice(0, 5), mingBranch) : natalGsList;
+        let lnGsListAll = evaluateAllGuanSha(natalPillars, lnPillarsTest, mingBranch);
         let lnGsListNew = lnGsListAll.filter(g => !dyGsListAll.includes(g));
 
         if (lnGsListNew.length > 0) {
