@@ -504,19 +504,19 @@
     <div id="date-inputs" class="input-section">
         <div class="input-group">
             <label>出生年 (西元)</label>
-            <input type="number" id="inpYear" value="1983">
+            <input type="number" id="inpYear" value="1973">
         </div>
         <div class="input-group">
             <label>出生月</label>
-            <input type="number" id="inpMonth" value="3">
+            <input type="number" id="inpMonth" value="12">
         </div>
         <div class="input-group">
             <label>出生日</label>
-            <input type="number" id="inpDay" value="27">
+            <input type="number" id="inpDay" value="18">
         </div>
         <div class="input-group">
             <label>出生時 (0-23)</label>
-            <input type="number" id="inpHour" value="10">
+            <input type="number" id="inpHour" value="12">
         </div>
     </div>
 
@@ -726,7 +726,7 @@ const gsRules = [
     { name: "8. 紅艷煞", type: "day_stem", mapping: { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] } },
     { name: "9. 流霞煞", type: "day_stem", mapping: { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5,6], 5:[5,6], 6:[4], 7:[3], 8:[11], 9:[2] } },
     { name: "10. 千日關", type: "day_stem", mapping: { 0:[6], 1:[4], 2:[9], 3:[8], 4:[5], 5:[11], 6:[2], 7:[10], 8:[1], 9:[7] } },
-    { name: "11. 取命關 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[11,3,7], 4:[11,3,7], 5:[11,3,7], 6:[2,6,10], 8:[2,6,10], 9:[2,6,10] } },
+    { name: "11. 取命關 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[11,3,7], 4:[11,3,7], 5:[11,3,7], 6:[2,6,10], 8:[5,9,1], 9:[5,9,1] } },
     { name: "11. 取命關", type: "day_stem", mapping: { 7:[8] } },
     { name: "閻王關A", type: "month_branch", mapping: { 2:[1,7], 3:[1,7], 4:[1,7], 5:[4,10], 6:[4,10], 7:[4,10], 8:[0,6], 9:[0,6], 10:[0,6], 11:[2,3], 0:[2,3], 1:[2,3] } },
     { name: "閻王關B", type: "day_stem", mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[8,0,4], 4:[11,3,7], 5:[11,3,7], 6:[11,3,7], 7:[2,6,10], 8:[2,6,10], 9:[2,6,10] } },
@@ -749,7 +749,7 @@ const gsRules = [
     { name: "30. 將軍箭 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[9,10,4], 3:[9,10,4], 4:[9,10,4], 5:[7,3,0], 6:[7,3,0], 7:[7,3,0], 8:[6,2,10], 9:[6,2,10], 10:[6,2,10], 11:[11,8,5], 0:[11,8,5], 1:[11,8,5] } },
     { name: "31. 血刃關", type: "month_branch", mapping: { 2:[1], 3:[7], 4:[2], 5:[8], 6:[3], 7:[9], 8:[4], 9:[10], 10:[5], 11:[11], 0:[6], 1:[0] } },
     { name: "32. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4], 6:[0,4], 7:[0,4], 8:[8,9], 9:[8,9], 10:[8,9], 11:[2,3,6], 0:[2,3,6], 1:[2,3,6] } },
-    { name: "33. 下情關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[2,0], 3:[2,0], 4:[2,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[8,1], 9:[8,1], 10:[8,1], 11:[3,6], 0:[3,6], 1:[3,6] } },
+    { name: "33. 下情關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[2,9,0], 3:[2,9,0], 4:[2,9,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[8,1], 9:[8,1], 10:[8,1], 11:[0,6], 0:[0,6], 1:[0,6] } },
     { name: "34. 百日關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[4,10,1,7], 8:[4,10,1,7], 5:[4,10,1,7], 11:[4,10,1,7], 4:[0,6,3,9], 10:[0,6,3,9], 1:[0,6,3,9], 7:[0,6,3,9], 0:[2,8,5,11], 6:[2,8,5,11], 3:[2,8,5,11], 9:[2,8,5,11] } },
     { name: "35. 斷橋關", type: "month_branch", mapping: { 2:[2], 3:[3], 4:[8], 5:[1], 6:[10], 7:[9], 8:[4], 9:[5], 10:[6], 11:[7], 0:[11], 1:[0] } },
     { name: "36. 四柱關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[5,11], 8:[5,11], 3:[4,10], 9:[4,10], 4:[3,9], 10:[3,9], 5:[2,8], 11:[2,8], 6:[1,7], 0:[1,7], 7:[0,6], 1:[0,6] } },
@@ -873,11 +873,10 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
 
         let targets = rule.mapping[baseVal];
         if (targets) {
-            // 從搜尋池中排除「觸發基準的該柱地支」，避免自己撞自己
             let searchPool = targetPillars.map(p => p.branch);
             
-            // 包含 day_stem, day_branch, nayin_day 皆排除日支；month_branch 排除月支。
-            if (rule.type === "day_branch" || rule.type === "day_stem" || rule.type === "nayin_day") {
+            // 排除自身基準柱
+            if (rule.type === "day_branch") {
                 searchPool = targetPillars.filter(p => p.name !== '日柱').map(p => p.branch);
             } else if (rule.type === "month_branch") {
                 searchPool = targetPillars.filter(p => p.name !== '月柱').map(p => p.branch);
@@ -886,7 +885,6 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
             }
 
             if (rule.count) {
-                // 如果需要中 2 粒：判斷該搜尋池中，符合目標地支的「總數量」是否達標
                 let count = searchPool.filter(b => targets.includes(b)).length;
                 if (count >= rule.count) {
                     triggered.push(rule.name);
