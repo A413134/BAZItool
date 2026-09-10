@@ -724,7 +724,7 @@ const gsRules = [
     { name: "6. 桃花煞", type: "day_branch", mapping: { 2:[3], 6:[3], 10:[3], 8:[9], 0:[9], 4:[9], 11:[0], 3:[0], 7:[0], 5:[6], 9:[6], 1:[6] } },
     { name: "7. 雷公打腦", type: "day_stem", mapping: { 0:[1], 1:[6], 2:[0], 3:[0], 4:[9], 5:[9], 6:[2], 7:[2], 8:[9], 9:[11] } },
     { name: "8. 紅艷煞", type: "day_stem", mapping: { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] } },
-    { name: "9. 流霞煞", type: "day_stem", mapping: { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5,6], 5:[5,6], 6:[4], 7:[3], 8:[11], 9:[2] } },
+    { name: "9. 流霞煞", type: "day_stem", mapping: { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] } },
     { name: "10. 千日關", type: "day_stem", mapping: { 0:[6], 1:[4], 2:[9], 3:[8], 4:[5], 5:[11], 6:[2], 7:[10], 8:[1], 9:[7] } },
     { name: "11. 取命關 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[11,3,7], 4:[11,3,7], 5:[11,3,7], 6:[2,6,10], 8:[5,9,1], 9:[5,9,1] } },
     { name: "11. 取命關", type: "day_stem", mapping: { 7:[8] } },
@@ -875,7 +875,7 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
         if (targets) {
             let searchPool = targetPillars.map(p => p.branch);
             
-            // 排除自身基準柱
+            // 排除自身基準柱 (日干為基準的，不再排除日支，以免漏算同柱地支)
             if (rule.type === "day_branch") {
                 searchPool = targetPillars.filter(p => p.name !== '日柱').map(p => p.branch);
             } else if (rule.type === "month_branch") {
