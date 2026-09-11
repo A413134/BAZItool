@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>子平八字 | 專業排盤 (五勝六忌+串宮修正+十神統計+藏干顯示+40關煞+雙星斷事)</title>
+    <title>子平八字 | 專業排盤 (五勝六忌+串宮修正+十神統計+藏干顯示+40關煞+雙星斷事+迎送格局)</title>
     <style>
         :root {
             --bg-color: #f5f7fa;
@@ -624,7 +624,7 @@ const gsDescriptions = {
     "24. 短命關": `<ul><li>失眠 夜鬼、日夜顛倒，晚間工作、shift。OT至10pm失眠，爛玩。</li><li>噪音。</li><li>心緒不寧，思慮過多，個腦停唔到。</li><li>大運/流年：特別夜收工，特別多應酬，可以多啲放工後去街应數，或者煲劇打机搞到自己夜瞓。</li><li>改頭換面. eg. 剪短髮，大幅度整容，衣著style改变。</li><li>日柱：擇偶考慮會突变，或拍拖pattern突变。</li></ul>`,
     "25. 劫煞關": `<ul><li>破財，洗劫一空，大駛。</li><li>不利投資。</li><li>流年遇劫煞，可租樓化解。</li></ul>`,
     "26. 天吊關": `<ul><li>痠麻痛、宜針灸處理 慢性发炎。</li><li>如果三白眼/鬥雞眼，脑部問題高危，易有抽筋、羊癇、自律神經問題、hormone issue。</li><li>活在自己世界，不理別人，性格內向，凡事置身事外。</li><li>自得其樂，宅男，逃避现实。</li><li>不合 team work，宜独立工作，remote工作。</li><li>大運流年天吊：除病应，可以应孤寂。</li><li>大運流年：會沉迷兴趣+散財、無心工作；如兴趣即工作，工作會突飛猛進，仲揾到錢。</li></ul>`,
-    "27. 湯火煞": `<ul><li>燙傷，曬傷 會留疤 (联想到医美)、发烧体質/心血管問題。</li><li>喉嚨潰爛. eg生痱滋。</li><li>別人會安排难處理的工作給此人，突发事情，24小時 on call。</li><li>因衝動心急而坏事，宜走穩陣路線。</li><li>時柱：有流產之厄、鍾意 R著数 貪小便宜。</li><li>月柱：會易有股中問題，宜多留意，易因小失大。</li></ul>`,
+    "27. 湯火煞": `<ul><li>燙傷，曬傷 會留疤 (联想到医美)、发烧体質/心血管問題。</li><li>喉嚨潰爛. eg生痱滋。</li><li>別人會安排难處理的工作給此人，突发事情，24小時 on call。</li><li>因衝動心急而坏事，宜走穩陣路线。</li><li>時柱：有流產之厄、鍾意 R著数 貪小便宜。</li><li>月柱：會易有股中問題，宜多留意，易因小失大。</li></ul>`,
     "28. 金鎖匙": `<ul><li>破財，失物盗賊。</li><li>經常買好多野又唔用。</li><li>不合投资、流年見此煞尤其易投资損手。</li><li>理財觀念差。</li><li>爱好敗家玩意、追棒名牌。</li><li>今朝有酒今朝醉，豪爽。</li><li>古時會立小妾，花天酒地。</li><li>流年見此煞就去吓旅行，上堂 (拎張cert 冇咩用 但洗錢)。</li><li>可以从事 luxury goods 行業。</li></ul>`,
     "29. 浴盆關": `<ul><li>肝功能較弱，較易有脂肪肝，肝硬化 -> 面色较黃，有斑。</li><li>較易有细菌感染，尤其係四肢，关節。</li><li>怕悶 愛結伴。</li><li>易受朋輩影响，豬朋狗友、三教九流 -> 易有破財之应。</li><li>流年見浴盆宜審慎交友。</li><li>病应：肝氣 -> 外連筋腱。</li></ul>`,
     "30. 將軍箭 (要中2粒)": `<ul><li>出門遇險，不利離鄉別井，會被欺压、多病，橫禍之应 動刀。</li><li>曾有命主原命有2-3粒就年幼時意外身亡。</li><li>宜留守家鄉 (出生地)，廣州出世去咗北京都算，出国的話就更大力。</li><li>之应期：秋冬特別应。</li><li>一箭像流死，二箭不滿把歲亡，三箭為人能死，四箭過得十二秋。</li><li>工作上利靜不利動。</li><li>長輩緣薄，易与父母起衝突。工作上树敵 被放暗箭。</li><li>伴侶之父母不喜伴侣，即男方父母不喜女方，或女方父母不喜男方。</li><li>易有職業病，因工作关係而產生的傷病，甚至返过夜班轉返日班但晚上瞓唔到。</li><li>有時流年將軍箭不易察覺. eg 返咗份工 搬位後成日病，有可能會係流年將軍箭嘅力推咗佢坐去病位/冷氣出風位。</li><li>可用針灸应劫。</li></ul>`,
@@ -687,6 +687,14 @@ const dualStarData = {
     "障礙-血光": "此組合之人非常【錫身】(驚青、怕事)，故命主做事小心謹慎和穩陣，一定要事先計劃妥當，做足準備，而且要裝備充足才會安心。<br>• 此類人並非膽小怕事，亦非緊張大師，只是喜歡樣樣事情做足準備而已。若是男性的話，就會讓人有一種婆婆媽媽，做事不乾脆的感覺。<br>• 此類人比較驚青和怕事，所以甚少公開表態或與人討論事情，命主會盡量避免麻煩和危險，所以比較內斂和經常保持沉默。<br>• 此類人容易脊骨出問題。工作上容易一陣子極急、極忙碌，一陣子悠閒沒事做。<br>• 此類人容易脊骨出問題，或會去整容，容易應身體的破損。工作時急時閒，宜儲蓄一筆後備財，以防不時之需。"
 };
 
+// --- 迎送組合定義解釋庫 ---
+const yingSongData = {
+    "有迎有送": "適合在體制內爬升的格局，命主應選擇在大機構、大公司、政府部門工作。 【迎】屬【陽】，所以在格局上，我們以【迎】多為喜。 若要創業，亦應選擇與大機構、政府部門合作。 迎送格局大適合大型機構，格局細(如1迎2送)則適合中小型機構。",
+    "無迎無送": "此乃浪子格，事業上適合【動】、【漂泊】，不喜受掣肘、喜歡自由。故命主適合創業或在小型公司工作，較能獲得發揮的機會。 命主的事業特質往往需要出差、到處走動，或工作地點不固定。 若在大公司工作，必須符合【動】、【漂泊】特質才可做得長。 由於此組合屬於【破格】，必須工作以應其【破】，若不工作則有機會在健康問題上應其【破】象。",
+    "有迎無送": "由於【迎】屬前方的儀仗隊，必須要見人，所以此組合之人適合從事一線的工作，亦適合從事演藝行業。 但凡要面對群眾、與人打好關係、見客人、不斷開會、不斷用電話溝通的工作都非常適合。 結合【強弱】分析：如果【命弱】，則可能要處理投訴；如果【命強】，則可能做開心推廣類型的工作。",
+    "無迎有送": "由於【送】屬後方，因此這種組合之人適合做後勤、支援工作，如文書處理，專門負責寫報告的工作；或維修類型的工作，如電腦維修、緊急維修等。 重點是工作上盡量少面對人群，以不需與人溝通為宜。"
+};
+
 // 打開關煞定義 Modal
 function showGuanShaInfo(gsName) {
     let desc = gsDescriptions[gsName];
@@ -722,7 +730,7 @@ const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏�
 const HiddenStems = [
     [9],             // 0: 子 (癸)
     [5, 9, 7],       // 1: 丑 (己,癸,辛)
-    [0, 2, 4],       // 2: 寅 (甲,丙,戊)
+    [0, 2, 4],       // 2:寅 (甲,丙,戊)
     [1],             // 3: 卯 (乙)
     [4, 1, 9],       // 4: 辰 (戊,乙,癸)
     [2, 4, 6],       // 5: 巳 (丙,戊,庚)
@@ -1280,6 +1288,50 @@ function runCalculation() {
             <ul style="list-style-type: square; color:#34495e; padding-left: 22px;">${dualStarsHtml}</ul>
         </div>`;
     }
+
+    // --- 【原局迎送格局 (論事業)】 ---
+    // 找出日主太歲地支 (利用日干查詢)
+    let tsBranch = getStemMapping(dStem);
+    
+    // 迎只看年支
+    let diffY = (yBranch - tsBranch + 12) % 12;
+    let hasYing = diffY <= 5;
+    let yingVal = hasYing ? diffY : null;
+
+    // 送只看時支
+    let diffH = (hBranch - tsBranch + 12) % 12;
+    let hasSong = diffH >= 6;
+    let songVal = hasSong ? (12 - diffH) : null;
+
+    let yingSongType = "";
+    let yingSongText = "";
+    if (hasYing && hasSong) {
+        yingSongType = "有迎有送";
+        yingSongText = `${yingVal}迎 ${songVal}送`;
+    } else if (!hasYing && !hasSong) {
+        yingSongType = "無迎無送";
+        yingSongText = `無迎 無送`;
+    } else if (hasYing && !hasSong) {
+        yingSongType = "有迎無送";
+        yingSongText = `${yingVal}迎 無送`;
+    } else if (!hasYing && hasSong) {
+        yingSongType = "無迎有送";
+        yingSongText = `無迎 ${songVal}送`;
+    }
+
+    html += `<div class="sheng-ji-box" style="border-color:#8e44ad; border-left-color:#9b59b6; background-color:#f4ecf7;">
+        <div class="sheng-ji-header" style="color:#8e44ad;">💼 原局迎送格局 (論事業)</div>
+        <div style="margin-bottom: 8px; color: #34495e;">
+            <b>日主太歲：</b>${Dizhi[tsBranch]} (由日干 ${Tiangan[dStem]} 轉化)<br>
+            <b>年支【迎】：</b>${Dizhi[yBranch]} ${hasYing ? `(距離 ${yingVal}，屬迎方)` : `(落在送方，故無迎)`}<br>
+            <b>時支【送】：</b>${Dizhi[hBranch]} ${hasSong ? `(距離 ${songVal}，屬送方)` : `(落在迎方，故無送)`}<br>
+            <b>格局判定：</b><span style="font-size:1.1em; font-weight:bold; color:#8e44ad;">【${yingSongText}】 (${yingSongType})</span>
+        </div>
+        <ul style="list-style-type: square; color:#34495e; padding-left: 22px;">
+            <li>${yingSongData[yingSongType]}</li>
+        </ul>
+    </div>`;
+
 
     // --- 原局五勝六忌判斷 ---
     let natalMatches = findShengJiMatches(natalPillars);
