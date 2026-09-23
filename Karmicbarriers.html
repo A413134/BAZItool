@@ -17,7 +17,6 @@
             --text-muted: #718096;
             --text-subtle: #a0aec0;
             
-            /* 功能與神煞專用色 */
             --color-green: #2e7d32;
             --color-purple: #6a1b9a;
             --color-red: #c62828;
@@ -25,7 +24,6 @@
             --color-gold-bg: #fffbf0;
             --color-gold-border: #f6e05e;
             
-            /* 圓角與陰影 */
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 14px;
@@ -52,7 +50,6 @@
             border: 1px solid var(--border-color);
         }
 
-        /* 標題區 */
         .main-header {
             background: linear-gradient(135deg, #1f2d3d 0%, #2c3e50 100%);
             color: #ffffff;
@@ -66,7 +63,6 @@
             box-shadow: var(--shadow-sm);
         }
 
-        /* 頁籤區 (Tabs) */
         .tabs {
             display: flex;
             border-bottom: 2px solid #edf2f7;
@@ -100,7 +96,6 @@
             border-bottom: 2px solid var(--surface-color);
         }
 
-        /* 輸入區 */
         .input-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -150,7 +145,6 @@
             box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.15);
         }
 
-        /* 按鈕區 */
         .btn-section {
             display: flex;
             justify-content: center;
@@ -178,7 +172,6 @@
         .btn-run { background: linear-gradient(135deg, #2c3e50, #34495e); }
         .btn-clear { background: linear-gradient(135deg, #718096, #a0aec0); }
 
-        /* 結果顯示區通用標題 */
         .section-title {
             padding: 12px 18px;
             font-size: 16px;
@@ -195,7 +188,6 @@
         .yuan-ju-header { background: linear-gradient(135deg, #2c3e50, #3a506b); }
         .dayun-header { background: linear-gradient(135deg, #4a5568, #2d3748); }
 
-        /* 表格通用排版 */
         .chart-table {
             width: 100%;
             border-collapse: collapse;
@@ -237,7 +229,6 @@
             border-radius: var(--radius-sm);
         }
 
-        /* 大運輪播列表 */
         .dayun-container {
             display: flex;
             flex-wrap: nowrap;
@@ -259,7 +250,7 @@
         .dayun-col:last-child { border-right: none; }
         .dayun-col div { padding: 3px 0; }
 
-        /* 流年納音分析 (五勝六忌 0-100歲) 獨立表格 */
+        /* 流年納音分析 (五勝六忌 1-100歲) 獨立表格 */
         .nayin-box {
             margin-top: 30px;
             background: #fffdf5;
@@ -295,11 +286,9 @@
         .nayin-table td {
             border: 1px solid #fef08a;
             padding: 9px 14px;
-            color: var(--text-main);
             font-size: 14px;
         }
 
-        /* 流年卡片區 */
         .decade-wrapper {
             margin-top: 30px;
             background: white;
@@ -389,7 +378,6 @@
         .bazi-list-row .center-val { flex: 1; text-align: center; font-weight: 700; color: var(--text-main); }
         .bazi-list-row .status { width: 65px; text-align: right; font-weight: 700; }
 
-        /* 十神統計摘要 */
         .ten-gods-summary {
             margin-top: 12px;
             padding: 14px 18px;
@@ -410,7 +398,6 @@
         .tg-item .tg-name { color: var(--text-muted); font-size: 12px; margin-bottom: 4px; font-weight: 600; }
         .tg-item .tg-count { font-weight: 700; font-size: 18px; }
 
-        /* 統一卡片提示框 */
         .sheng-ji-box {
             background-color: #fffdf5;
             border: 1px solid #f6e05e;
@@ -475,14 +462,12 @@
             margin-top: 2px;
         }
 
-        /* 文字色彩 */
         .c-green { color: var(--color-green); }
         .c-purple { color: var(--color-purple); }
         .c-red { color: var(--color-red); }
         .t-bold { font-weight: 700; }
         .t-large { font-size: 1.1em; }
 
-        /* 彈窗樣式優化 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -631,7 +616,6 @@
     <div id="resultArea"></div>
 </div>
 
-<!-- Modal 彈窗區塊 -->
 <div class="modal-overlay" id="gsModal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <button class="modal-close" onclick="closeModal(event)">&times;</button>
@@ -641,9 +625,6 @@
 </div>
 
 <script>
-// ==========================================
-//   關煞定義解釋庫
-// ==========================================
 const gsDescriptions = {
     "1. 白虎關": `<ul><li>病应：血毒血糖、血脂、貧血、白血病、免疫系統疾病。</li><li>病应：腹部疾病。</li><li>易有破損瘀傷。</li><li>大運/流年見白虎：易有手術之应，易有突发事情，令人措手不及，考驗应变能力。</li><li>大運/流年：OT 或要工餘時進修 (变相OT)。</li><li>原命白虎宜做「見血」工作。</li></ul>`,
     "2. 鐵蛇關": `<ul><li>皮膚病、过敏、出疹，生蛇，蚊叮虫咬、香港腳、湿疹。</li><li>只能硬食，頂硬上 (生活上，各方面都易有呢個情況)。</li></ul>`,
@@ -783,9 +764,6 @@ function closeModal(event) {
     document.getElementById('gsModal').style.display = 'none';
 }
 
-// ==========================================
-//   全域變數與初始化
-// ==========================================
 const Tiangan = "甲,乙,丙,丁,戊,己,庚,辛,壬,癸".split(",");
 const Dizhi = "子,丑,寅,卯,辰,巳,午,未,申,酉,戌,亥".split(",");
 const ShenSha = "太歲,青龍,喪門,六合,官符,小耗,大耗,朱雀,白虎,貴神,吊客,病符".split(",");
@@ -793,18 +771,18 @@ const TenGodsYang = "比肩,劫財,食神,傷官,偏財,正財,七殺,正官,偏
 const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏印,劫財".split(",");
 
 const HiddenStems = [
-    [9],              // 0: 子 (癸)
-    [5, 9, 7],        // 1: 丑 (己,癸,辛)
-    [0, 2, 4],        // 2: 寅 (甲,丙,戊)
-    [1],              // 3: 卯 (乙)
-    [4, 1, 9],        // 4: 辰 (戊,乙,癸)
-    [2, 4, 6],        // 5: 巳 (丙,戊,庚)
-    [3, 5],           // 6: 午 (丁,己)
-    [5, 3, 1],        // 7: 未 (己,丁,乙)
-    [6, 8, 4],        // 8: 申 (庚,壬,戊)
-    [7],              // 9: 酉 (辛)
-    [4, 7, 3],        // 10: 戌 (戊,辛,丁)
-    [8, 0]            // 11: 亥 (壬,甲)
+    [9],
+    [5, 9, 7],
+    [0, 2, 4],
+    [1],
+    [4, 1, 9],
+    [2, 4, 6],
+    [3, 5],
+    [5, 3, 1],
+    [6, 8, 4],
+    [7],
+    [4, 7, 3],
+    [8, 0]
 ];
 
 const JieQiCVal = [5.4055, 3.87, 5.63, 4.81, 5.52, 5.678, 7.108, 7.5, 7.646, 8.318, 7.438, 7.18];
@@ -1074,10 +1052,6 @@ function getPureShenSha(startB, target, isStem) {
     return ShenSha[safeMod(targetB - startB, 12)];
 }
 
-// ==========================================
-//   核心運算
-// ==========================================
-
 function runCalculation() {
     const gender = document.getElementById('inpGender').value;
     const rangeVal = document.getElementById('inpRange').value.split("-");
@@ -1242,7 +1216,6 @@ function runCalculation() {
     let html = "";
     let dTaiSuiBranch = getStemMapping(dStem);
 
-    // 1. 原局命盤
     html += `<div class="section-title yuan-ju-header"><span>【 原 局 命 盤 】</span><span>${infoStr} · ${daysToJieText} (${dyStartAge}歲起運)</span></div>`;
     
     if (showConvertedDate && bDate) {
@@ -1452,19 +1425,19 @@ function runCalculation() {
 
     // 獨立表格：1-100歲流年納音分析 (五勝六忌)
     let nayinRowsHtml = "";
-    for (let age = 1; age <= 100; age++) {
-        let loopY = RealBaziYear + age - 1;
+    for (let curAge = 1; curAge <= 100; curAge++) {
+        let loopY = RealBaziYear + curAge - 1;
         let off = safeMod(loopY - 4, 60);
         let loopStem = off % 10;
         let loopBranch = off % 12;
         let loopGZ = Tiangan[loopStem] + Dizhi[loopBranch];
         let loopNaYin = getNaYin(loopStem, loopBranch);
 
-        let dyStep = Math.floor((age - dyStartAge) / 10) + 1;
+        let dyStep = Math.floor((curAge - dyStartAge) / 10) + 1;
         if (dyStep > 11) dyStep = 11;
         let currDyStem = -1, currDyBranch = -1, currDyGZ = "";
         
-        if (age >= dyStartAge) {
+        if (curAge >= dyStartAge && dyStep >= 1) {
             if (isForward) {
                 currDyStem = safeMod(mStem + dyStep, 10);
                 currDyBranch = safeMod(mBranch + dyStep, 12);
@@ -1483,24 +1456,27 @@ function runCalculation() {
         let statusText = "";
         let inlineColor = "";
 
-        for (let baseP of targetPillars) {
-            for (let rule of ShengRules) {
-                if (rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) {
+        for (let bp = 0; bp < targetPillars.length; bp++) {
+            let baseP = targetPillars[bp];
+            for (let r = 0; r < ShengRules.length; r++) {
+                let ruleItem = ShengRules[r];
+                if (ruleItem.A.includes(loopGZ) && ruleItem.B.includes(baseP.gz)) {
                     statusText = "勝 (得利)";
-                    inlineColor = "#2e7d32"; // 綠色
+                    inlineColor = "#2e7d32";
                     break;
-                } else if (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz)) {
+                } else if (ruleItem.B.includes(loopGZ) && ruleItem.A.includes(baseP.gz)) {
                     statusText = "負 (不利) (行衰運)";[cite: 2, 3]
-                    inlineColor = "#c62828"; // 紅色
+                    inlineColor = "#c62828";
                     break;
                 }
             }
             if (statusText) break;
 
-            for (let rule of JiRules) {
-                if ((rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) || (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz))) {
+            for (let r = 0; r < JiRules.length; r++) {
+                let ruleItem = JiRules[r];
+                if ((ruleItem.A.includes(loopGZ) && ruleItem.B.includes(baseP.gz)) || (ruleItem.B.includes(loopGZ) && ruleItem.A.includes(baseP.gz))) {
                     statusText = "忌 (犯忌)";[cite: 2, 3]
-                    inlineColor = "#c62828"; // 紅色
+                    inlineColor = "#c62828";
                     break;
                 }
             }
@@ -1509,11 +1485,11 @@ function runCalculation() {
 
         if (statusText) {
             nayinRowsHtml += `<tr>
-                <td>${age} 歲</td>
+                <td>${curAge} 歲</td>
                 <td>${loopY}</td>
                 <td>${loopGZ}</td>
                 <td>${loopNaYin}</td>
-                <td style="color:${inlineColor}; font-weight:700;">${statusText}</td>
+                <td style="color:${inlineColor} !important; font-weight:700;">${statusText}</td>
             </tr>`;
         }
     }
@@ -1558,7 +1534,7 @@ function runCalculation() {
         if (dyStep > 11) dyStep = 11;
         let currDyGZ = "未起運", currDyStem = -1, currDyBranch = -1;
         
-        if (currentAge >= dyStartAge) {
+        if (currentAge >= dyStartAge && dyStep >= 1) {
              if (isForward) {
                 currDyStem = safeMod(mStem + dyStep, 10);
                 currDyBranch = safeMod(mBranch + dyStep, 12);
@@ -1575,7 +1551,6 @@ function runCalculation() {
         
         html += `<div class="liunian-grid">`;
         
-        // 左：太歲入局
         html += `<div>`;
         html += `<div class="subtitle red">【太歲入局】(年支為君)</div>`;
         html += generateRowTypeA("年柱", yStem, yBranch, loopBranch);
@@ -1589,7 +1564,6 @@ function runCalculation() {
         }
         html += `</div>`;
 
-        // 右：串宮壓運
         html += `<div>`;
         html += `<div class="subtitle green">【串宮壓運】(日干為君)</div>`;
         
@@ -1678,10 +1652,6 @@ function runCalculation() {
 function clearData() {
     document.getElementById('resultArea').innerHTML = "";
 }
-
-// ==========================================
-//  輔助函數
-// ==========================================
 
 function findShengJiMatches(pillars, excludeNatalOnly = false) {
     let results = [];
