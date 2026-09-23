@@ -298,9 +298,11 @@
             color: var(--text-main);
             font-size: 14px;
         }
-        .status-ji { color: var(--color-red); font-weight: 700; }
-        .status-sheng { color: var(--color-green); font-weight: 700; }
-        .status-fu { color: var(--color-red); font-weight: 700; }
+        
+        /* 狀態顏色設定：勝為綠色，負與忌為紅色 */
+        .status-ji { color: var(--color-red) !important; font-weight: 700; }
+        .status-fu { color: var(--color-red) !important; font-weight: 700; }
+        .status-sheng { color: var(--color-green) !important; font-weight: 700; }
 
         /* 流年卡片區 */
         .decade-wrapper {
@@ -1493,7 +1495,7 @@ function runCalculation() {
                     statusClass = "status-sheng";
                     break;
                 } else if (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz)) {
-                    statusText = "負 (不利) (行衰運)";
+                    statusText = "負 (不利) (行衰運)";[cite: 2]
                     statusClass = "status-fu";
                     break;
                 }
@@ -1502,7 +1504,7 @@ function runCalculation() {
 
             for (let rule of JiRules) {
                 if ((rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) || (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz))) {
-                    statusText = "忌 (犯忌)";
+                    statusText = "忌 (犯忌)";[cite: 2]
                     statusClass = "status-ji";
                     break;
                 }
