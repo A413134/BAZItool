@@ -298,11 +298,6 @@
             color: var(--text-main);
             font-size: 14px;
         }
-        
-        /* 狀態顏色設定：勝為綠色，負與忌為紅色 */
-        .status-ji { color: var(--color-red) !important; font-weight: 700; }
-        .status-fu { color: var(--color-red) !important; font-weight: 700; }
-        .status-sheng { color: var(--color-green) !important; font-weight: 700; }
 
         /* 流年卡片區 */
         .decade-wrapper {
@@ -1486,17 +1481,17 @@ function runCalculation() {
         }
 
         let statusText = "";
-        let statusClass = "";
+        let inlineColor = "";
 
         for (let baseP of targetPillars) {
             for (let rule of ShengRules) {
                 if (rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) {
                     statusText = "勝 (得利)";
-                    statusClass = "status-sheng";
+                    inlineColor = "#2e7d32"; // 綠色
                     break;
                 } else if (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz)) {
-                    statusText = "負 (不利) (行衰運)";[cite: 2]
-                    statusClass = "status-fu";
+                    statusText = "負 (不利) (行衰運)";[cite: 2, 3]
+                    inlineColor = "#c62828"; // 紅色
                     break;
                 }
             }
@@ -1504,8 +1499,8 @@ function runCalculation() {
 
             for (let rule of JiRules) {
                 if ((rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) || (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz))) {
-                    statusText = "忌 (犯忌)";[cite: 2]
-                    statusClass = "status-ji";
+                    statusText = "忌 (犯忌)";[cite: 2, 3]
+                    inlineColor = "#c62828"; // 紅色
                     break;
                 }
             }
@@ -1518,7 +1513,7 @@ function runCalculation() {
                 <td>${loopY}</td>
                 <td>${loopGZ}</td>
                 <td>${loopNaYin}</td>
-                <td class="${statusClass}">${statusText}</td>
+                <td style="color:${inlineColor}; font-weight:700;">${statusText}</td>
             </tr>`;
         }
     }
