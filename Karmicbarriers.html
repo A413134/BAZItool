@@ -692,7 +692,6 @@ const gsDescriptions = {
     "41. 金鎖關 (掌訣)": `<ul><li>(鎖喉)</li><li>影响金病，肺喉呼吸系統、氣虛，慢性咽喉炎，睡眠窒息症、吞咽問題、聲帶問題。</li><li>窒息，血氣問題 -> 毒素積聚 -> 代謝差，慢性疲勞 免疫系統問題。</li><li>皮膚問題、頸椎問題、甲狀腺。</li><li>面对压力時，會覺得條氣/心口頂住。</li><li>Public speech時 會结结巴巴、開唔到口咁。</li><li>表达有障礙，可以係兒時遇到某些事而以至失語/表达問題。</li><li>如纳音有金 會連爆，即金錢引爆纳音金。</li><li>如何判定嚴重程度？睇叠象 原命主中金鎖+鐵蛇 同損金氣，則金病病情會較重。</li></ul>`
 };
 
-// --- 雙星組合定義解釋庫 ---
 const dualStarData = {
     "人緣-人緣": "天干、地支全由【青龍】和【六合】互配組成。<br>• 此乃人緣極旺的組合，命主必多朋友，以及社交應酬。",
     "血光-血光": "天干、地支全由【白虎】和【朱雀】互配組成。<br>• 此乃凶險的組合，主開刀、入醫院、慢性痛症(不計部位)。<br>• 若生於亂世，此組合之人往往會從軍打仗。<br>• 現代則多數為異路功名，或從事一些帶有血光、危險性質的工作，比如屠夫、鐵打正骨、醫護類的工作。<br>• 女命見此組合必定影響姻緣，感情路上多艱辛，古代會直斷為小三命格。",
@@ -738,7 +737,6 @@ const dualStarData = {
     "障礙-血光": "此組合之人非常【錫身】(驚青、怕事)，故命主做事小心謹慎和穩陣，一定要事先計劃妥當，做足準備，而且要裝備充足才會安心。<br>• 此類人並非膽小怕事，亦非緊張大師，只是喜歡樣樣事情做足準備而已。若是男性的話，就會讓人有一種婆婆媽媽，做事不乾脆的感覺。<br>• 此類人比較驚青和怕事，所以甚少公開表態或與人討論事情，命主會盡量避免麻煩和危險，所以比較內斂和經常保持沉默。<br>• 此類人容易脊骨出問題。工作上容易一陣子極急、極忙碌，一陣子悠閒沒事做。<br>• 此類人容易脊骨出問題，或會去整容，容易應身體的破損。工作時急時閒，宜儲蓄一筆後備財，以防不時之需。"
 };
 
-// --- 迎送組合定義解釋庫 (已還原所有筆記要點) ---
 const yingSongData = {
     "有迎有送": `
         <li>此乃適合在體制內爬升的格局，命主應選擇在大機構、大公司、政府部門工作。邪神提到，【迎】屬【陽】，所以在格局上，我們以【迎】多為喜。</li>
@@ -766,7 +764,6 @@ const yingSongData = {
     `
 };
 
-// 打開關煞定義 Modal
 function showGuanShaInfo(gsName) {
     let desc = gsDescriptions[gsName];
     if (!desc) {
@@ -868,7 +865,7 @@ const gsRules = [
     { name: "29. 浴盆關", type: "month_branch", mapping: { 2:[4], 3:[4], 4:[4], 5:[7], 6:[7], 7:[7], 8:[10], 9:[10], 10:[10], 11:[1], 0:[1], 1:[1] } },
     { name: "30. 將軍箭 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[9,10,4], 3:[9,10,4], 4:[9,10,4], 5:[7,3,0], 6:[7,3,0], 7:[7,3,0], 8:[6,2,10], 9:[6,2,10], 10:[6,2,10], 11:[11,8,5], 0:[11,8,5], 1:[11,8,5] } },
     { name: "31. 血刃關", type: "month_branch", mapping: { 2:[1], 3:[7], 4:[2], 5:[8], 6:[3], 7:[9], 8:[4], 9:[10], 10:[5], 11:[11], 0:[6], 1:[0] } },
-    { name: "32. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4], 6:[0,4], 7:[0,4], 8:[8,9], 9:[8,9], 10:[8,9], 11:[2,3], 0:[2,3,6], 1:[2,3,6] } },
+    { name: "32. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4], 6:[0,4], 7:[0,4], 8:[8,9], 9:[8,9], 10:[8,9], 11:[2,3,6], 0:[2,3,6], 1:[2,3,6] } },
     { name: "33. 下情關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[2,9,0], 3:[2,9,0], 4:[2,9,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[8,1], 9:[8,1], 10:[8,1], 11:[0,6], 0:[0,6], 1:[0,6] } },
     { name: "34. 百日關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[4,10,1,7], 8:[4,10,1,7], 5:[4,10,1,7], 11:[4,10,1,7], 4:[0,6,3,9], 10:[0,6,3,9], 1:[0,6,3,9], 7:[0,6,3,9], 0:[2,8,5,11], 6:[2,8,5,11], 3:[2,8,5,11], 9:[2,8,5,11] } },
     { name: "35. 斷橋關", type: "month_branch", mapping: { 2:[2], 3:[3], 4:[8], 5:[1], 6:[10], 7:[9], 8:[4], 9:[5], 10:[6], 11:[7], 0:[11], 1:[0] } },
@@ -882,7 +879,6 @@ const gsRules = [
 let currentMode = 'date';
 const globalTgOrder = ["比肩", "劫財", "食神", "傷官", "偏財", "正財", "七殺", "正官", "偏印", "正印"];
 
-// 系統初始化載入
 window.onload = function() {
     initGanzhiSelects();
 };
@@ -915,7 +911,6 @@ function safeMod(n, m) {
     return ((n % m) + m) % m;
 }
 
-// 根據基準年與干支，逆推尋找真實日期 (用於自動計算起運歲數)
 function findDateFromGanzhi(baseYear, targetMBranch, targetDStem, targetDBranch, targetHBranch, targetYStem, targetYBranch) {
     let searchStart = new Date(baseYear - 60, 0, 1);
     let searchEnd = new Date(baseYear + 60, 11, 31);
@@ -969,7 +964,6 @@ function findDateFromGanzhi(baseYear, targetMBranch, targetDStem, targetDBranch,
     return null;
 }
 
-// 關煞判斷核心函式
 function evaluateAllGuanSha(basePillars, targetPillars) {
     let triggered = [];
     let dayPillar = basePillars.find(p => p.name === '日柱') || {};
@@ -1067,7 +1061,6 @@ function evaluateAllGuanSha(basePillars, targetPillars) {
     });
 }
 
-// 雙星解釋的提取輔助函式
 function getDualStarGroup(rawName) {
     if (rawName.includes("白虎") || rawName.includes("朱雀")) return "血光";
     if (rawName.includes("喪門") || rawName.includes("吊客")) return "孤獨";
@@ -1295,7 +1288,6 @@ function runCalculation() {
     html += `<td colspan="3" style="background:#fafbfc"></td></tr>`;
     html += `</table></div>`;
 
-    // 原局命盤十神總數統計
     let yjStemsToCount = [yStem, mStem, hStem]; 
     let yjBranchesToCount = [yBranch, mBranch, dBranch, hBranch];
     let yjTgCounts = getTenGodsCount(dStem, yjStemsToCount, yjBranchesToCount);
@@ -1312,7 +1304,6 @@ function runCalculation() {
     });
     html += `</div>`;
 
-    // 原局關煞統計
     let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars);
     let gsDisplayHtml = natalGsList.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
 
@@ -1323,7 +1314,6 @@ function runCalculation() {
         </div>`;
     }
 
-    // 原局雙星斷事
     let dualStarsHtml = "";
     let pillarsToCheck = [
         {name: "年柱", s: yStem, b: yBranch},
@@ -1351,7 +1341,6 @@ function runCalculation() {
         </div>`;
     }
 
-    // 原局迎送格局
     let tsBranch = getStemMapping(dStem);
     let diffY = (yBranch - tsBranch + 12) % 12;
     let hasYing = diffY <= 5;
@@ -1390,7 +1379,6 @@ function runCalculation() {
         </ul>
     </div>`;
 
-    // 原局五勝六忌
     let natalMatches = findShengJiMatches(natalPillars);
     if (natalMatches.length > 0) {
         html += `<div class="sheng-ji-box">
@@ -1465,7 +1453,7 @@ function runCalculation() {
                  </div>`;
     }
 
-    // 獨立表格：1-100歲流年納音分析 (五勝六忌)[cite: 2]
+    // 獨立表格：1-100歲流年納音分析 (五勝六忌)
     let nayinRowsHtml = "";
     for (let age = 1; age <= 100; age++) {
         let loopY = RealBaziYear + age - 1;
@@ -1505,7 +1493,7 @@ function runCalculation() {
                     statusClass = "status-sheng";
                     break;
                 } else if (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz)) {
-                    statusText = "負 (不利) (行衰運)";[cite: 2]
+                    statusText = "負 (不利) (行衰運)";
                     statusClass = "status-fu";
                     break;
                 }
@@ -1514,7 +1502,7 @@ function runCalculation() {
 
             for (let rule of JiRules) {
                 if ((rule.A.includes(loopGZ) && rule.B.includes(baseP.gz)) || (rule.B.includes(loopGZ) && rule.A.includes(baseP.gz))) {
-                    statusText = "忌 (犯忌)";[cite: 2]
+                    statusText = "忌 (犯忌)";
                     statusClass = "status-ji";
                     break;
                 }
@@ -1628,7 +1616,6 @@ function runCalculation() {
         html += `</div>`; 
         html += `</div>`; 
 
-        // 流年十神總結
         let stemsToCount = [yStem, mStem, hStem];
         let branchesToCount = [yBranch, mBranch, dBranch, hBranch];
         if (currDyStem !== -1) {
@@ -1835,7 +1822,6 @@ function generateListRow(label, content, statusHtml) {
     </div>`;
 }
 
-// --- 節氣計算 ---
 function getJieQiDate(y, termIndex) {
     let idx = termIndex;
     if (idx < 0) idx = 0;
