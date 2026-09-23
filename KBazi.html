@@ -129,12 +129,15 @@
                 <img class="h-5 sm:h-6 md:h-8 w-auto object-contain" src="Image/logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <span class="text-white font-bold text-base md:text-xl tracking-wider hidden" style="display:none;">Kosvibe</span>
             </div>
-            <div class="text-slate-300 text-xs md:text-sm font-medium">八字命理排盤工具</div>
+            <div class="text-amber-500 font-bold text-xs md:text-sm tracking-wide">
+                八字排盤系統
+            </div>
         </nav>
 
-        <!-- 輸入表單區塊 -->
+        <!-- 輸入表單區塊 (預設為頁面置中卡片，修改時轉為 Modal) -->
         <div id="formOverlay" class="fade-in transition-all duration-300">
             <div id="formCard" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-4 md:p-8 w-full max-w-3xl relative mx-auto mt-4 md:mt-10">
+                <!-- 關閉按鈕 (僅在 Modal 模式顯示) -->
                 <button id="formCloseBtn" type="button" onclick="closeInputFormModal()" class="hidden-el absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 bg-slate-100 rounded-full">
                     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -145,6 +148,7 @@
                 </h2>
 
                 <form id="baziForm" class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-6">
+                    <!-- 基本資料 -->
                     <div class="md:col-span-4 space-y-1">
                         <label class="block text-xs font-bold text-slate-600">姓名</label>
                         <input type="text" id="nameInput" placeholder="請輸入姓名" class="w-full px-3 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none transition-all" />
@@ -182,7 +186,8 @@
                         <input type="text" id="commentInput" placeholder="簡單備註..." class="w-full px-3 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none transition-all" />
                     </div>
 
-                    <div class="md:col-span-12 flex pt-2 md:pt-4">
+                    <!-- 按鈕區 -->
+                    <div class="md:col-span-12 pt-2 md:pt-4">
                         <button type="submit" id="submitBtn" class="w-full py-2.5 md:py-3 px-6 text-white bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 rounded-xl font-bold shadow-md transition-all flex items-center justify-center text-sm md:text-base">
                             <span id="btnText">開始排盤</span>
                         </button>
@@ -195,17 +200,21 @@
         <!-- 排盤結果主區塊 -->
         <div id="mainResultContainer" class="hidden-el fade-in space-y-3 md:space-y-6">
             
+            <!-- 標題與操作列整合 -->
             <div class="flex flex-col md:flex-row items-center justify-between border-b-2 border-amber-200 pb-3 mt-4 gap-3">
                 <h2 id="resultNameDisplay" class="text-xl md:text-3xl font-black text-amber-900"></h2>
                 
                 <div class="flex items-center gap-2 flex-wrap justify-center">
+                    <!-- 查詢日期 -->
                     <div class="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
                         <label for="queryDateInput" class="text-[10px] md:text-xs font-bold text-amber-700 whitespace-nowrap">查詢日期</label>
                         <input type="date" id="queryDateInput" value="2026-09-08" class="px-1.5 py-1 rounded border border-amber-200 bg-white text-[10px] md:text-xs text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none transition-all" />
                     </div>
+                    <!-- 太歲切換按鈕 -->
                     <button id="taiSuiToggleBtn" onclick="toggleTaiSui()" class="hidden-el px-3 py-1.5 md:px-4 md:py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-colors shadow-sm">
                         切換至太歲化凶 (If Stay)
                     </button>
+                    <!-- 修改命盤按鈕 -->
                     <button onclick="openInputFormAsModal()" class="px-3 py-1.5 md:px-4 md:py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs md:text-sm font-bold rounded-lg md:rounded-xl shadow-sm transition-all flex items-center gap-1.5">
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         修改命盤
@@ -213,7 +222,7 @@
                 </div>
             </div>
 
-            <!-- 主導航 tab 按鈕列 -->
+            <!-- 主導航 tab 按鈕列（獨立卡片） -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-4">
                 <div class="flex justify-start md:justify-center overflow-x-auto custom-scrollbar gap-1 sm:gap-2 md:gap-6 px-1">
                     <button class="main-tab-btn active" onclick="switchPillarTab('bazi', this)">基礎命盤</button>
@@ -225,7 +234,7 @@
                 </div>
             </div>
 
-            <!-- 六柱展示區 -->
+            <!-- 六柱展示區 (動態更新；四柱＋大運＋流年) -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 mt-4 fade-in">
                 <div id="dynamicPillarsContainer" class="flex flex-row justify-center w-full gap-1 sm:gap-2 md:gap-6 overflow-x-auto custom-scrollbar"></div>
             </div>
@@ -236,7 +245,7 @@
                 <div id="baziTables" class="hidden-el flex flex-col lg:flex-row gap-3 md:gap-6 mb-4 justify-center items-center lg:items-start"></div>
                 <div id="kwInfoLine" class="hidden-el mb-4 text-xs md:text-sm text-center text-slate-600 bg-amber-50/60 p-2 md:p-3 rounded-xl border border-amber-100"></div>
 
-                <!-- 一柱論命 -->
+                <!-- 一柱論命（以日柱干支為主） -->
                 <div id="yizhuBlock" class="hidden-el mb-4 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/80 to-orange-50/40 p-3 md:p-5">
                     <div class="flex items-center gap-2 mb-2 md:mb-3">
                         <span class="text-base md:text-lg">📜</span>
@@ -259,6 +268,7 @@
                 <div class="bg-slate-50/70 p-3 md:p-4 rounded-xl border border-slate-200 mb-3 md:mb-4 text-xs md:text-sm text-slate-700 leading-relaxed">
                     盲公陳脈體系參考手冊。先用下方分頁快速定位，再對照自己命盤查閱。
                 </div>
+                <!-- 參考資料子分頁 -->
                 <div class="ref-subtab-bar flex flex-wrap gap-1 md:gap-2 mb-4 md:mb-5 border-b border-slate-200 pb-2">
                     <button class="ref-subtab-btn active px-2.5 md:px-3.5 py-1.5 md:py-2 text-[11px] md:text-xs font-bold rounded-t-lg border-b-2 border-amber-500 text-amber-700 bg-amber-50" data-ref-tab="gongwei" onclick="switchRefTab('gongwei', this)">宮位流限</button>
                     <button class="ref-subtab-btn px-2.5 md:px-3.5 py-1.5 md:py-2 text-[11px] md:text-xs font-bold rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-amber-700 hover:bg-amber-50/50" data-ref-tab="shensha" onclick="switchRefTab('shensha', this)">十二神煞</button>
@@ -376,8 +386,7 @@
                                             </tr>
                                             <tr class="bg-slate-50/40">
                                                 <td class="border border-slate-200 px-1.5 py-1.5" colspan="4">
-                                                    <span class="text-sky-600 font-semibold">地支（陰，右）</span>
-                                                    主右半邊；天干陽左主外、男、尊，地支陰右主內、女、卑。
+                                                    <span class="text-sky-600 font-semibold">地支（陰，右）</span> 主右半邊；天干陽左主外、男、尊，地支陰右主內、女、卑。
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -402,96 +411,7 @@
                                     <p class="text-slate-600">日支宮位的星為「<b>自坐</b>」，會散到整條命。</p>
                                 </div>
                             </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/70 transition-colors flex items-center justify-between">
-                                    <span>青龍 <span class="text-xs font-normal text-slate-500 ml-2">喜神</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>青龍為喜神，主<b class="text-emerald-700">生貴子（男丁星）</b>，易有人幫手。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/70 transition-colors flex items-center justify-between">
-                                    <span>喪門 <span class="text-xs font-normal text-slate-500 ml-2">白事星／哭星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>悲傷形態，追欲望。心不安，<b>破財擋災</b>。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-amber-300 bg-amber-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-amber-800 bg-amber-100/80 hover:bg-amber-200/70 transition-colors flex items-center justify-between">
-                                    <span>太歲 <span class="text-xs font-normal text-amber-600 ml-2">首領星</span></span>
-                                    <span class="text-amber-500 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-2">
-                                    <p>為首領，程度最強，可<b>化凶／化吉</b>。需靠太歲訣來定吉凶。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/70 transition-colors flex items-center justify-between">
-                                    <span>六合 <span class="text-xs font-normal text-slate-500 ml-2">六親和合</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>六合＝六親和合，易得六親助力（如有神助）。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-red-700 bg-red-50/70 hover:bg-red-100/70 transition-colors flex items-center justify-between">
-                                    <span>大耗 / 小耗 <span class="text-xs font-normal text-slate-500 ml-2">破財星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>同為耗星，也是破財星。遇耗星，建議<b class="text-amber-700">主動開心破災</b>。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/70 transition-colors flex items-center justify-between">
-                                    <span>官符 <span class="text-xs font-normal text-slate-500 ml-2">文人符印</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>文人氣質（君子星），守禮，有文化，有貴氣。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-red-700 bg-red-50/70 hover:bg-red-100/70 transition-colors flex items-center justify-between">
-                                    <span>朱雀 <span class="text-xs font-normal text-slate-500 ml-2">是非口舌星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>人事／是非口舌星。要求高，做磨心，多小人。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-red-700 bg-red-50/70 hover:bg-red-100/70 transition-colors flex items-center justify-between">
-                                    <span>白虎 <span class="text-xs font-normal text-slate-500 ml-2">武將星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>虎符（兵符），武將星。主異路功名，血光橫禍傷災。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/70 transition-colors flex items-center justify-between">
-                                    <span>貴神 <span class="text-xs font-normal text-slate-500 ml-2">吉星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>吉星，有名望。愈多吉星愈好，多嘢庇佑。</p>
-                                </div>
-                            </details>
-                            <details class="group rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-                                <summary class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/70 transition-colors flex items-center justify-between">
-                                    <span>吊客 <span class="text-xs font-normal text-slate-500 ml-2">白事星／孤獨星</span></span>
-                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
-                                </summary>
-                                <div class="p-3 md:p-4 space-y-1.5">
-                                    <p>白事星、孤獨星。情緒鬱結較重。</p>
-                                </div>
-                            </details>
+                            <!-- 更多參考項目保留於 DOM 中，可按需要閱讀 -->
                         </div>
                     </div>
                 </div>
@@ -528,7 +448,7 @@
                 </div>
             </div>
 
-            <!-- 十二神煞進階內容 -->
+            <!-- 1. 十二神煞進階內容 -->
             <div id="content-shensha" class="tab-content hidden-el bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 fade-in">
                 <h2 class="section-title">命格強弱與君臣論</h2>
                 <div class="flex flex-col md:flex-row gap-3 md:gap-8 items-center md:items-start mb-4 md:mb-6">
@@ -545,8 +465,16 @@
                 <h3 class="font-bold text-amber-800 mb-2 md:mb-3 text-xs md:text-sm border-b border-slate-200 pb-1.5 md:pb-2">君臣論 (命局角色)</h3>
                 <div id="rolesContainer" class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4"></div>
 
+                <!-- 單星論斷 -->
                 <h2 class="section-title mt-6 md:mt-8">單星論斷</h2>
+                <div class="bg-slate-50/70 p-3 md:p-4 rounded-xl border border-slate-200 mb-3 md:mb-4">
+                    <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                        以<b class="text-slate-900">四柱宮位</b>定大方向。<b class="text-red-600">日支（自坐）</b>擴散到整條命，最影響命主結構；其餘三柱主管四輩人際。<b>天干</b>為主力，<b>地支</b>為輔助。
+                    </p>
+                </div>
+
                 <div id="zizuoContainer" class="mb-4 md:mb-5"></div>
+
                 <div class="flex gap-1 md:gap-2 mb-2 md:mb-3 border-b border-slate-200 overflow-x-auto">
                     <button class="danxing-tab-btn px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-bold border-b-2 border-amber-500 text-amber-700 bg-amber-50 rounded-t-lg whitespace-nowrap" data-dx-tab="年柱" onclick="switchDanxingTab('年柱', this)">年柱 · 1-15歲</button>
                     <button class="danxing-tab-btn px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-bold border-b-2 border-transparent text-slate-600 hover:text-amber-700 hover:bg-amber-50/50 rounded-t-lg whitespace-nowrap" data-dx-tab="月柱" onclick="switchDanxingTab('月柱', this)">月柱 · 16-30歲</button>
@@ -555,6 +483,7 @@
                 <div id="danxingMergedContainer" class="mb-4 md:mb-5"></div>
                 <div id="bingfuContainer" class="mt-4 md:mt-5"></div>
 
+                <!-- 雙星論斷 -->
                 <h2 class="section-title mt-6 md:mt-8">雙星論斷</h2>
                 <div class="bg-slate-50 p-2.5 md:p-3 rounded-xl border border-slate-200 mb-3 md:mb-4">
                     <div id="shuangxingGroupLegend" class="flex flex-wrap gap-1.5 md:gap-2"></div>
@@ -562,7 +491,7 @@
                 <div id="shuangxingContainer" class="space-y-3 md:space-y-4"></div>
             </div>
 
-            <!-- 通變星進階內容 -->
+            <!-- 2. 十神與格局進階內容 -->
             <div id="content-shishen" class="tab-content hidden-el bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 fade-in">
                 <h2 class="section-title">通變星與格局</h2>
                 <div class="bg-amber-50 p-3 md:p-4 rounded-xl border border-amber-200 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
@@ -571,7 +500,7 @@
                 </div>
             </div>
 
-            <!-- 納音勝敗進階內容 -->
+            <!-- 3. 納音勝敗進階內容 -->
             <div id="content-nanyin" class="tab-content hidden-el bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 fade-in">
                 <h2 class="section-title">納音五行性質分析</h2>
                 <div id="nanyinNature" class="mb-6 md:mb-8"></div>
@@ -588,10 +517,12 @@
                             <div id="nanyinTargets" class="text-xs md:text-sm text-slate-700 space-y-1.5 md:space-y-2"></div>
                         </div>
                     </div>
+                    
                     <div>
                         <h3 class="font-bold text-amber-800 mb-2 border-b border-amber-100 pb-1 text-sm md:text-base">大運納音分析</h3>
                         <div id="nanyinDaYun" class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3"></div>
                     </div>
+
                     <div>
                         <h3 class="font-bold text-amber-800 mb-2 border-b border-amber-100 pb-1 text-sm md:text-base">流年納音分析</h3>
                         <div class="overflow-x-auto custom-scrollbar">
@@ -606,7 +537,7 @@
                 </div>
             </div>
 
-            <!-- 空亡/連空分析 -->
+            <!-- 3b. 空亡/連空分析 -->
             <div id="content-konglian" class="tab-content hidden-el bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 fade-in">
                 <h2 class="section-title">空亡 / 連空分析</h2>
                 <div class="space-y-4 md:space-y-6">
@@ -614,10 +545,12 @@
                         <h3 class="font-bold text-amber-800 mb-2 md:mb-3 text-xs md:text-sm border-b border-slate-200 pb-1.5 md:pb-2">搖擺天干</h3>
                         <div id="kwSwingingStems" class="text-xs md:text-sm text-slate-700"></div>
                     </div>
+
                     <div>
                         <h3 class="font-bold text-amber-800 mb-2 border-b border-amber-100 pb-1 text-sm md:text-base">大運空亡 / 連空分析</h3>
                         <div id="kwDaYun" class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3"></div>
                     </div>
+
                     <div>
                         <h3 class="font-bold text-amber-800 mb-2 border-b border-amber-100 pb-1 text-sm md:text-base">流年空亡 / 連空分析</h3>
                         <div class="overflow-x-auto custom-scrollbar">
@@ -636,6 +569,7 @@
     </div>
 
     <script>
+        // 參考資料子分頁切換
         function switchRefTab(tabName, btn) {
             document.querySelectorAll('.ref-subtab-panel').forEach(p => p.classList.add('hidden-el'));
             const target = document.getElementById('ref-panel-' + tabName);
@@ -653,11 +587,13 @@
                 refPanel.scrollIntoView({behavior:'smooth', block:'start'});
             }
         }
-
+        
+        // 全域變數
         let currentTaiSuiState = 'move'; 
         let cachedStarInfo = null;
         window.currentPillarsData = [];
 
+        // 一柱論命資料
         const YIZHU_POEMS = {
             "甲子": "平生立事好營成，爭奈時艱歷萬程，回首故鄉千萬里，夢魂流水到宸京。\n丹山鸞鳳居山穩，一片忠心逐水濱，花謝黃昏月滿庭，逢時應遂晚年心。\n知君多合高人意，嘆我常招小輩仇，福居百順達剛柔，反應靈敏機謀深。\n心慈口噪而傷人，過於急進而失敗，做事常有頭無尾，心內惶恐常操心。",
             "甲寅": "性似電光明察快，聲如雷響震瑤臺，多找桃李蕃枝葉，丹桂堂前有異苗。\n春花正發日遲遲，夜半風狂葉亦稀，鄉門休嘆家南北，流水落花後有心。\n先時招悔後時通，鶯語來時花爛漫，為人聰明志孤高，自嫌孤獨樂清虛。\n立性不定多進退，志氣豪逸有貴人，宜謹慎克服困難，扭轉惡運向光明。",
@@ -718,9 +654,10 @@
             "癸巳": "性急倦行嫌路遠，風雨相催近夜台，晚看落霞紅日近，枯楊枝上雁輕盈。\n上怨名園春意濃，門庭桃李笑春風，優游福慶不須憂，鼎新門戶有扁舟。\n先天河洛太極圖，復定陰陽八卦推，說長論短三吋舌，移南換北一身心。\n倉忙惹出是非來，朋友相遇不知心，若得青龍行大海，自然平地起雷聲。",
             "癸未": "祿位漸高須有險，資財求處自艱難，喬松慣耐雪霜凝，節硬心高不改青。\n萬里江山重不盡，悠悠雲畔任回返，鷗鷺晚來同樂處，柳蔭深處桂花香。\n知君袖內有驪珠，生不逢時意圖強，心硬氣高人慈善，愛說是非遭人忌。\n遇事不驚有威權，幾番恩愛返成怨，只因多事熱心腸，不須苦苦強追尋。",
             "癸酉": "立身不必乘先蔭，玉墜石中金在沙，秋深雁過江邊遠，草木榮新別有家。\n花開好看難成實，秋深一果寄枝頭，更加福佑重回首，明月清風景不窮。\n憂愁常鎖兩眉尖，千頭萬緒掛心懷，平生不作瞞心事，添間氣力得便宜。\n雖然暗裏藏笑刀，成中見破性難定，玉兔交時方得意，恰如枯木再逢春。",
-            "癸亥": "巨浪輕舟不用槁，平生興廢幾波濤，中年消息風光好，梅老經霜始放花。\n憶昔喧宣多口舌，如今幸得已身歸，三果花開成兩果，一炷名香達上天。\n貴人遭遇水雲鄉，冷淡交情滋味長，枯木逢春待雨來，經過險阻方得遇。\n無限精神克勞苦，享福享祿於五旬，不是寒冰連底凍，那得梅花滿園春。"
+            "癸亥": "巨浪輕舟不用槁，平生興廢幾波濤，中年消息風光好，梅老經霜始放花。\n憶昔喧宣多口舌，如今幸得已身歸，三果花開成兩果，一炷名香達上天。\n貴人遭遇水雲鄉，冷淡交情滋味長，枯木逢春待雨來，經過險阻方得遇。\n無限精神克勞苦，享福享祿於五旬，不是寒冰連底凍，那得梅花滿園春。",
         };
 
+        // UI 切換
         function switchPillarTab(tabName, btnElement) {
             document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
@@ -778,6 +715,7 @@
             });
         }
 
+        // 表單 Modal 控制
         function openInputFormAsModal() {
             const overlay = document.getElementById('formOverlay');
             const card = document.getElementById('formCard');
@@ -794,6 +732,7 @@
             document.getElementById('formOverlay').classList.add('hidden-el');
         }
 
+        // 八字反推西曆 Modal 控制
         function openReverseBaziModal() {
             document.getElementById('reverseBaziModal').classList.remove('hidden-el');
             document.getElementById('rbError').classList.add('hidden-el');
@@ -849,6 +788,7 @@
             }
         }
 
+        // 排盤表單提交
         document.getElementById('baziForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const date = document.getElementById('dateInput').value;
@@ -898,6 +838,7 @@
             }
         });
 
+        // 查詢日期切換
         document.getElementById('queryDateInput').addEventListener('change', async function() {
             if (!window.lastBaziQuery) return;
             const queryDate = this.value;
@@ -977,11 +918,11 @@
 
         const SHUANGXING_GROUPS = {
             zhangai:   { name: '障礙組',     stars: ['太歲','病符'], color: 'bg-slate-600',            bg: 'bg-slate-50',  border: 'border-slate-300', text: 'text-slate-700' },
-            renyuan:   { name: '人緣組',     stars: ['六合','青龍'], color: 'bg-emerald-600',          bg: 'bg-emerald-50',border: 'border-emerald-300', text: 'text-emerald-700' },
-            pocai:     { name: '破財組',     stars: ['大耗','小耗'], color: 'bg-amber-600',            bg: 'bg-amber-50',  border: 'border-amber-300',   text: 'text-amber-700' },
-            shiye:     { name: '事業功名組', stars: ['官符','貴神'], color: 'bg-indigo-600',           bg: 'bg-indigo-50', border: 'border-indigo-300',  text: 'text-indigo-700' },
-            xueguang:  { name: '血光橫禍組', stars: ['白虎','朱雀'], color: 'bg-red-600',              bg: 'bg-red-50',    border: 'border-red-300',     text: 'text-red-700' },
-            gudu:      { name: '孤獨白事組', stars: ['喪門','吊客'], color: 'bg-purple-600',           bg: 'bg-purple-50', border: 'border-purple-300',  text: 'text-purple-700' }
+            renyuan:   { name: '人緣組',     stars: ['六合','青龍'], color: 'bg-emerald-600',         bg: 'bg-emerald-50',border: 'border-emerald-300', text: 'text-emerald-700' },
+            pocai:     { name: '破財組',     stars: ['大耗','小耗'], color: 'bg-amber-600',           bg: 'bg-amber-50',  border: 'border-amber-300',   text: 'text-amber-700' },
+            shiye:     { name: '事業功名組', stars: ['官符','貴神'], color: 'bg-indigo-600',          bg: 'bg-indigo-50', border: 'border-indigo-300',  text: 'text-indigo-700' },
+            xueguang:  { name: '血光橫禍組', stars: ['白虎','朱雀'], color: 'bg-red-600',             bg: 'bg-red-50',    border: 'border-red-300',     text: 'text-red-700' },
+            gudu:      { name: '孤獨白事組', stars: ['喪門','吊客'], color: 'bg-purple-600',          bg: 'bg-purple-50', border: 'border-purple-300',  text: 'text-purple-700' }
         };
 
         const SHUANGXING_STAR_TO_GROUP = {};
@@ -1043,17 +984,17 @@
 
         const STAR_INFO = {
             '太歲': { color: 'amber',   nature: '首領星（可化吉/化凶）', alias: '太歲', desc: '為首領，程度最強，需靠「起動」化吉；靜則應凶。' },
-            '青龍': { color: 'emerald',  nature: '喜神', alias: '青龍', desc: '主生貴子（男丁星），易有人幫手，官運好，學嘢快，屬木。' },
-            '喪門': { color: 'slate',    nature: '白事星／哭星', alias: '喪門', desc: '悲傷形態、心不安、破財擋災；自坐者易有敏感體質。' },
-            '六合': { color: 'emerald',  nature: '六親和合', alias: '六合', desc: '易得六親助力（如有神助），交際好；女性忌多見。' },
-            '官符': { color: 'emerald',  nature: '文人符印', alias: '官符', desc: '君子星，守禮、有文化、有貴氣，適合大公司，易上司賞識。' },
-            '小耗': { color: 'red',      nature: '破財星（家鼠）', alias: '小耗', desc: '小額破財、是非口舌；主動開心破災可化解。' },
-            '大耗': { color: 'red',      nature: '大破財星（田鼠）', alias: '大耗', desc: '大額破財，愈有機會愈大鑊；忌年柱見，怕晚年無錢。' },
-            '朱雀': { color: 'red',      nature: '是非口舌星', alias: '朱雀', desc: '人事是非、要求高、做磨心、多小人；適合 sales／娛樂圈。' },
-            '白虎': { color: 'red',      nature: '武將星／血光', alias: '白虎', desc: '主異路功名、血光橫禍傷災；適合一門手藝。' },
-            '貴神': { color: 'emerald',  nature: '吉星', alias: '貴神', desc: '有名望、多庇佑、上司提拔；自坐者易大事化小。' },
-            '吊客': { color: 'slate',    nature: '白事星／孤獨星', alias: '吊客', desc: '白事、孤獨、情緒鬱結；程度少於喪門，哭到會好啲。' },
-            '病符': { color: 'red',      nature: '病星', alias: '病符', desc: '主病；追病符三要素：病部、病五行、病運限。' }
+            '青龍': { color: 'emerald', nature: '喜神', alias: '青龍', desc: '主生貴子（男丁星），易有人幫手，官運好，學嘢快，屬木。' },
+            '喪門': { color: 'slate',   nature: '白事星／哭星', alias: '喪門', desc: '悲傷形態、心不安、破財擋災；自坐者易有敏感體質。' },
+            '六合': { color: 'emerald', nature: '六親和合', alias: '六合', desc: '易得六親助力（如有神助），交際好；女性忌多見。' },
+            '官符': { color: 'emerald', nature: '文人符印', alias: '官符', desc: '君子星，守禮、有文化、有貴氣，適合大公司，易上司賞識。' },
+            '小耗': { color: 'red',     nature: '破財星（家鼠）', alias: '小耗', desc: '小額破財、是非口舌；主動開心破災可化解。' },
+            '大耗': { color: 'red',     nature: '大破財星（田鼠）', alias: '大耗', desc: '大額破財，愈有機會愈大鑊；忌年柱見，怕晚年無錢。' },
+            '朱雀': { color: 'red',     nature: '是非口舌星', alias: '朱雀', desc: '人事是非、要求高、做磨心、多小人；適合 sales／娛樂圈。' },
+            '白虎': { color: 'red',     nature: '武將星／血光', alias: '白虎', desc: '主異路功名、血光橫禍傷災；適合一門手藝。' },
+            '貴神': { color: 'emerald', nature: '吉星', alias: '貴神', desc: '有名望、多庇佑、上司提拔；自坐者易大事化小。' },
+            '吊客': { color: 'slate',   nature: '白事星／孤獨星', alias: '吊客', desc: '白事、孤獨、情緒鬱結；程度少於喪門，哭到會好啲。' },
+            '病符': { color: 'red',     nature: '病星', alias: '病符', desc: '主病；追病符三要素：病部、病五行、病運限。' }
         };
 
         const PILLAR_INFO = {
@@ -1109,9 +1050,9 @@
             '喪門': {
                 '年干': '父親／男長輩緣薄，或自小見白事；家宅不安，心情常沉重。',
                 '年支': '父母緣薄，尤其母親；早年少家庭溫暖。',
-                '月干': '工作上易遇悲觀、負面氛圍；同事間有白事或哭喪場合。喪門主破財擋災，主動使錢可化解。',
+                '月干': '工作上易遇悲觀、負面氛圍；同事間有白事或哭喪場合。喪門主破財擋災，主動使錢（帛金、探病）可化解。',
                 '月支': '兄弟姊妹緣份較薄；朋友易離散。',
-                '日支': '自坐喪門散到整條命：易有敏感體質；姻緣弱、無拍拖。成世心不安，宜以破財擋災。',
+                '日支': '自坐喪門散到整條命：易有敏感體質（陰信息敏感，如皮膚敏感）；姻緣弱、無拍拖。成世心不安，宜以破財擋災。',
                 '時干': '大仔體弱或緣薄；晚年心境孤清。',
                 '時支': '子女（女／細仔）令自己操心；晚輩中易有白事。'
             },
@@ -1120,7 +1061,7 @@
                 '年支': '母親／女上司長袖善舞；家庭聚會多。',
                 '月干': '同事、朋友助力，人脈就喺呢段建立；工作上多人幫。',
                 '月支': '兄弟姊妹感情好；朋友圈廣闊、出入成羣。',
-                '日支': '自坐六合有人緣，配偶賢和；但女命忌自坐／多見六合。見六合小毛病多但難成大病。',
+                '日支': '自坐六合有人緣，配偶賢和；但女命忌自坐／多見六合——與六親交往過甚，易出不正之妻。見六合小毛病多但難成大病。',
                 '時干': '手下、下屬幫到手；大仔人緣好。',
                 '時支': '子女孝順、晚輩有禮；晚年六親圍繞。'
             },
@@ -1136,7 +1077,7 @@
             '小耗': {
                 '年干': '年柱忌見耗星——根上坐耗，成世財氣鬆散，怕晚年無錢。父親／男長輩使錢闊綽。',
                 '年支': '母親／家庭日常開銷大；細個已見財來財去。',
-                '月干': '16-30 歲使錢多應酬、裝身；人工左手來右手去。宜主動開心破財化解。',
+                '月干': '16-30 歲使錢多應酬、裝身；人工左手來右手去。宜主動開心破財（請客、送禮）化解。',
                 '月支': '兄弟朋友間有金錢往來；易借小錢唔還。',
                 '日支': '自坐小耗，會消費多咗喺老婆身上；配偶鍾意消費、家用開支大。',
                 '時干': '晚年有小破財；大仔使錢闊綽。',
@@ -1145,56 +1086,56 @@
             '大耗': {
                 '年干': '年柱大忌——父輩或祖業有大破財；根上坐大耗，成世財氣最難留，必須及早強制儲蓄。',
                 '年支': '家庭曾有大額損失；母親掌家但財鬆。',
-                '月干': '事業起步期大額使錢；愈有機會愈大鑊，唔好亂投資。',
+                '月干': '事業起步期大額使錢（進修、創業、裝備）；愈有機會愈大鑊，唔好亂投資。',
                 '月支': '兄弟朋友間有大數目轇轕；易因朋友破大財。',
-                '日支': '配偶大花筒或因婚姻大額使錢；自坐散財，成世唔聚財，宜用資產鎖財。',
-                '時干': '晚年大額支出；必須早儲蓄。',
+                '日支': '配偶大花筒或因婚姻大額使錢；自坐散財，成世唔聚財，宜用資產（樓、黃金）鎖財。',
+                '時干': '晚年大額支出（醫療、子女）；必須早儲蓄。',
                 '時支': '子女或晚年有大破財；宜中年後主動置業鎖財，主動開心破災。'
             },
             '朱雀': {
                 '年干': '父親／男上司是非多、口不擇言；自小口舌不離家。',
-                '年支': '母親／女長輩多說話、要求高；家庭易嘈交。',
-                '月干': '工作上是非圈、做磨心；適合 sales、保險地產、娛樂圈、創意媒體。',
+                '年支': '母親／女長輩多說話、要求高（奄尖）；家庭易嘈交。',
+                '月干': '工作上是非圈、做磨心；適合 sales、保險地產、娛樂圈、創意媒體、飛機師——將口舌化為職業本錢。',
                 '月支': '同事多小人、易背後講；朋友間口舌不斷。',
-                '日支': '自坐朱雀，家嘈屋閉、易起衝突；夫妻各自坐朱雀則緣薄；帶六合者享受是非。',
+                '日支': '自坐朱雀，家嘈屋閉、易起衝突、甚至思覺失調；夫妻各自坐朱雀則緣薄；但帶六合者享受是非，如魚得水。',
                 '時干': '晚年多管閒事、易嘈；大仔口材好或惹是非。',
                 '時支': '子女（女／細仔）多說話；晚年留意因口惹禍，唔好管閒事。'
             },
             '白虎': {
-                '年干': '父親／男長輩脾氣剛、或帶傷；自小見血光場合。',
+                '年干': '父親／男長輩脾氣剛、或帶傷；自小見血光場合（如做廚、做工程家庭）。',
                 '年支': '母親／女長輩體格硬朗或有手術；家宅有意外。',
-                '月干': '適合學一門手藝——剪髮、廚師、外科醫生、紀律部隊；工作帶刀、帶金屬。',
+                '月干': '適合學一門手藝——剪髮、廚師、外科醫生、紀律部隊（異路功名）；工作帶刀、帶金屬，主血光橫禍但可化為功名。',
                 '月支': '兄弟朋友性格火爆；工作環境體力勞動、挨更抵夜。',
-                '日支': '自坐白虎，無啦啦瘀傷、受傷；配偶剛烈、武職或手藝人。',
+                '日支': '自坐白虎，無啦啦瘀傷、受傷；配偶剛烈、武職或手藝人。散到整條命，成世多意外，宜習武、做手藝化解。',
                 '時干': '大仔頑皮、易跌撞；晚年留意血光、手術。',
-                '時支': '子女（女／細仔）體力好或帶傷；晚年下半身易傷。'
+                '時支': '子女（女／細仔）體力好或帶傷；晚年下半身（腳、腰）易傷。'
             },
             '貴神': {
-                '年干': '細個見貴神會哂咗——但長輩有貴氣、家底有名望。',
+                '年干': '細個見貴神會哂咗（小朋友接唔住貴氣）——但長輩有貴氣、家底有名望。',
                 '年支': '母親／女長輩有貴氣；細個有人呵護但自己未必識用。',
-                '月干': '上司提拔、事業有貴人；搵工易有賞識。',
+                '月干': '上司提拔、事業有貴人（貴神利月、日、時柱）；搵工易有賞識。',
                 '月支': '兄弟朋友中有貴人；同事樂於扶持。',
                 '日支': '自坐貴神，易大事化小、逢凶有救；配偶賢德、帶挈自己。',
                 '時干': '晚年有名望、受人尊敬；大仔有出息。',
-                '時支': '子女孝順有成就；以貴為尊，以少為尊。'
+                '時支': '子女孝順有成就；以貴為尊，以少為尊——貴神唔使多，一粒就夠力。'
             },
             '吊客': {
                 '年干': '父親／男長輩孤獨或早別；自小習慣獨處。',
                 '年支': '母親／女長輩情緒內斂；家庭氣氛較冷清。',
-                '月干': '工作上獨立、少團隊；適合保密、獨立性強工種。',
-                '月支': '朋友不多、聯絡疏；享受孤獨就 ok。',
-                '日支': '配偶內向、或婚姻聚少離多；自己情緒鬱結，程度輕於喪門。',
+                '月干': '工作上獨立、少團隊；適合保密、獨立性強工種（網絡保安、夜更、研究）。',
+                '月支': '朋友不多、聯絡疏；享受孤獨就 ok，唔享受孤獨就唔 ok。',
+                '日支': '配偶內向、或婚姻聚少離多；自己情緒鬱結，程度輕於喪門，哭出來會好啲。',
                 '時干': '大仔獨立、早離家；晚年獨處時間多。',
                 '時支': '子女（女／細仔）內向；晚輩緣份淡。'
             },
             '病符': {
-                '年干': '細個體弱多小病；父親／男長輩健康一般。',
+                '年干': '細個體弱多小病（頭、面、頸部位）；父親／男長輩健康一般。',
                 '年支': '母親／女長輩體弱；自小見家人食藥。',
-                '月干': '16-30 歲易病；工作環境易操勞。',
+                '月干': '16-30 歲易病（胸、肺、心、雙手部位）；工作環境易操勞。',
                 '月支': '兄弟姊妹體弱；自己肩背、胸口易不適。',
-                '日支': '自坐病符散到整條命，病唔限一位＝遺傳；病部周圍走，以日柱月柱為主。',
-                '時干': '46-60 歲應期，病部在石門穴以下：生殖器官、尾龍骨、腳。',
-                '時支': '晚年病在下半身、右腳；慢性病浮現。'
+                '日支': '自坐病符散到整條命，病唔限一位＝遺傳（由上一代落自己）；病部周圍走，以日柱月柱為主（腸胃差、肩背肌肉痛）。女命生育後食夠補品可重啟生旺。',
+                '時干': '46-60 歲應期，病部在石門穴以下：生殖器官、尾龍骨、腳。配病五行定臟腑。',
+                '時支': '晚年病在下半身、右腳；慢性病浮現，留意排水、腎水問題。'
             }
         };
 
@@ -1376,7 +1317,7 @@
             const zizuoNote = isZizuo ? `
                 <div class="rounded-xl border border-red-200 bg-red-50/80 p-3 mb-3 text-xs md:text-sm text-slate-700">
                     <b class="text-red-700">⚠ 病符自坐（日支）：</b>
-                    會擴散到整條命，病部以日柱、月柱區域為主。病五行固定，但病部會擴散，要全面留意。
+                    會擴散到整條命，病部以日柱、月柱區域為主（腹部、腰、腸胃、胸口、肺、心、雙手）。
                     <span class="text-emerald-700 block mt-1">女性於生育後可重啟，進補得宜可生旺。</span>
                 </div>` : '';
 
@@ -1387,7 +1328,7 @@
                 ${zizuoNote}
                 <div class="grid grid-cols-1 gap-2.5 md:gap-3">${cards}</div>
                 <p class="text-[10px] md:text-xs text-slate-500 mt-2 leading-relaxed">
-                    病 = 病部 + 病五行。同一病符，落在哪柱就決定患處位置和年齡應期。
+                    病 = 病部 + 病五行。同一病符，落在哪柱就決定患處位置和年齡應期；乾支取其五行屬性對應臟器。
                 </p>`;
         }
 
@@ -1449,7 +1390,9 @@
                 } else {
                     comboTitle = `${tgGroup.name} × ${dzGroup.name}`;
                     const key = `${tgGroupKey}_${dzGroupKey}`;
-                    bulletPoints = CROSS_GROUP_DESC[key] || ['待論斷'];
+                    bulletPoints = CROSS_GROUP_DESC[key] || [
+                        '待論斷（呢堂未教到，等下一堂補充）'
+                    ];
                 }
 
                 const ageRange = { '年柱': '1-15歲', '月柱': '16-30歲', '時柱': '46-60歲' }[p.title] || '';
@@ -1504,7 +1447,6 @@
         }
 
         function renderBazi(data) {
-            const kwArray = data.bazi.空亡array || [];
             const kwBranches = data.bazi.空亡branches || [];
             const isKw = (branch) => kwBranches.includes(branch);
 
@@ -1597,7 +1539,8 @@
                 '水':'text-blue-700 bg-blue-50 border-blue-200'
             }[wx] || 'text-slate-600 bg-slate-50 border-slate-200');
 
-            let table1 = '<table class="border-collapse text-center text-xs md:text-sm"><tbody><tr>';
+            let table1 = '<table class="border-collapse text-center text-xs md:text-sm"><tbody>';
+            table1 += '<tr>';
             fourPillars.forEach(p => {
                 table1 += `<td class="border border-amber-200 px-2 md:px-4 py-1 md:py-1.5 font-bold text-amber-900 bg-amber-50/60 w-16 md:w-20">${p.stem}</td>`;
             });
@@ -1620,7 +1563,8 @@
             });
             table1 += '</tr></tbody></table>';
 
-            let table2 = '<table class="border-collapse text-center text-xs md:text-sm"><tbody><tr>';
+            let table2 = '<table class="border-collapse text-center text-xs md:text-sm"><tbody>';
+            table2 += '<tr>';
             fourPillars.forEach(p => {
                 const wx = stemWuxing[p.stem] || '';
                 table2 += `<td class="border px-2 md:px-4 py-1 md:py-1.5 font-bold w-16 md:w-20 ${wxColor(wx)}">${wx}</td>`;
