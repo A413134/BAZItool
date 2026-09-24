@@ -6,105 +6,111 @@
     <title>子平八字 | 專業排盤系統 (30納音私班全收錄完整版)</title>
     <style>
         :root {
-            --bg-color: #f7f9fa;
+            --bg-color: #f1f5f9;
             --surface-color: #ffffff;
-            --primary-blue: #2c3e50;
-            --primary-hover: #1a252f;
-            --accent-blue: #34495e;
+            --surface-card: #ffffff;
+            --primary-blue: #1e293b;
+            --primary-hover: #0f172a;
+            --accent-blue: #334155;
             --border-color: #e2e8f0;
-            --border-focus: #4a6fa5;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --text-subtle: #a0aec0;
+            --border-focus: #3b82f6;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
             
-            --color-green: #2e7d32;
-            --color-purple: #6a1b9a;
-            --color-red: #c62828;
-            --color-gold: #b7791f;
-            --color-gold-bg: #fffbf0;
-            --color-gold-border: #f6e05e;
+            --color-green: #15803d;
+            --color-green-bg: #f0fdf4;
+            --color-purple: #7e22ce;
+            --color-purple-bg: #faf5ff;
+            --color-red: #b91c1c;
+            --color-red-bg: #fef2f2;
+            --color-gold: #b45309;
+            --color-gold-bg: #fffbeb;
+            --color-gold-border: #fde68a;
             
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "微軟正黑體", sans-serif;
             background-color: var(--bg-color);
             margin: 0;
-            padding: 24px 16px;
+            padding: 32px 16px;
             color: var(--text-main);
-            line-height: 1.5;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
         }
 
         .container {
             max-width: 1040px;
             margin: 0 auto;
             background: var(--surface-color);
-            padding: 30px;
-            box-shadow: var(--shadow-md);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-lg);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .main-header {
-            background: linear-gradient(135deg, #1f2d3d 0%, #2c3e50 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
             color: #ffffff;
             text-align: center;
-            padding: 22px;
-            font-size: 24px;
-            font-weight: 700;
+            padding: 24px;
+            font-size: 22px;
+            font-weight: 800;
             border-radius: var(--radius-md);
-            margin-bottom: 24px;
-            letter-spacing: 3px;
-            box-shadow: var(--shadow-sm);
+            margin-bottom: 28px;
+            letter-spacing: 4px;
+            box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.35);
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #edf2f7;
-            margin-bottom: 24px;
-            gap: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 26px;
+            gap: 10px;
         }
         
         .tab {
-            padding: 12px 28px;
+            padding: 12px 30px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 15px;
             color: var(--text-muted);
-            background: #edf2f7;
+            background: #e2e8f0;
             border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-            transition: all 0.25s ease;
-            border: 1px solid transparent;
-            border-bottom: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
         }
         
         .tab:hover {
             color: var(--primary-blue);
-            background: #e2e8f0;
+            background: #cbd5e1;
         }
         
         .tab.active {
             background: var(--surface-color);
-            color: var(--primary-blue);
-            border-color: #e2e8f0;
-            margin-bottom: -2px;
-            border-bottom: 2px solid var(--surface-color);
+            color: #0f172a;
+            border-bottom: 3px solid #0f172a;
         }
 
         .input-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 16px;
+            gap: 18px;
             background-color: #f8fafc;
-            padding: 20px;
+            padding: 22px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .input-group {
@@ -114,7 +120,7 @@
 
         .flex-row {
             display: flex;
-            gap: 6px;
+            gap: 8px;
         }
         .flex-row select {
             flex: 1;
@@ -122,18 +128,18 @@
 
         .input-group label {
             font-size: 13px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .input-group input, .input-group select {
-            padding: 10px 12px;
+            padding: 11px 14px;
             font-size: 15px;
-            border: 1px solid #cbd5e0;
+            border: 1.5px solid #cbd5e1;
             border-radius: var(--radius-sm);
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
             background: var(--surface-color);
             color: var(--text-main);
             transition: all 0.2s ease;
@@ -141,92 +147,99 @@
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.15);
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
         }
 
         .btn-section {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin: 25px 0;
-            padding-top: 15px;
+            gap: 18px;
+            margin: 30px 0 10px 0;
+            padding-top: 20px;
             border-top: 1px dashed var(--border-color);
         }
 
         .btn {
-            padding: 12px 36px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 13px 40px;
+            font-size: 15px;
+            font-weight: 700;
             color: white;
             border: none;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-sm);
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
 
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.25); 
+        }
         .btn:active { transform: translateY(0); }
-        .btn-run { background: linear-gradient(135deg, #2c3e50, #34495e); }
-        .btn-clear { background: linear-gradient(135deg, #718096, #a0aec0); }
+        .btn-run { background: linear-gradient(135deg, #0f172a, #334155); }
+        .btn-clear { background: linear-gradient(135deg, #64748b, #94a3b8); }
 
         .section-title {
-            padding: 12px 18px;
-            font-size: 16px;
-            font-weight: 700;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 800;
             color: white;
-            margin-top: 30px;
+            margin-top: 36px;
             border-radius: var(--radius-sm);
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: var(--shadow-sm);
         }
 
-        .yuan-ju-header { background: linear-gradient(135deg, #2c3e50, #3a506b); }
-        .dayun-header { background: linear-gradient(135deg, #4a5568, #2d3748); }
+        .yuan-ju-header { background: linear-gradient(135deg, #1e293b, #334155); }
+        .dayun-header { background: linear-gradient(135deg, #334155, #475569); }
 
         .chart-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 12px;
+            margin-top: 14px;
             text-align: center;
             font-size: 14px;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             overflow: hidden;
             border: 1px solid var(--border-color);
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
 
         .chart-table th, .chart-table td {
             border: 1px solid var(--border-color);
-            padding: 10px 8px;
+            padding: 12px 10px;
             vertical-align: middle;
         }
         
         .chart-table th { 
             background-color: #f8fafc; 
             color: var(--text-muted); 
-            font-weight: 600;
+            font-weight: 700;
         }
         
         .highlight-bg { 
-            background-color: #f1f5f9; 
-            font-size: 1.2em; 
-            font-weight: bold; 
+            background-color: #f8fafc; 
+            font-size: 1.3em; 
+            font-weight: 800; 
             color: var(--primary-blue); 
         }
-        .shensha-row { font-size: 0.9em; background-color: #fafbfc; }
+        .shensha-row { font-size: 0.9em; background-color: #ffffff; }
         
         .converted-date-box {
             background-color: #f0f7ff;
-            border-left: 4px solid #3182ce;
-            padding: 10px 16px;
-            margin-top: 12px;
+            border-left: 4px solid #0284c7;
+            padding: 12px 18px;
+            margin-top: 14px;
             font-size: 14px;
-            color: #2b6cb0;
+            color: #0369a1;
             border-radius: var(--radius-sm);
+            font-weight: 600;
         }
 
         .dayun-container {
@@ -235,34 +248,36 @@
             overflow-x: auto;
             gap: 0;
             border: 1px solid var(--border-color);
-            margin-top: 12px;
-            border-radius: var(--radius-sm);
+            margin-top: 14px;
+            border-radius: var(--radius-md);
             background: white;
             box-shadow: var(--shadow-sm);
         }
         .dayun-col {
-            flex: 0 0 88px;
+            flex: 0 0 92px;
             border-right: 1px solid var(--border-color);
             text-align: center;
-            padding: 10px 0;
+            padding: 12px 0;
             font-size: 14px;
+            transition: background-color 0.15s ease;
         }
+        .dayun-col:hover { background-color: #f8fafc; }
         .dayun-col:last-child { border-right: none; }
         .dayun-col div { padding: 3px 0; }
 
         .nayin-box {
-            margin-top: 30px;
-            background: #fffdf5;
-            border: 1px solid #f6e05e;
-            padding: 20px 24px;
+            margin-top: 36px;
+            background: var(--color-gold-bg);
+            border: 1.5px solid var(--color-gold-border);
+            padding: 22px 26px;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
         }
         .nayin-title {
-            color: #975a16;
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 12px;
+            color: var(--color-gold);
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 14px;
             letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
@@ -272,32 +287,33 @@
             width: 100%;
             border-collapse: collapse;
             background: white;
-            border: 1px solid #f6e05e;
+            border: 1px solid var(--color-gold-border);
             border-radius: var(--radius-sm);
             overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         .nayin-table th {
-            border: 1px solid #f6e05e;
-            padding: 11px 14px;
+            border: 1px solid var(--color-gold-border);
+            padding: 12px 14px;
             text-align: left;
-            background-color: #fefcbf;
-            color: #744210;
-            font-weight: 700;
-            font-size: 14px;
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: 800;
+            font-size: 13.5px;
         }
         .nayin-table td {
-            border: 1px solid #fef08a;
-            padding: 9px 14px;
+            border: 1px solid #fef3c7;
+            padding: 10px 14px;
             color: var(--text-main);
             font-size: 14px;
         }
         
-        .status-sheng { color: var(--color-green) !important; font-weight: 700; }
-        .status-fu { color: var(--color-red) !important; font-weight: 700; }
-        .status-ji { color: var(--color-red) !important; font-weight: 700; }
+        .status-sheng { color: var(--color-green) !important; font-weight: 800; }
+        .status-fu { color: var(--color-red) !important; font-weight: 800; }
+        .status-ji { color: var(--color-red) !important; font-weight: 800; }
 
         .decade-wrapper {
-            margin-top: 30px;
+            margin-top: 36px;
             background: white;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
@@ -305,95 +321,96 @@
             overflow: hidden;
         }
         .decade-header {
-            background: linear-gradient(135deg, #1a202c, #2d3748);
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             color: white;
-            padding: 14px;
+            padding: 15px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 800;
             text-align: center;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
         .decade-content {
-            padding: 16px;
+            padding: 20px;
             background: #f8fafc;
         }
 
         .liunian-details {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
             background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
             display: block;
         }
         .liunian-details:last-child { margin-bottom: 0; }
         
         .liunian-header {
-            background-color: #edf2f7;
+            background-color: #f1f5f9;
             color: var(--primary-blue);
-            padding: 10px 18px;
-            font-size: 15px;
-            font-weight: 700;
+            padding: 12px 20px;
+            font-size: 14.5px;
+            font-weight: 800;
             border-bottom: 1px solid var(--border-color);
         }
         
-        .liunian-body { padding: 18px; }
+        .liunian-body { padding: 20px; }
 
         .liunian-grid {
             display: grid;
             grid-template-columns: 1fr 1fr; 
-            gap: 24px;
+            gap: 28px;
         }
 
         @media (max-width: 768px) {
             .liunian-grid { grid-template-columns: 1fr; }
-            .container { padding: 16px; }
+            .container { padding: 20px 14px; }
         }
 
         .subtitle {
             font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: 800;
+            margin-bottom: 12px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 6px;
+            letter-spacing: 0.5px;
         }
-        .subtitle.red { color: var(--color-red); border-bottom-color: #feb2b2; }
-        .subtitle.green { color: var(--color-green); border-bottom-color: #9ae6b4; }
-        .subtitle.blue { color: var(--primary-blue); border-bottom-color: #cbd5e0; margin-top: 20px; }
+        .subtitle.red { color: var(--color-red); border-bottom-color: #fecaca; }
+        .subtitle.green { color: var(--color-green); border-bottom-color: #bbf7d0; }
+        .subtitle.blue { color: var(--primary-blue); border-bottom-color: #cbd5e1; margin-top: 22px; }
 
         .complex-row {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #edf2f7;
-            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 11px 0;
             font-size: 14px;
         }
-        .complex-row .label { width: 55px; font-weight: 600; color: var(--text-muted); }
+        .complex-row .label { width: 55px; font-weight: 700; color: var(--text-muted); }
         .complex-row .content { flex: 1; display: flex; justify-content: space-around; text-align: center; }
 
         .bazi-list-row {
             display: flex;
             justify-content: space-between; 
             align-items: center;
-            border-bottom: 1px solid #edf2f7;
-            padding: 10px 4px;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 11px 4px;
             font-size: 14px;
         }
         .bazi-list-row:last-child { border-bottom: none; }
-        .bazi-list-row .label { width: 65px; text-align: left; color: var(--text-muted); font-weight: 600; }
+        .bazi-list-row .label { width: 65px; text-align: left; color: var(--text-muted); font-weight: 700; }
         .bazi-list-row .center-val { flex: 1; text-align: center; font-weight: 700; color: var(--text-main); }
-        .bazi-list-row .status { width: 65px; text-align: right; font-weight: 700; }
+        .bazi-list-row .status { width: 65px; text-align: right; font-weight: 800; }
 
         .ten-gods-summary {
-            margin-top: 12px;
-            padding: 14px 18px;
+            margin-top: 14px;
+            padding: 16px 20px;
             background-color: #f8fafc;
             border-radius: var(--radius-sm);
-            border: 1px dashed #cbd5e0;
+            border: 1px dashed #cbd5e1;
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 14px;
             justify-content: space-around;
         }
         .tg-item {
@@ -402,27 +419,28 @@
             align-items: center;
             min-width: 44px;
         }
-        .tg-item .tg-name { color: var(--text-muted); font-size: 12px; margin-bottom: 4px; font-weight: 600; }
-        .tg-item .tg-count { font-weight: 700; font-size: 18px; }
+        .tg-item .tg-name { color: var(--text-muted); font-size: 12px; margin-bottom: 4px; font-weight: 700; }
+        .tg-item .tg-count { font-weight: 800; font-size: 19px; }
 
         .sheng-ji-box {
-            background-color: #fffdf5;
-            border: 1px solid #f6e05e;
-            border-left: 5px solid #d69e2e;
-            padding: 14px 18px;
-            margin-top: 14px;
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 5px solid var(--color-gold);
+            padding: 16px 20px;
+            margin-top: 16px;
             border-radius: var(--radius-sm);
             font-size: 14px;
+            box-shadow: var(--shadow-sm);
         }
         .sheng-ji-box.guansha {
-            background-color: #fff5f5;
-            border-color: #feb2b2;
+            background-color: var(--color-red-bg);
+            border-color: #fecaca;
             border-left-color: var(--color-red);
         }
         .sheng-ji-box .sheng-ji-header {
-            font-weight: 700;
-            color: #b7791f;
-            margin-bottom: 10px;
+            font-weight: 800;
+            color: var(--color-gold);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -437,31 +455,36 @@
         .sheng-ji-box li {
             margin-bottom: 8px;
             line-height: 1.6;
-            color: #4a5568;
+            color: #334155;
         }
         .sheng-ji-box li:last-child { margin-bottom: 0; }
         
         .sheng-ji-tag {
             display: inline-block;
-            padding: 2px 7px;
-            border-radius: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 700;
             font-size: 12px;
             margin-right: 6px;
             color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .tag-sheng { background-color: var(--color-green); }
         .tag-fu { background-color: var(--color-red); }
         .tag-ji { background-color: var(--color-red); }
         
         .tag-gs { 
-            background-color: #c53030; 
-            margin-bottom: 4px; 
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            margin-bottom: 6px; 
             cursor: pointer; 
-            border-bottom: 1px dashed rgba(255,255,255,0.7);
-            transition: background-color 0.15s ease;
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .tag-gs:hover { background-color: #e53e3e; }
+        .tag-gs:hover { 
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(185, 28, 28, 0.3);
+        }
         
         .sheng-ji-desc {
             display: block;
@@ -473,86 +496,81 @@
         .c-green { color: var(--color-green); }
         .c-purple { color: var(--color-purple); }
         .c-red { color: var(--color-red); }
-        .t-bold { font-weight: 700; }
+        .t-bold { font-weight: 800; }
         .t-large { font-size: 1.1em; }
 
         .nayin-clickable {
             cursor: pointer;
-            border-bottom: 1px dotted #4a6fa5;
+            border-bottom: 1.5px dotted #64748b;
             transition: all 0.2s ease;
-            color: var(--primary-blue);
+            color: #334155;
+            font-weight: 700;
+            padding-bottom: 1px;
         }
         .nayin-clickable:hover {
             color: var(--color-purple);
-            border-bottom: 1px solid var(--color-purple);
+            border-bottom: 1.5px solid var(--color-purple);
         }
 
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(4px);
         }
         .modal-content {
             background: white;
-            padding: 24px 28px;
+            padding: 28px 32px;
             border-radius: var(--radius-md);
-            max-width: 600px;
+            max-width: 620px;
             width: 92%;
             max-height: 82vh;
             overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            box-shadow: 0 25px 30px -5px rgba(0,0,0,0.25);
             position: relative;
-            animation: modalFadeIn 0.2s ease-out;
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.96); }
+            from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
         .modal-close {
             position: absolute;
-            top: 14px; right: 16px;
-            font-size: 24px;
+            top: 18px; right: 20px;
+            font-size: 26px;
             cursor: pointer;
             color: var(--text-subtle);
             background: none;
             border: none;
             line-height: 1;
+            transition: color 0.15s ease;
         }
         .modal-close:hover { color: var(--color-red); }
         .modal-title {
             color: var(--primary-blue);
             font-size: 18px;
-            margin-bottom: 14px;
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 10px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
             margin-top: 0;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         .nayin-detail-section {
             margin-bottom: 14px;
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-radius: var(--radius-sm);
             font-size: 13.5px;
-            line-height: 1.65;
+            line-height: 1.7;
         }
-        .nayin-detail-section.zhengyin {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-        .nayin-detail-section.shiyin {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-        }
-        .nayin-detail-section.bingying {
-            background-color: #fffbeb;
-            border: 1px solid #fde68a;
-        }
+        .nayin-detail-section.zhengyin { background-color: var(--color-green-bg); border: 1px solid #bbf7d0; }
+        .nayin-detail-section.shiyin { background-color: var(--color-red-bg); border: 1px solid #fecaca; }
+        .nayin-detail-section.bingying { background-color: var(--color-gold-bg); border: 1px solid var(--color-gold-border); }
     </style>
 </head>
 <body>
@@ -658,7 +676,228 @@
 
 <script>
 // ==========================================
-// 納音 30 組正音/失音詳解庫 (講義逐頁完整收錄)
+// 40 關煞私人班手稿原話庫 (精確對應)
+// ==========================================
+const gsDescriptions = {
+    "雷公打腦": `<ul>
+        <li>雷火之厄、雷擊、觸電、燒傷。</li>
+        <li>神經緊張、腦神經痛、筋腱痛、易抽筋。</li>
+        <li>工作壓力大、經常OT。頭痛、頸痛。</li>
+        <li>小朋友會驚青啲。不善於表達，不善辭令 (Public speaking)。</li>
+        <li>發炎、發燒，小兒麻痺。撞傷頭頸，易PK跌倒。</li>
+        <li>工作：適合24小時 On-call 的工作。</li>
+        <li>年柱：與長輩不和。失眠、痛症、關節炎。</li>
+    </ul>`,
+    "夜啼關": `<ul>
+        <li><b>原命：</b>靈異體質、怕黑，長大後失眠、精神差、夢遊。疑心重，姻緣較差，積極性低。</li>
+        <li><b>工作：</b>適合Dirty工作、清潔、環保，返工地點易選工廈，宜返偏門、夜班。</li>
+        <li><b>流年：</b>出外時較易遇靈異事件，易出奇難雜症（邪病）。</li>
+        <li>原命有者，應期留意大運流年配對；原命無者，亦可由大運A+流年B觸發。</li>
+    </ul>`,
+    "桃花煞": `<ul>
+        <li>走動多。家庭背景複雜（如離異、家暴）。社交動物、私生活較亂。</li>
+        <li>流年見桃花易出感情錯亂、借錢、離鄉別井。</li>
+        <li>病應：應水病、水土不服、婦科、胸部乳房疾病。</li>
+        <li>月柱：工作接觸人多，適合做Sales。</li>
+    </ul>`,
+    "紅艷煞": `<ul>
+        <li>感情混亂麻煩，易有不可告人的關係。</li>
+        <li>天生就Charm、極易吸引狂風浪蝶。</li>
+        <li>愛走苦情路線，自怨自憐。適合做娛樂圈。</li>
+        <li>命帶財氣、有貴人。易有空氣傳播疾病（呼吸系統）。</li>
+    </ul>`,
+    "流霞煞": `<ul>
+        <li>霞即晚霞，紅即流血，主血光、流產。</li>
+        <li>主要病應：貧血、內出血、便血、大腸瘜肉；女士血崩、子宮肌瘤、難產；心血管病、中風、血壓高低、血友病。</li>
+        <li>原命：除體質外，仲主破財，儲到錢會突然要用，橫災之應，入不敷支。輕症見紙割傷(Paper cut)、流牙血、乾燥爆拆。</li>
+        <li><b>化解：</b>主動自主破財、定期洗牙針灸。</li>
+    </ul>`,
+    "金鎖匙": `<ul>
+        <li>破財、失物、招盜賊。經常買好多野又唔用。</li>
+        <li>不合投資，流年見此煞尤其容易投資損手。理財觀念差，喜好敗家玩意、追捧名牌。</li>
+        <li>今朝有酒今朝醉，為人豪爽。古時會立小妾、花天酒地。</li>
+        <li>流年見此煞可去旅行、報讀課程花錢應劫（拎張證書無咩用但洗咗錢）。適合從事Luxury goods名牌奢飾品行業。</li>
+    </ul>`,
+    "和尚關": `<ul>
+        <li>又名休庵關。對宗教有傾斜意向，術數及宗教指標。</li>
+        <li>思想出世脫俗，愛孤獨，哲學腦Emotional，追求以宗教安穩情緒。</li>
+        <li>孤僻、禪修、Single bowl，Prefer獨立工作。</li>
+        <li>流年見和尚：寂寂無名，無人賞識，與伴侶疏離（如Long-distance戀愛、日夜作息錯開）。</li>
+    </ul>`,
+    "取命關": `<ul>
+        <li>原命、大運、流年逢之：高處墮下傷頭、傷腳、容易摔倒PK。</li>
+        <li>經常頭痛、腳痛、膝蓋痛。易受驚嚇、細膽膽小。</li>
+        <li>高估自己的能力（先吉後凶）、有頭威無尾陣。</li>
+        <li>通常殺你一個措手不及，最有信心嗰陣先出事。越自大越容易賴野。</li>
+        <li>不宜衝動行事，宜畏首畏尾，小心駛得萬年船。</li>
+    </ul>`,
+    "斷腸關": `<ul>
+        <li>哭斷腸，易傷心，易情緒低落，多愁善感，自閉、抑鬱指標。</li>
+        <li>人際關係較疏離，對人冷漠或給人冷漠之感。共情感極重，極易受外界負面情緒影響。</li>
+        <li>情感壓抑，生活圈若多情緒有問題的人反而較合適。宜找宗教依靠（如德蘭修女照顧病患）。</li>
+        <li>適合偏門工作：殯儀、心理醫生、社工、義工、身心靈治療、精神科、NGO。</li>
+        <li>流年：親人離世，伴侶關係較差多鬱結。</li>
+    </ul>`,
+    "直難關": `<ul>
+        <li>直難即值難，Involve in difficult situation。凡事多困難，主多哭泣啾唧。</li>
+        <li>必定要面對困難、硬食、迎難而上。橫衝直撞不懂轉彎，易遇挫折，不停試錯遍體鱗傷。</li>
+        <li>為人頑固、會強人所難，易得罪人起衝突，人緣與姻緣較差。</li>
+        <li>習慣磨難故內心強大。好堅毅堅持，明知不可而為之（Stubborn）。控制狂、自閉傾向，易有癮。</li>
+        <li>病應：易受按摩、針灸、走罐等痛感治療；痛症（不限部位）、手術之應。</li>
+    </ul>`,
+    "埋兒關": `<ul>
+        <li>長輩緣薄，與父母貼錯門神，想搬離父母，避免家庭聚會。</li>
+        <li>原命埋兒 + 大運/流年吉兒：上司會提攜（吉應）。</li>
+        <li>原命無埋兒 + 大運/流年見埋兒：父母關係差、上司關係差、職場被投閒置散。</li>
+    </ul>`,
+    "天吊關": `<ul>
+        <li>痠麻痛，慢性發炎，宜以針灸處理。若帶三白眼或射喱眼，腦部問題高危，易抽筋、羊癇、自律神經與荷爾蒙失調。</li>
+        <li>活在自己世界不理別人，性格內向逃避現實，自得其樂的宅男。不合Teamwork，宜獨立或Remote工作。</li>
+        <li>大運流年見之：應孤寂，或沉迷個人興趣散財、無心工作；若興趣即是工作，則事業突飛猛進且賺到錢。</li>
+    </ul>`,
+    "劫煞關": `<ul>
+        <li>破財、洗劫一空、開銷大。不利任何投機投資。</li>
+        <li>流年遇劫煞，可主動租樓花費應劫化解。</li>
+    </ul>`,
+    "天狗關": `<ul>
+        <li>口舌是非吵架星，家嘈屋閉，易與人起摩擦。適合是非行業（KOL、網媒）。</li>
+        <li>皮膚差、容易紅腫潰爛（適合做皮膚科醫生）。</li>
+        <li>疤痕之應（適合紋身師、紋眉）。</li>
+    </ul>`,
+    "鐵蛇關": `<ul>
+        <li>皮膚病、過敏出疹、生蛇、蚊蟲叮咬、香港腳、濕疹。</li>
+        <li>生活各方面容易遇到「只能硬食、頂硬上」的無奈局面。</li>
+    </ul>`,
+    "將軍箭": `<ul>
+        <li>出門遇險，不利離鄉別井，出國力量更大，容易被欺壓、多病動刀、橫禍之應。</li>
+        <li>工作上利靜不利動。長輩緣薄，易與父母起衝突。職場樹敵、容易被放暗箭。</li>
+        <li>伴侶雙方父母容易互不喜愛（女家不喜男方或男家不喜女方）。</li>
+        <li>職業病：因工作產生傷病（如夜班轉日班失眠）。流年將軍箭易被推到病位或冷氣出風口。</li>
+        <li>應期多在秋冬或特定流月，可用針灸化解。一箭冷淡，二箭三箭見凶災。</li>
+    </ul>`,
+    "千日關": `<ul>
+        <li>不適合完全由父母照顧，宜交託親戚家人，最好離開原生家庭養育，否則孩童易高燒或腦膜炎。</li>
+        <li>長大後容易頭暈、暈車浪、幽門螺旋菌、胃病。</li>
+        <li>大運流年見之：個人唔痴家，長年在外。</li>
+    </ul>`,
+    "閻王關": `<ul>
+        <li>術數指標、靈異指標、容易撞邪。適合偏門冷門行業。</li>
+        <li>陰氣偏重，宜有宗教信仰或沉迷宗教寄託。</li>
+        <li>情緒病、精神病指標，想唔開時易有尋短念頭。</li>
+    </ul>`,
+    "浴盆關": `<ul>
+        <li>肝功能較弱，較易有脂肪肝、肝硬化，面色偏黃有斑。</li>
+        <li>容易有細菌感染，尤其四肢與關節部位。肝氣外連筋腱痛症。</li>
+        <li>怕悶愛結伴，容易受朋友影響（豬朋狗友、三教九流），進而招致破財。流年見之宜審慎交友。</li>
+    </ul>`,
+    "白虎關": `<ul>
+        <li>病應：血毒血糖、血脂、貧血、白血病、免疫系統問題。腹部疾病，易有破損瘀傷。</li>
+        <li>大運流年見白虎：易有手術之應，常有突發事件令人措手不及，考驗應變。</li>
+        <li>大運流年亦主工餘進修或瘋狂OT加班（變相OT）。原命帶白虎適合做「見血」工作。</li>
+    </ul>`,
+    "五鬼關": `<ul>
+        <li>死氣沉沉、陰氣重。不願爭取努力，工作動力差，迷失無目標。精神困擾、無力感重。</li>
+        <li>年月柱見之：內向宅家，不懼殯儀館、墓地、寺廟等孤寡地（具敏感體質），易入忌諱行業。或夜班壓力大失眠（宜做美股夜班或投入宗教）。</li>
+        <li>時柱見之：愛好靜態獨處，夜睡夜蒲。</li>
+        <li>大運流年見五鬼：意志消沉挫敗，提不起勁，或易遇白事影響情緒消極。</li>
+    </ul>`,
+    "金鎖關": `<ul>
+        <li>金鎖鎖喉。損金氣：影響肺部喉嚨、呼吸系統、氣虛、慢性咽喉炎、睡眠窒息症、吞嚥問題、聲帶受損。</li>
+        <li>血氣不通致毒素積聚、代謝差、慢性疲勞、免疫系統失調、皮膚過敏、頸椎甲狀腺問題。</li>
+        <li>面對壓力時胸口頂住、條氣唔順。公眾發言結結巴巴，表達障礙（或兒時曾遇創傷以致失語）。</li>
+        <li>若八字納音帶金會連環引爆金病；若同時命中鐵蛇關，病情會加重。</li>
+    </ul>`,
+    "撞命關": `<ul>
+        <li>爭拗，與家人易有衝突，關係較差。幼年若全家背祖離鄉或自幼由祖輩隔代撫養則可應劫化解。</li>
+        <li>工作社交上容易遇到非常照顧自己的長輩（父母替代品）。</li>
+        <li>影響手腳筋腱關節，容易撞瘀手腳。</li>
+        <li>月柱：朋友多移居外國（不在身邊），兄弟疏離。時柱：子女緣薄。</li>
+    </ul>`,
+    "血刃關": `<ul>
+        <li>易長痘、皮膚差出疹、肝火旺盛。血壓問題，打針留意糖尿。</li>
+        <li>血光刀傷小傷口。女士注意經期血崩、流產或剖腹產動刀；男士注意痔瘡。</li>
+        <li>性情衝動，易做錯決定，脾氣暴躁。大運流年見之防躁狂、情緒失控鬧人。</li>
+    </ul>`,
+    "雞飛關": `<ul>
+        <li>膽小怕事，做事缺乏信心，玻璃心怕失敗。只適合做創新、沒人做過的事（無比較無傷害）。</li>
+        <li>宜學手藝演變出新體系。心急欲創出自己一套，廢寢忘餐，多為藝術家、設計師、作家、Programmer。</li>
+        <li>不喜跟隨主流框架，學術數要學獨家秘方。大運流年見之在舊環境易惹是非，宜在此時學新手藝。</li>
+        <li>病應：木病，肝膽筋腱、痛症、消化系統弱。</li>
+    </ul>`,
+    "鬼門關": `<ul>
+        <li>特立獨行有性格，討厭跟隨主流大隊，專登Against主流。衣著奇裝異服，喜好非主流，陰陽怪氣包拗頸。</li>
+        <li>多為自由職業者或打散工，不願被社會規範束縛。</li>
+        <li>大運流年見之：看伴侶說什麼都不順耳想換人；單身者易遇到與以往截然不同的對象（如靈異體質、情緒怪癖、宗教異端）。</li>
+    </ul>`,
+    "百日關": `<ul>
+        <li>不懂得拒絕他人，別人叫試乜就試，易近墨者黑。常聽取無建設性意見，最終自己一手包辦。</li>
+        <li>個人衛生與免疫力稍遜，先天易過敏。不喜改變，Prefer穩定特定Schedule。</li>
+        <li>工作辛苦，不敢拒絕上司無理要求，經常食豬頭骨。女命易有留級或愛情長跑（齋拍拖唔結婚生仔）。</li>
+    </ul>`,
+    "下情關": `<ul>
+        <li>破壞父母關係，與父母疏離有隔膜，或應於父母離異早逝，極少聯絡長輩甚至不祭祖。</li>
+        <li>若家庭應驗深，反而能獲外面上司前輩之助力。</li>
+        <li>大運流年見之：與父母或上司關係惡化起爭執，不得助力，慎防手術動刀血光。</li>
+    </ul>`,
+    "基敗關": `<ul>
+        <li>注意骨盆腔、血崩婦科；男士留意前列腺、痔瘡及腳患。影響遺產傳承。</li>
+        <li>若無病應則財庫失守，命中基敗難聚財。流年大運失財於自學無用之知識或遇電騙。</li>
+        <li>居所漏水、牆身空鼓凸起；家中或辦公室附近頻繁有裝修噪音聲煞。</li>
+    </ul>`,
+    "斷橋關": `<ul>
+        <li>與水無關。慎防臍帶勒頸、窒息、哮喘、心肺呼吸系統脆弱、先天睡眠窒息、失眠。</li>
+        <li>長大後易與人爭執，爭論中被動說服但心不服，形成精神焦慮與周身痛症。</li>
+        <li>大運流年：情緒壓力來襲，身心俱疲周身痛，輪更作息混亂，慎防溺水水險。</li>
+    </ul>`,
+    "落井關": `<ul>
+        <li>住處外牆滲水、水喉爆裂倒灌、忘關水龍頭、冷氣機滴水。防犯水險。</li>
+        <li>水腫、淋巴阻塞、泌尿系統毛病、常流鼻水淚水。嗜酒損腎氣。毅力較弱半途而廢。</li>
+        <li>月柱：工作顛沛流離，適合Piece-rate計件工作，易被同輩奚落。年柱：家道中落被窮養奚落。時柱：買好野迅速貶值，投資失利。</li>
+        <li>大運流年：物質享受主動自我降級以應劫向下流。</li>
+    </ul>`,
+    "四柱關": `<ul>
+        <li>犯土煞，宜多補充澱粉Starch。脾胃弱，消化極端肥或極端瘦，體內濕氣重難驅走，腦筋與手腳反應較慢。</li>
+        <li>易受外界干擾，心思單純，平衡力較差容易摔倒PK。學習吸收較慢需將勤補拙，性格較自卑，家中雜物多。</li>
+        <li>流年見之：容易發胖，周遭遭遇裝修噪音干擾。</li>
+    </ul>`,
+    "短命關": `<ul>
+        <li>失眠夜鬼、日夜顛倒、晚間Shift輪班工作、OT至深夜。受環境噪音困擾。心緒不寧思慮過多，大腦無法停頓。</li>
+        <li>日柱見之：擇偶標準或拍拖Pattern突變。外型大幅度改頭換面（如剪極短髮、整容換風格）。</li>
+        <li>大運流年：特別遲收工，應酬極多，宜放工多逛街消遣或煲劇打機應數。</li>
+    </ul>`,
+    "湯火煞": `<ul>
+        <li>燙傷、曬傷、易留疤痕（聯想到醫美），發燒體質，心血管問題，咽喉口腔潰爛生痱滋。</li>
+        <li>別人常將難處理的突發工作丟給事主，需24小時On-call。因衝動心急而壞事，宜走穩陣路線。</li>
+        <li>月柱：易有囊腫問題，慎防因小失大。時柱：防流產，性格愛貪小便宜。</li>
+    </ul>`,
+    "水火關": `<ul>
+        <li>強迫傾向，極度不喜他人移動自己的私人物品。不喜改變，每日吃同一款早餐，看不得環境髒亂。</li>
+        <li>自成一套難同人夾，姻緣較差。職場易與同事起摩擦（細微事有固定堅持），宜獨立工作。</li>
+        <li>腸胃脆弱、大腸瘜肉、容易食物中毒。大運流年見之周遭有人搞亂自己秩序，鄰近頻繁裝修。</li>
+    </ul>`,
+    "深水關": `<ul>
+        <li>遺傳病、慢性病、長期病患。與家族緣薄，與祖輩相刑剋，長大後多搬離家鄉父母。</li>
+        <li>與父母信仰或政治取態不同。幼年易逢父母離異或父母早逝。</li>
+        <li>大運流年：易與長輩上司激烈爭吵，或與官方機構有官非，受政策修例負面衝擊。</li>
+    </ul>`,
+    "四季關": `<ul>
+        <li>先天缺乏資源，必須自食其力。堅持到底者終能出頭。</li>
+        <li>轉季易病、風邪感冒，身體與心情極易受天氣影響，衛氣較差。</li>
+        <li>工作不長久常想轉工，適合Project-based、季節性或輪班Shift工作，生活不喜長期被困在同一地方。感情常想間中淡季放假。</li>
+    </ul>`,
+    "急腳關": `<ul>
+        <li>腳部問題：扁平足、拇趾外翻。</li>
+        <li>工作上容易受他人連累拖累，或自身無法的起心肝去做，習慣一直拖延，做事事倍功半。</li>
+    </ul>`,
+    "急腳煞": `<ul>
+        <li>力量比急腳關更大。急急子，坐言起行，Chur住衝。逼自己快、逼身邊人快，往往行事流於表面粗疏。</li>
+        <li>反應快回覆快，但太快易誤判翻車。脾氣急躁忍耐不住，毫無耐性，絕不願排隊等待。</li>
+        <li>命中必須學習戒急忍耐，修煉心性韌性。</li>
+    </ul>`
+};
+
+// ==========================================
+// 納音 30 組正音/失音詳解庫
 // ==========================================
 const nayinExplanationData = {
     "海中金": {
@@ -669,25 +908,25 @@ const nayinExplanationData = {
     },
     "爐中火": {
         gz: "丙寅、丁卯",
-        zhengyin: "<b>【心性特質】</b>好推得、Tough頑強、固執堅持，可重複做同一件事。情緒EQ高，沉穩、不溫不火，耐性高、具大將之風。適合專業人士、Chef廚師、科研。<br>• <b>月柱：</b>一份工做好耐，重複性工作（如政府工），艱辛較多，工作環境較惡劣。<br>• <b>時柱：</b>沉迷興趣，極具潛力將興趣轉化為事業（Turn interest into career），入對行業就唔走。<br>• <b>處事感情：</b>好多原則框架，衣著固定（好古板）。較長情，難離婚，有情有義；若離婚易有手尾（因惰性Inertia）。有橫財投資運。",
+        zhengyin: "<b>【心性特質】</b>好推得、Tough頑強、固執堅持，可重複做同一件事。情緒EQ高，沉穩、不溫不火，耐性高、具大將之風。適合專業人士、Chef廚師、科研。<br>• <b>月柱：</b>一份工做好耐，重複性工作（如政府工），艱辛較多，工作環境較惡劣。<br>• <b>時柱：</b>沉迷興趣，極具潛力將興趣轉化為事業，入對行業就唔走。<br>• <b>處事感情：</b>好多原則框架，衣著固定（好古板）。較長情，難離婚，有情有義；若離婚易有手尾。有橫財投資運。",
         shiyin: "<b>【盲點表現】</b>三分鐘熱度、脾氣火爆即發、衣著常變追潮流、八卦追求新刺激。經常轉工，或同時做好多份兼職批散（Slasher）。ADHD傾向。<br>• <b>日柱：</b>關係較短、散拖多。<br>• <b>年柱：</b>默默耕耘，讀到書，有長輩助力。",
         bingying: "心血管、血液、長期慢性病。"
     },
     "大林木": {
         gz: "戊辰、己巳",
-        zhengyin: "<b>【心性特質】</b>認第一、做大哥、做領袖。義不容辭、義無反顧，擔子雖重但有掌聲、講義氣。容易於行業中成為老行尊，通常有自己的班底團隊，轉工常整隊帶走（成team走）。家庭觀念重，千金散盡還復來，在大公司容易升遷。做大機構可以好襟做。",
-        shiyin: "<b>【盲點表現】</b>無承擔、自私、只計自己數。難以獨當一面，做到第一把手就變差（上限最多只能做二把手）。煞氣重：推大林木上位送佢一程。無事業心，升職只為人工福利，不會維護同事（當同事係Condom）。沒有天助，做得唔長，容易被裁員。常覺得被搵笨，不照顧同伴，有苦勞無功勞，人脈極弱。",
+        zhengyin: "<b>【心性特質】</b>認第一、做大哥、做領袖。義不容辭、義無反顧，擔子雖重但有掌聲、講義氣。容易於行業中成為老行尊，通常有自己的班底團隊，轉工常整隊帶走。家庭觀念重，千金散盡還復來，在大公司容易升遷。做大機構可以好襟做。",
+        shiyin: "<b>【盲點表現】</b>無承擔、自私、只計自己數。難以獨當一面，做到第一把手就變差（上限最多只能做二把手）。煞氣重：推大林木上位送佢一程。無事業心，升職只為人工福利，不會維護同事。沒有天助，做得唔長，容易被裁員。常覺得被搵笨，不照顧同伴，有苦勞無功勞，人脈極弱。",
         bingying: "肝膽火旺、易怒、容易瘀傷且難止血。"
     },
     "路旁土": {
         gz: "庚午、辛未",
-        zhengyin: "<b>【心性特質】</b>生財之物，具強烈投資傾向，善於計算創業經商。生活上精明花錢，若遇大小耗星則無寶不落搞投資。實事求是，太沒有夢想，腳踏實地。對數字敏感（金融、地產），不會衝動消費，但該花則花，唔算孤寒但親疏有別。至抵精明眼，有耐性紀律。可靠可信賴，一句到尾，有難時很多人衝出來幫手，屬隱形富豪格。",
-        shiyin: "<b>【盲點表現】</b>對數字不敏感，只計小數卻失大數，斤斤計較。亂花錢，對生活用度與未來儲蓄完全沒有計劃。聽消息就衝動投資買野（毫無分析），對生活無太高要求，不守規矩，情緒心情主導，容易揮金如土。<b>【警告：千祈不要搞投資！】</b>避險意識極低，得把口話自己好有人脈。",
+        zhengyin: "<b>【心性特質】</b>生財之物，具強烈投資傾向，善於計算創業經商。生活上精明花錢，若遇大小耗星則無寶不落搞投資。實事求是，腳踏實地。對數字敏感（金融、地產），不會衝動消費，該花則花，唔算孤寒但親疏有別。至抵精明眼，有耐性紀律。可靠可信賴，一句到尾，有難時很多人衝出來幫手，屬隱形富豪格。",
+        shiyin: "<b>【盲點表現】</b>對數字不敏感，只計小數卻失大數，斤斤計較。亂花錢，對生活用度與未來儲蓄完全沒有計劃。聽消息就衝動投資買野，對生活無太高要求，不守規矩，情緒心情主導，容易揮金如土。<b>【警告：千祈不要搞投資！】</b>避險意識極低，得把口話自己好有人脈。",
         bingying: "脾胃、肌肉、肉瘡肉瘤。"
     },
     "劍鋒金": {
         gz: "壬申、癸酉",
-        zhengyin: "<b>【心性特質】</b>不怒而威、一將功成萬骨枯，氣場極強。駕馭資源能力強，多長輩上司助力，近貴之象。處事手腕硬、斬釘截鐵。宜做外國公司，做本地公司易惹是非。與人關係較疏離，對朋友挑剔，要麼管晒所有人，要麼單打獨鬥。人在江湖飄容易挨刀，動刀開刀之象。<br>• <b>月柱：</b>挨刀受傷，或從事金融、醫美。<br>• <b>日柱：</b>辛苦命指標，多勞損。<br>• <b>時柱：</b>寵物養唔熟，踢頭踢腳之應。<br>• <b>年/時柱：</b>整容、開刀應劫。",
+        zhengyin: "<b>【心性特質】</b>不怒而威、一將功成萬骨枯，氣場極強。駕馭資源能力強，多長輩上司助力，近貴之象。處事手腕硬、斬釘截鐵。宜做外國公司，做本地公司易惹是非。與人關係較疏離，對朋友挑剔，要麼管晒所有人，要麼單打獨鬥。動刀開刀之象。<br>• <b>月柱：</b>挨刀受傷，或從事金融、醫美。<br>• <b>日柱：</b>辛苦命指標，多勞損。<br>• <b>時柱：</b>寵物養唔熟，踢頭踢腳之應。<br>• <b>年/時柱：</b>整容、開刀應劫。",
         shiyin: "<b>【盲點表現】</b>極度淋善、優柔寡斷、拖泥帶水（年柱易被長輩拖累，月柱被朋輩兄弟拖累），容易被拖累。性格隨和包容，對大眾慈善，常因幫人信人而被拖累失財。多朋友心，對所有人都好。",
         bingying: "哮喘、息肉、睡眠失調、骨骼損傷。"
     },
@@ -699,91 +938,91 @@ const nayinExplanationData = {
     },
     "澗下水": {
         gz: "丙子、丁丑",
-        zhengyin: "<b>【心性特質】</b>低調隨和、上善若水、無架子，易同人打成一片。實際實用、謙卑謙厚，和光同塵的君子。抵得諗，甚至肯幫人做擔保，容易儲落深厚人情，有難時多人出手相救。人脈長久，行業中易積累江湖地位，老實實幹，苦盡甘來。有貴人帶挈，幫過人也不會記住，沉潛內斂，多做義工慈善。<br>• <b>月柱日柱雙生：</b>有老闆養、工作輕鬆、有家庭助力。",
-        shiyin: "<b>【盲點表現】</b>算死草、極度孤寒計較，永無離散。死命記住自己幫過人並要求回報，愛炫耀吹噓講到停唔到口。易有是非口舌，名聲有損，專業失德。只著重眼前數目而忽略中長線，容易計錯數，少貴人扶持。",
+        zhengyin: "<b>【心性特質】</b>低調隨和、上善若水、無架子，易同人打成一片。實際實用、謙卑謙厚，和光同塵的君子。抵得諗，甚至肯幫人做擔保，容易儲落深厚人情，有難時多人出手相救。人脈長久，行業中易積累江湖地位，老實實幹，苦盡甘來。有貴人帶挈，沉潛內斂，多做義工慈善。<br>• <b>月柱日柱雙生：</b>有老闆養、工作輕鬆、有家庭助力。",
+        shiyin: "<b>【盲點表現】</b>算死草、極度孤寒計較。死命記住自己幫過人並要求回報，愛炫耀吹噓講到停唔到口。易有是非口舌，名聲有損，專業失德。只著重眼前數目而忽略中長線，容易計錯數，少貴人扶持。",
         bingying: "泌尿系統、腎氣虛、水土不服。"
     },
     "城頭土": {
         gz: "戊寅、己卯",
-        zhengyin: "<b>【心性特質】</b>固執、硬頸、多原則規矩，儀式感極重。做事不喜變通但堅毅不放棄，深信將勤補拙，能在同一行業深耕。承諾過的事一定落實，絕不輕易應承人，誠信極高，絕不說謊。感情上從一而終，哪怕選錯也會繼續走下去。具匠人精神，有承擔，適合一成不變的工作。",
+        zhengyin: "<b>【心性特質】</b>固執、硬頸、多原則規矩，儀式感極重。做事不喜變通但堅毅不放棄，深信將勤補拙，能在同一行業深耕。承諾過的事一定落實，絕不輕易應承人，誠信極高，絕不說謊。感情上從一而終。具匠人精神，有承擔，適合一成不變的工作。",
         shiyin: "<b>【盲點表現】</b>虎頭蛇尾、毫無誠信、朝秦暮楚，容易被替換。三分鐘熱度，無規矩無規律，放任隨意。日柱拍散拖，行徑投機古惑。<br>• <b>攝住先建議：</b>幫人執行既定規矩，或在小公司長做。",
         bingying: "脾胃弱、消化不良、皮膚慢性問題。"
     },
     "白蠟金": {
         gz: "庚辰、辛巳",
         zhengyin: "<b>【心性特質】</b>可以不斷重複做同一件事而不覺煩悶，為人極度專注。耐得住獨處孤獨，適合獨立工作（如糕點師、咖啡師、廚師、會計、科研、考古、程式設計師）。凡事親力親為，精挑細選（合做Merchandiser採購）。即使升為高層，底層技術依然純熟，有需要時能自己落手做。要忙、長情。",
-        shiyin: "<b>【盲點表現】</b>凡事必須找人陪伴（可以陪人，但不能接受自己沒伴）。外向愛社交，但牙痛爪利、刀子嘴豆腐心，八卦愛吸收新知卻只學皮毛、毫無深度。愛做指揮點人做野，自身容易疏忽大意，被投閒置散。",
+        shiyin: "<b>【盲點表現】</b>凡事必須找人陪伴。外向愛社交，但牙痛爪利、刀子嘴豆腐心，八卦愛吸收新知卻只學皮毛、毫無深度。愛做指揮點人做野，自身容易疏忽大意，被投閒置散。",
         bingying: "肩頸、五十肩、筋腱骨骼、脊柱側彎。"
     },
     "楊柳木": {
         gz: "壬午、癸未",
-        zhengyin: "<b>【心性特質】</b>牆頭草、世界仔、做人極其圓滑（懂刷鞋）。少得罪人，能吃四方飯。懂得順勢而為，有投資運容易投資成功。轉數快、身兼多職、人脈廣闊。節目多多，適合Networking、商業商會與市場行銷，決斷神速。",
-        shiyin: "<b>【盲點表現】</b>不喜被固定，怕悶要新鮮感，工作隨性。缺乏主見，猶豫不決，不夠果斷。不擅辭令，常講錯話惹是非，拒絕深入探究，拒絕學習新知識。",
+        zhengyin: "<b>【心性特質】</b>牆頭草、世界仔、做人極其圓滑。少得罪人，能吃四方飯。懂得順勢而為，有投資運容易投資成功。轉數快、身兼多職、人脈廣闊。節目多多，適合Networking、商業商會與市場行銷，決斷神速。",
+        shiyin: "<b>【盲點表現】</b>不喜被固定，怕悶要新鮮感，工作隨性。缺乏主見，猶豫不決，不夠果斷。不擅辭令，常講錯話惹是非，拒絕深入探究新知識。",
         bingying: "腰腿、膀胱、乳房婦科。"
     },
     "泉中水": {
         gz: "甲申、乙酉",
         zhengyin: "<b>【心性特質】</b>樂於與人交際分享，朋友圈中的開心果。與人打成一片，朋友會有好帶挈，具無私奉獻與助人精神。做團隊工作容易發揮，樂善好施、知足常樂，重視人情勝過金錢。適合NGO、區議員、社福界、傳銷、飲食小店。笨實有運，少病痛。",
-        shiyin: "<b>【盲點表現】</b>非常計較，凡事求回報，交往必帶強烈目的（勾心鬥角Sales）。人際交往極少，比澗下水更加孤僻孤獨。<br>• <b>調頻建議：</b>多做善事義工，宜選大路主流職業。",
+        shiyin: "<b>【盲點表現】</b>非常計較，凡事求回報，交往必帶強烈目的。人際交往極少，比澗下水更加孤僻孤獨。<br>• <b>調頻建議：</b>多做善事義工，宜選大路主流職業。",
         bingying: "腎氣、水腫、泌尿功能。"
     },
     "屋上土": {
         gz: "丙戌、丁亥",
-        zhengyin: "<b>【心性特質】</b>不愛改變（同一餐廳/食品/品牌），對另一半認定了就不會變，願意為對方默默付出。穩重如山，甚至帶點呆氣。有祖蔭、父蔭、政府資助或前輩相助，易中籤公屋。適合大機構、大公司、政府公職。家庭觀念極重，有儲物癖傾向。<br>• <b>年柱：</b>人在遠方之地，父母之命媒妁之言。",
+        zhengyin: "<b>【心性特質】</b>不愛改變，對另一半認定了就不會變，願意為對方默默付出。穩重如山，甚至帶點呆氣。有祖蔭、父蔭、政府資助或前輩相助，易中籤公屋。適合大機構、大公司、政府公職。家庭觀念極重，有儲物癖傾向。<br>• <b>年柱：</b>人在遠方之地，父母之命媒妁之言。",
         shiyin: "<b>【盲點表現】</b>怕悶，追求新鮮感與多花臣，ADHD傾向。勢派助力弱，缺乏貴人扶持。擇偶上容易與父母對著幹，引發婆媳糾紛。<br>• <b>攝住先建議：</b>做創意、非傳統、虛擬AI相關工作。",
         bingying: "皮膚、情緒焦慮、消化機能弱。"
     },
     "霹靂火": {
         gz: "戊子、己丑",
-        zhengyin: "<b>【心性特質】</b>百足咁多爪、即興、不顧後果，衝勁十足。一想到就做，常令人難以跟隨。具橫財運、神神化化、反應極快。工作上不斷尋求新挑戰，適合專案型（Project-based）、創意廣告、Marketing。經常轉行也不影響前程（多職Slasher）。說話語速極快，對術數與宗教皆有深厚緣份。",
-        shiyin: "<b>【盲點表現】</b>極度不想改變，強烈要求在生活中建立固定秩序，家中雜物多。經常有突發亂子打亂生活節奏。控制狂、愛話事。若從事刻板工作容易抱怨、發脾氣，常感被打壓不滿。<br>• <b>攝住先建議：</b>收藏Figure模型、玩3D Printing（掌握規律事物），投入固定宗教修持。",
+        zhengyin: "<b>【心性特質】</b>百足咁多爪、即興、不顧後果，衝勁十足。一想到就做，常令人難以跟隨。具橫財運、神神化化、反應極快。工作上不斷尋求新挑戰，適合專案型、創意廣告、Marketing。經常轉行也不影響前程。說話語速極快，對術數與宗教皆有深厚緣份。",
+        shiyin: "<b>【盲點表現】</b>極度不想改變，強烈要求在生活中建立固定秩序，家中雜物多。經常有突發亂子打亂生活節奏。控制狂、愛話事。若從事刻板工作容易抱怨發脾氣，常感被打壓不滿。<br>• <b>攝住先建議：</b>收藏Figure模型、玩3D Printing，投入固定宗教修持。",
         bingying: "神經衰弱、全身性奇難雜症、突發炎症。"
     },
     "松柏木": {
         gz: "庚寅、辛卯",
-        zhengyin: "<b>【心性特質】</b>頑強堅持、死頂到底，堅毅不放棄，極具耐性。答應過的事不計成本必定完成，迎難而上。傾向以不變應萬變，若改變無可避免，亦有耐性去適應解決。念舊，只要有恆心鐵柱磨成針。具工匠手藝，在同一行業能留很久並建立江湖地位（音樂家、手藝人、高壓競爭生還者）。知心朋友較少，常自省自律。",
+        zhengyin: "<b>【心性特質】</b>頑強堅持、死頂到底，堅毅不放棄，極具耐性。答應過的事不計成本必定完成，迎難而上。傾向以不變應萬變，念舊，只要有恆心鐵柱磨成針。具工匠手藝，在同一行業能留很久並建立江湖地位。知心朋友較少，常自省自律。",
         shiyin: "<b>【盲點表現】</b>三分鐘熱度，不會深入練習鑽研。競爭力不足，缺乏專業秘技，流於表面易被淘汰。缺乏耐性，孤獨焦躁。多交際應酬、酒色財氣，容易破財。多做炒散Slasher。<br>• <b>攝住先建議：</b>多考取專業資格，建立硬實力。",
         bingying: "關節痛症、手腳受傷、肝膽筋腱、風寒感冒。"
     },
     "長流水": {
         gz: "壬辰、癸巳",
-        zhengyin: "<b>【心性特質】</b>長命工夫長命做的代表。一行到尾、事業心極重、工作至上的工作狂。過度專注事業（女強人格），甚至因此無暇顧及伴侶。對事業極具Passion，甚至唔放假。工作適合大機構、政府工。不愁沒有工作，個天自會給工作養活，帶有一定權力慾望。",
+        zhengyin: "<b>【心性特質】</b>長命工夫長命做。一行到尾、事業心極重、工作至上的工作狂。過度專注事業，甚至無暇顧及伴侶。對事業極具Passion，甚至唔放假。工作適合大機構、政府工。不愁沒有工作，個天自會給工作養活，帶有一定權力慾望。",
         shiyin: "<b>【盲點表現】</b>工作毫無熱情，追求極致Work-life balance，返工純粹為搵錢玩樂。財來財去，難以累積財富。工作缺乏連續性，朝不保夕。感情生活多姿多彩但自身碌碌無為。",
         bingying: "腰腿、腎臟膀胱功能差。"
     },
     "沙中金": {
         gz: "甲午、乙未",
-        zhengyin: "<b>【心性特質】</b>做事重複但慢條斯理、極度仔細有耐性，能勝任長工時。極擅長查找問題（尤其是數字與數據方面），能精準分析資料找出盲點並修正完善（如公司醫生、系統改善專家）。思想與生活細節井井有條、整潔分明。能見微知著發掘投資商機，具良好社交與獨立思考能力，不輕易隨波逐流，管理風格穩健踏實。",
-        shiyin: "<b>【盲點表現】</b>性急冒失，覺得「執輸行頭慘過敗家」。神昏志昧、懶醒、急於搶答。未深入分析就作決定，短視且治標不治本（頭痛醫頭腳痛醫腳）。今朝有酒今朝醉，成日忙於應付突發危機與補鑊拆彈，多失誤，不能做精細工作，難以攀升。",
+        zhengyin: "<b>【心性特質】</b>做事重複但慢條斯理、極度仔細有耐性，能勝任長工時。極擅長查找問題，能精準分析資料找出盲點並修正完善。思想與生活細節井井有條、整潔分明。能見微知著發掘投資商機，具良好社交與獨立思考能力，管理風格穩健踏實。",
+        shiyin: "<b>【盲點表現】</b>性急冒失，覺得執輸行頭慘過敗家。神昏志昧、懶醒、急於搶答。未深入分析就作決定，短視且治標不治本。今朝有酒今朝醉，成日忙於應付突發危機與補鑊拆彈，多失誤，難以攀升。",
         bingying: "肺部大腸、腸胃敏感腹瀉、皮膚面色灰暗沉、無名腫毒。"
     },
     "山下火": {
         gz: "丙申、丁酉",
-        zhengyin: "<b>【心性特質】</b>韜光養晦，知自身形勢不如人時絕不盲目出頭。不認叻、謙厚受教以保存實力。服從性高，善於收集他人意見並貫徹執行。寧可逍遙自在做二、三把手也不急於擔大旗，深明進退之位。穩陣保守，跟隨大機構或有力前輩發展。重團隊助力，知恩圖報，有利益願與合夥人分享分擔風險。",
-        shiyin: "<b>【盲點表現】</b>狼死獨食、好大喜功。明明能力不足卻自傲自滿，十個瓦遮九個蓋。為求自保不惜損害名聲、鋌而走險。愛出風頭要排場，認為上司不如自己。常搞秘撈私幫導致正職仕途蹭蹬，即使風光過亦常因各種原因全盤吐回，冤枉來瘟疫去。",
+        zhengyin: "<b>【心性特質】</b>韜光養晦，知自身形勢不如人時絕不盲目出頭。不認叻、謙厚受教以保存實力。服從性高，善於收集他人意見並貫徹執行。寧可逍遙自在做二、三把手也不急於擔大旗，深明進退之位。穩陣保守，跟隨有力前輩發展。重團隊助力，知恩圖報。",
+        shiyin: "<b>【盲點表現】</b>狼死獨食、好大喜功。明明能力不足卻自傲自滿，十個瓦遮九個蓋。為求自保不惜損害名聲、鋌而走險。愛出風頭要排場。常搞秘撈私幫導致正職仕途蹭蹬，即使風光過亦常全盤吐回，冤枉來瘟疫去。",
         bingying: "心血眼目、小腸消化系統、荷爾蒙、腸道情緒皮膚問題。"
     },
     "平地木": {
         gz: "戊戌、己亥",
-        zhengyin: "<b>【心性特質】</b>無腰骨、無膊頭、隨風轉舵。好相處、無稜角，圓滑隨和的極致。八面玲瓏，合做生意吃四方飯。最大原則就是沒有固定原則，絕不得罪人。適應力極強，隨遇而安。和光同塵，常做義工慈善，關懷基層。合社福界或高壓厭惡性行業（如見血醫護、殯葬保護）。靠人際關係搞管理，無架子。",
+        zhengyin: "<b>【心性特質】</b>無腰骨、無膊頭、隨風轉舵。好相處、無稜角，圓滑隨和的極致。八面玲瓏，合做生意吃四方飯。最大原則就是沒有固定原則，絕不得罪人。適應力極強，隨遇而安。和光同塵，常做義工慈善。合社福界或高壓厭惡性行業。靠人際關係搞管理。",
         shiyin: "<b>【盲點表現】</b>有膊頭有主見卻極端硬頸不服輸，橫衝直撞容易得罪人。要求過多，不願妥協屈就，拒絕改變。經常抱怨投訴、怨天怨地，成牢騷王，拒絕嘗試新事物。",
         bingying: "肝膽經絡、筋腱僵硬、偏頭痛。"
     },
     "壁上土": {
         gz: "庚子、辛丑",
         zhengyin: "<b>【心性特質】</b>一大班人柴娃娃、團結一致。顧家、極重視家庭與原生家庭牽絆。對所屬公司團隊歸屬感極強，適合大公司大機構及團隊工作。具犧牲奉獻精神與領導才能，熱心投入組織體系與集體義工。",
-        shiyin: "<b>【盲點表現】</b>家庭關係疏離、不給家用甚至離家出走。不願融入群體，獨善其身。工作受環境困身局限，工時長或資金常被拖欠（老闆拖數）。缺乏家庭與人際實質助力，升職受限發展慢。<br>• <b>攝住先建議：</b>參加團體運動，在公開互惠團體中磨練。",
+        shiyin: "<b>【盲點表現】</b>家庭關係疏離、不給家用甚至離家出走。不願融入群體，獨善其身。工作受環境困身局限，工時長或資金常被拖欠。缺乏家庭與人際實質助力，升職受限發展慢。<br>• <b>攝住先建議：</b>參加團體運動，在公開互惠團體中磨練。",
         bingying: "脾胃病、皮膚頑疾（牛皮癬、濕疹、凹凸洞）。"
     },
     "金箔金": {
         gz: "壬寅、癸卯",
-        zhengyin: "<b>【心性特質】</b>蛇魄（膽小謹慎），不敢自己草率做決定。食屎食著豆，傻人有傻福。易收禮物、易受照顧資助，異性緣重。人脈廣，容易得到周遭援助，但非高高在上的貴人提攜。依賴心強，遇到困局愛求神問卜。學術數雖只學少少，但往往能一語中的直斷批中。",
+        zhengyin: "<b>【心性特質】</b>蛇魄（膽小謹慎），不敢自己草率做決定。食屎食著豆，傻人有傻福。易收禮物、易受照顧資助，異性緣重。人脈廣，容易得到周遭援助。依賴心強，遇到困局愛求神問卜。學術數雖只學少少，但往往能一語中的直斷批中。",
         shiyin: "<b>【盲點表現】</b>自視過高、天不怕地不怕（卻極易出事翻車）。橫禍之應，易走火入魔陷入迷信。情緒病高危，想唔開。<br>• <b>攝住先建議：</b>從事身心靈或靈媒相關工作。",
         bingying: "皮膚泛紅過敏、飲酒出紅斑、荷爾蒙失調、心律不齊、怪病。"
     },
     "覆燈火": {
         gz: "甲辰、乙巳",
-        zhengyin: "<b>【心性特質】</b>深具宗教指標，適合學術研究，耐性極高。唔怕悶、可靠堅持、鐵柱磨成針。能在同一行業堅持很久（一行到尾成老行尊）。樂意幫助他人解惑排難，適合做術數師、宗教人士、上師、人生教練。大方且提攜後輩，與宗教名校緣份深厚。",
+        zhengyin: "<b>【心性特質】</b>深具宗教指標，適合學術研究，耐性極高。唔怕悶、可靠堅持、鐵柱磨成針。能在同一行業堅持很久。樂意幫助他人解惑排難，適合做術數師、宗教人士、上師、人生教練。大方且提攜後輩，與宗教名校緣份深厚。",
         shiyin: "<b>【盲點表現】</b>易行歪路、偷呃拐騙、搞偏門甚至淪為騙子。防禦心過強，少言自身之事。孤寒刻薄，說話時情緒激動且急躁。",
         bingying: "心血管、心肌梗塞、小腸吸收弱、體內毒素積聚、邪病撞邪。"
     },
@@ -795,13 +1034,13 @@ const nayinExplanationData = {
     },
     "大驛土": {
         gz: "戊申、己酉",
-        zhengyin: "<b>【心性特質】</b>世界仔，極懂與人相處溝通。為人圓滑，主動結交朋友，人脈極廣。有好東西會樂於介紹給他人，適合做業務Sales。不怕冒險，好奇寶寶，四海之內皆兄弟。賺錢門路多，利做商業地產、娛樂圈、商會經商，吃得開四方飯，食屎食著豆常有意外收穫。",
+        zhengyin: "<b>【心性特質】</b>世界仔，極懂與人相處溝通。為人圓滑，主動結交朋友，人脈極廣。有好東西會樂於介紹給他人，適合做業務Sales。不怕冒險，好奇寶寶，四海之內皆兄弟。賺錢門路多，利做商業地產、娛樂圈、商會經商，吃得開四方飯，常有意外收穫。",
         shiyin: "<b>【盲點表現】</b>過度有原則、高傲傲氣、嘴巴不饒人、坐唔定。在社交圈與工作圈中顯得鶴立雞群且過於冷酷。死撐固執、頑固不化、強迫症。滿口「應該點、唔應該點」，不能放下身段。<br>• <b>攝住先建議：</b>尋找有嚴格既定流程、工作內容固定的崗位。",
         bingying: "消化系統脾胃、偏頭痛、頸椎肩頸痛、富貴包。"
     },
     "釵釧金": {
         gz: "庚戌、辛亥",
-        zhengyin: "<b>【心性特質】</b>慢條斯理、眼界高有要求、寧缺勿濫。因過於挑剔，較為享受孤獨，姻緣往往較遲。越處於正音狀態越追求完美主義（Boss-type，要求極嚴格）。對自己和外人都極高標準，如坐針氈。外形儀態永遠整潔得體，熱愛進修，追求高學歷，講求生活儀式感。適合高端專業研發領域。",
+        zhengyin: "<b>【心性特質】</b>慢條斯理、眼界高有要求、寧缺勿濫。因過於挑剔，較為享受孤獨，姻緣往往較遲。越處於正音狀態越追求完美主義。對自己和外人都極高標準，如坐針氈。外形儀態永遠整潔得體，熱愛進修，追求高學歷，講求生活儀式感。適合高端專業研發領域。",
         shiyin: "<b>【盲點表現】</b>容忍度表面極高、隨和社群，但事業始終難以起步。不修邊幅，極少打扮化妝。",
         bingying: "肺部、大腸、皮膚極易過敏發癬。"
     },
@@ -813,114 +1052,34 @@ const nayinExplanationData = {
     },
     "大溪水": {
         gz: "甲寅、乙卯",
-        zhengyin: "<b>【心性特質】</b>自信心爆棚（甚至誇張），愛面子。凡事拍心口承擔，應承了就死掂佢都要完成。親力親為、勞心勞力。輸人不輸陣，行事裝備必須齊全。老行尊形態，認受性極高。能獨當一面，一呼百應，深得大老闆信任。適合緊急任務、24小時On-call或高新科技產業。行事花費大方。",
+        zhengyin: "<b>【心性特質】</b>自信心爆棚，愛面子。凡事拍心口承擔，應承了就死掂佢都要完成。親力親為、勞心勞力。輸人不輸陣，行事裝備必須齊全。老行尊形態，認受性極高。能獨當一面，一呼百應，深得大老闆信任。適合緊急任務、24小時On-call或高新科技產業。行事花費大方。",
         shiyin: "<b>【盲點表現】</b>為人小家子氣，欠缺氣魄，不敢承擔，表現能力低。循規蹈矩只求大公司打份工混日子。與人相處能力較弱，社交退縮。",
         bingying: "腰腿婦科疾患、易扭傷拗柴、水腫、椎間盤突出。"
     },
     "沙中土": {
         gz: "丙辰、丁巳",
-        zhengyin: "<b>【心性特質】</b>爭勝心極強，必須給自己設定競爭對手與目標。極度害怕退步，怕自己變得無用，靠將勤補拙不斷攀升。唔係一定要贏，純粹係唔想輸；一旦輸了就再埋頭鑽研求進步。工作把關嚴苛極度盡責，深得老闆喜愛，但因不近人情導致職場朋友少（適合律師、QC、Audit審計、合規Compliance）。自我要求極高，重視現實。",
+        zhengyin: "<b>【心性特質】</b>爭勝心極強，必須給自己設定競爭對手與目標。極度害怕退步，怕自己變得無用，靠將勤補拙不斷攀升。唔係一定要贏，純粹係唔想輸；一旦輸了就再埋頭鑽研求進步。工作把關嚴苛極度盡責，深得老闆喜愛，但因不近人情導致職場朋友少。自我要求極高，重視現實。",
         shiyin: "<b>【盲點表現】</b>消遙快活，對自己要求極度寬鬆隨意，毫無原則。在感情上挑剔嚴苛，常被伴侶抱怨，六親緣薄。<br>• <b>建議：</b>不適合高壓競爭行業，宜找互補包容的伴侶。",
         bingying: "經常看醫生、身形暴肥或過瘦、消化機能、胰臟脾胃、不知飢餓。"
     },
     "天上火": {
         gz: "戊午、己未",
-        zhengyin: "<b>【心性特質】</b>術數與宗教最高指標。願為崇高信仰與使命奉獻所有，使命感強烈，理念先行，並身體力行去完成（親自扶貧、做理念生意哪怕蝕錢）。勇於追夢，合娛樂圈、KOL、創業。常有宏大理念，具經營NGO傾向。錢財並非首要考量，為理想可以傾盡全力，常有伯樂出資贊助追夢。",
+        zhengyin: "<b>【心性特質】</b>術數與宗教最高指標。願為崇高信仰與使命奉獻所有，使命感強烈，理念先行，並身體力行去完成。勇於追夢，合娛樂圈、KOL、創業。常有宏大理念，具經營NGO傾向。錢財並非首要考量，為理想可以傾盡全力，常有伯樂出資贊助追夢。",
         shiyin: "<b>【盲點表現】</b>嘲笑理想主義者，過於現實功利。完全不相信宗教信仰，行事只能求基本安穩，缺乏遠大抱負與發圍良機。",
         bingying: "精神焦慮、心血管梗塞、腫瘤癌症風險。"
     },
     "石榴木": {
         gz: "庚申、辛酉",
-        zhengyin: "<b>【心性特質】</b>手頭資源極度豐沛，且非常樂意與他人共享自身資源。因經常施予人情，身邊多貴人扶持回饋，適合做生意（靠人情與Network）。重視生活玩樂與享受，朋友極多（包括酒肉歡場朋友）。生意越做越大，轉工常獲高薪挖角。適合高額大宗交易（如豪宅地產、奢侈名品）。對數字極敏感。",
-        shiyin: "<b>【盲點表現】</b>極度不願分享資源，凡事怕蝕底（外出用餐連小費都不肯給）。缺少貴人與帶挈機遇，眼睜睜看著別人成功，輪到自己出手就虧輸。對數字不敏感。<br>• <b>建議：</b>適合不用面對人群的工作（如單純對電腦操作）。",
+        zhengyin: "<b>【心性特質】</b>手頭資源極度豐沛，且非常樂意與他人共享自身資源。因經常施予人情，身邊多貴人扶持回饋，適合做生意。重視生活玩樂與享受，朋友極多。生意越做越大，轉工常獲高薪挖角。適合高額大宗交易（如豪宅地產、奢侈名品）。對數字極敏感。",
+        shiyin: "<b>【盲點表現】</b>極度不願分享資源，凡事怕蝕底。缺少貴人與帶挈機遇，眼睜睜看著別人成功，輪到自己出手就虧輸。對數字不敏感。<br>• <b>建議：</b>適合不用面對人群的工作（如單純對電腦操作）。",
         bingying: "肝膽經絡、纖維結節腫瘤、關節痛症、行動不便。"
     },
     "大海水": {
         gz: "壬戌、癸亥",
-        zhengyin: "<b>【心性特質】</b>慢活代表，說話語速慢、滋悠淡定、氣定神閒。絕不適應高壓工作，適合手作藝術、生活美學小店（如手沖咖啡、精品零售）。從事高價位精緻商品（因為不用急），沉浸於藝術或研究工作。自得其樂，不太追求功利金錢，帶二世祖守業之清閒福氣，順其自然。",
+        zhengyin: "<b>【心性特質】</b>慢活代表，說話語速慢、滋悠淡定、氣定神閒。絕不適應高壓工作，適合手作藝術、生活美學小店（如手沖咖啡、精品零售）。從事高價位精緻商品，沉浸於藝術或研究工作。自得其樂，不太追求功利金錢，帶二世祖守業之清閒福氣，順其自然。",
         shiyin: "<b>【盲點表現】</b>急性子、急急子，語速飛快。一味求快卻雜亂無章，盲目衝入競爭激烈的行業，往往吃力不討好，損手離場。",
         bingying: "耳疾聽力、耳水不平衡、坐骨神經、腰腿痠軟、婦科失調。"
     }
-};
-
-function showNaYinInfo(nayinName) {
-    let pureName = nayinName.trim();
-    let data = nayinExplanationData[pureName];
-    if (!data) {
-        for (let k in nayinExplanationData) {
-            if (pureName.includes(k) || k.includes(pureName)) {
-                data = nayinExplanationData[k];
-                pureName = k;
-                break;
-            }
-        }
-    }
-
-    if (data) {
-        document.getElementById('gsModalTitle').innerText = `【 納音 · ${pureName} 】心性象意詳解`;
-        let contentHtml = `
-            <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><b>對應六十甲子：</b>${data.gz}</div>
-            <div class="nayin-detail-section zhengyin">
-                <div style="font-weight:700; color:var(--color-green); margin-bottom:6px;">正音 (陽) · 得天地能量之吉兆：</div>
-                <div style="color:#2d3748;">${data.zhengyin}</div>
-            </div>
-            <div class="nayin-detail-section shiyin">
-                <div style="font-weight:700; color:var(--color-red); margin-bottom:6px;">失音 (陰) · 不得能量之盲點：</div>
-                <div style="color:#2d3748;">${data.shiyin}</div>
-            </div>
-            <div class="nayin-detail-section bingying">
-                <div style="font-weight:700; color:#b7791f; margin-bottom:4px;">病應象徵：</div>
-                <div style="color:#4a5568;">${data.bingying}</div>
-            </div>
-        `;
-        document.getElementById('gsModalBody').innerHTML = contentHtml;
-        document.getElementById('gsModal').style.display = 'flex';
-    }
-}
-
-// 關煞解釋庫
-const gsDescriptions = {
-    "1. 白虎關": `<ul><li>病應：血毒血糖、血脂、貧血、白血病、免疫系統疾病。</li><li>病應：腹部疾病。</li><li>易有破損瘀傷。</li><li>大運/流年見白虎：易有手術之應，易有突發事情，令人措手不及，考驗應變能力。</li><li>大運/流年：OT 或要工餘時進修 (變相OT)。</li><li>原命白虎宜做「見血」工作。</li></ul>`,
-    "2. 鐵蛇關": `<ul><li>皮膚病、過敏、出疹，生蛇，蚊叮蟲咬、香港腳、濕疹。</li><li>只能硬食，頂硬上 (生活上，各方面都易有呢個情況)。</li></ul>`,
-    "3. 直難關 (年支版)": `<ul><li>困難的星星，難以發揮出力量，又名直頭星。</li><li>凡事多困難，主多哭泣。</li><li>必定要面對困難、硬食、迎難而上。</li><li>橫衝直撞，不懂轉彎，容易遇挫折，不停試錯，遍體鱗傷。</li><li>為人較頑固、會強人所難，易得罪人，易與人起衝突，人緣較差，姻緣較差。</li><li>因為習慣磨難，所以內心較強大。</li><li>好堅毅堅持、明知不可而為之。</li><li>合做研究工作、控制狂；自閉症、強迫症，易有癮。</li><li>易受按摩，針灸、走罐之類的痛的治療。</li></ul>`,
-    "4/5. 夜啼關 (AB配對成功)": `<ul><li>原命：靈異體質/怕黑，長大後失眠、精神差、夢遊。</li><li>工作：dirty工作、清潔、環保，返工地點易選工廈，宜返偏門、夜班。</li><li>疑心重，姻緣較差，積極性低。</li><li>流年：出外時較易遇靈異事件，易出奇難雜症。</li></ul>`,
-    "4. 夜啼關": `<ul><li>原命：靈異體質/怕黑，長大後失眠、精神差、夢遊。</li><li>工作：dirty工作、清潔、環保，返工地點易選工廈，宜返偏門、夜班。</li><li>疑心重，姻緣較差，積極性低。</li><li>流年：出外時較易遇靈異事件，易出奇難雜症。</li></ul>`,
-    "6. 桃花煞": `<ul><li>走動多。</li><li>家庭背景複雜，如離異、家暴。</li><li>社交動物、較亂。</li><li>流年見桃花易出感情錯亂，借錢，離鄉別井。</li><li>應水病、水土不服、婦科、胸部病。</li><li>月柱：工作接觸人多，Sales。</li></ul>`,
-    "7. 雷公打腦": `<ul><li>雷火之厄、雷擊，觸電、燒傷。</li><li>神經緊張、腦神經痛、筋腱痛、易抽筋。</li><li>工作壓力大、經常OT。</li><li>頭痛、頸痛。</li><li>小朋友會驚青啲。</li><li>不善於表達，不善辭令。</li><li>發炎、發燒，小兒麻痺。</li><li>撞傷頭頸，易PK。</li><li>工作：24小時 on call 的工作。</li><li>年柱：與長輩不和。</li><li>失眠、痛症，關節炎。</li></ul>`,
-    "8. 紅艷煞": `<ul><li>感情混亂麻煩，不可告人的關係。</li><li>天生就魅惑、易吸引到狂風浪蝶。</li><li>走苦情路線，自怨自憐。</li><li>合做娛樂圈。</li><li>有財氣、有貴人。</li><li>易有空氣傳播疾病 (呼吸系統)。</li></ul>`,
-    "9. 流霞煞": `<ul><li>霞 -> 晚霞 -> 紅 -> 流血。</li><li>血光、流產。</li><li>主要病應：貧血、內出血，便血、大腸瘜肉；女士血崩，子宮肌瘤，難產；心血管病，中風、血壓高/低、血友病。</li><li>原命：除體質外，仲主破財，儲到錢會突然要用，橫災之應，入不敷支。</li><li>輕症：擦傷流血，牙齦出血，小損傷。</li><li>化解：自主破財，針灸。</li></ul>`,
-    "10. 千日關": `<ul><li>不適合被父母照顧，宜交託家人，最好離開原生家庭養育，否則孩童易高燒或腦膜炎。</li><li>或長大後易有頭暈暈車浪、幽門螺旋菌、胃病。</li><li>大運/流年：唔痴家。</li></ul>`,
-    "11. 取命關 (要中2粒)": `<ul><li>高處墮下傷頭、腳、摔傷。</li><li>頭痛，腳痛、膝痛。</li><li>易受驚嚇，膽小。</li><li>高估自己的能力 (先吉後凶)、有頭無尾。</li><li>通常殺你一個措手不及，最有信心嗰陣先出事。</li><li>自以為是，小心駛得萬年船。</li></ul>`,
-    "11. 取命關": `<ul><li>高處墮下傷頭、腳、摔傷。</li><li>頭痛，腳痛、膝痛。</li><li>易受驚嚇，膽小。</li><li>高估自己的能力 (先吉後凶)、有頭無尾。</li><li>小心駛得萬年船。</li></ul>`,
-    "12. 閻王關": `<ul><li>術數指標，靈異指標、撞邪。</li><li>偏門行業。</li><li>陰氣偏重。</li><li>宜有宗教信仰。</li><li>情緒病、精神病指標。</li></ul>`,
-    "14. 雞飛關 (要中2粒)": `<ul><li>為人膽小怕事，做事沒信心，玻璃心，怕失敗。</li><li>適合做創新、沒人做過的事。</li><li>多為藝術家、設計師、程式設計師。</li><li>病應：肝膽、筋腱、消化系統弱。</li></ul>`,
-    "15. 落井關": `<ul><li>住處外牆滲水、水喉有問題、倒灌、忘關水龍頭。</li><li>水腫，淋巴、泌尿系統毛病。</li><li>易犯水險。</li></ul>`,
-    "16. 急腳煞 (要中2粒)": `<ul><li>急躁，迫自己快，迫身邊人快，容易粗疏武斷而誤判。</li><li>脾氣急躁，無耐性。戒急忍耐。</li></ul>`,
-    "17. 斷腸關": `<ul><li>易傷心，易情緒低落，多愁善感，自閉、抑鬱指標。</li><li>共情感重，情感壓抑。宜有信仰或從事社福心理類工作。</li></ul>`,
-    "18. 和尚關 (要中2粒)": `<ul><li>對宗教有傾斜意向、思想出世脫俗。</li><li>孤僻，喜獨處獨立工作。</li></ul>`,
-    "19. 天狗關": `<ul><li>口舌是非吵架星，易與人摩擦。</li><li>皮膚易長痘潰爛或有疤痕。</li></ul>`,
-    "20. 五鬼關": `<ul><li>陰氣重，無力感重，工作動力弱。</li><li>大運流年見之易消沉抑鬱。</li></ul>`,
-    "21. 撞命關": `<ul><li>與家人易有衝突或緣薄。手腳關節易碰傷。</li></ul>`,
-    "22. 埋兒關": `<ul><li>長輩緣薄、與父母意見相左。</li></ul>`,
-    "23. 鬼門關 (要中2粒)": `<ul><li>性格特立獨行，反主流，喜非主流穿著與喜好。</li></ul>`,
-    "24. 短命關": `<ul><li>失眠、夜鬼、日夜顛倒，晚間工作。心緒不寧。</li></ul>`,
-    "25. 劫煞關": `<ul><li>破財，不利投資，耗損。</li></ul>`,
-    "26. 天吊關": `<ul><li>痠麻痛、神經問題。凡事置身事外，喜獨立工作。</li></ul>`,
-    "27. 湯火煞": `<ul><li>燙傷、曬傷、易留疤。急性子容易壞事。</li></ul>`,
-    "28. 金鎖匙": `<ul><li>破財、失物、理財觀念較薄弱。</li></ul>`,
-    "29. 浴盆關": `<ul><li>肝功能較弱，易受朋友影響而破耗。</li></ul>`,
-    "30. 將軍箭 (要中2粒)": `<ul><li>出門遇險，不宜離鄉太遠。秋冬特別應驗，可用針灸化解。</li></ul>`,
-    "31. 血刃關": `<ul><li>易有血光、刀傷、手術、情緒急躁。</li></ul>`,
-    "32. 基敗關 (要中2粒)": `<ul><li>財庫失守，家中易漏水，裝修噪音。</li></ul>`,
-    "33. 下情關 (要中2粒)": `<ul><li>與父母上司關係疏離，不易得上級助力。</li></ul>`,
-    "34. 百日關 (要中2粒)": `<ul><li>不懂拒絕人，易攬事上身，工作辛苦。</li></ul>`,
-    "35. 斷橋關": `<ul><li>心肺、呼吸系統弱，睡眠問題。</li></ul>`,
-    "36. 四柱關 (要中2粒)": `<ul><li>脾胃消化較弱，易受干擾，反應慢。</li></ul>`,
-    "37. 水火關 (要中2粒)": `<ul><li>強迫傾向，不喜他人動自己物品，腸胃弱。</li></ul>`,
-    "38. 深水關": `<ul><li>遺傳或慢性病，與長輩家族緣分較薄。</li></ul>`,
-    "39. 四季關": `<ul><li>先天資源少，需自食其力，轉季易病。</li></ul>`,
-    "40. 急腳關": `<ul><li>腳部問題、拖延、事倍功半。</li></ul>`,
-    "41. 金鎖關 (掌訣)": `<ul><li>呼吸道、喉部、慢性發炎，表達有窒礙感。</li></ul>`
 };
 
 const dualStarData = {
@@ -968,6 +1127,75 @@ const yingSongData = {
     "有迎無送": `<li>「迎」在前，適合前線、公關、演藝、業務、客務等面對群眾之工作。</li>`,
     "無迎有送": `<li>「送」在後，適合後勤、幕僚、支援、研發、技術與維修類工作，少接觸人群。</li>`
 };
+
+function showNaYinInfo(nayinName) {
+    let pureName = nayinName.trim();
+    let data = nayinExplanationData[pureName];
+    if (!data) {
+        for (let k in nayinExplanationData) {
+            if (pureName.includes(k) || k.includes(pureName)) {
+                data = nayinExplanationData[k];
+                pureName = k;
+                break;
+            }
+        }
+    }
+
+    if (data) {
+        document.getElementById('gsModalTitle').innerText = `【 納音 · ${pureName} 】心性象意詳解`;
+        let contentHtml = `
+            <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><b>對應六十甲子：</b>${data.gz}</div>
+            <div class="nayin-detail-section zhengyin">
+                <div style="font-weight:700; color:var(--color-green); margin-bottom:6px;">正音 (陽) · 得天地能量之吉兆：</div>
+                <div style="color:#2d3748;">${data.zhengyin}</div>
+            </div>
+            <div class="nayin-detail-section shiyin">
+                <div style="font-weight:700; color:var(--color-red); margin-bottom:6px;">失音 (陰) · 不得能量之盲點：</div>
+                <div style="color:#2d3748;">${data.shiyin}</div>
+            </div>
+            <div class="nayin-detail-section bingying">
+                <div style="font-weight:700; color:#b7791f; margin-bottom:4px;">病應象徵：</div>
+                <div style="color:#4a5568;">${data.bingying}</div>
+            </div>
+        `;
+        document.getElementById('gsModalBody').innerHTML = contentHtml;
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
+
+// 智慧清洗關煞鍵值，保證 100% 成功匹配
+function cleanGuanShaKey(rawName) {
+    let s = rawName.replace(/^[0-9./\s]+/, '');
+    s = s.replace(/\(.*?\)/g, '');
+    s = s.replace(/（.*?）/g, '');
+    return s.trim();
+}
+
+function showGuanShaInfo(gsName) {
+    let cleanKey = cleanGuanShaKey(gsName);
+    let desc = gsDescriptions[cleanKey];
+    let matchedTitle = cleanKey;
+
+    if (!desc) {
+        for (let key in gsDescriptions) {
+            if (cleanKey.includes(key) || key.includes(cleanKey)) {
+                desc = gsDescriptions[key];
+                matchedTitle = key;
+                break;
+            }
+        }
+    }
+
+    if (desc) {
+        document.getElementById('gsModalTitle').innerText = `【 ${matchedTitle} 】私人班定義解釋`;
+        document.getElementById('gsModalBody').innerHTML = desc;
+        document.getElementById('gsModal').style.display = 'flex';
+    } else {
+        document.getElementById('gsModalTitle').innerText = `【 ${gsName} 】`;
+        document.getElementById('gsModalBody').innerHTML = `<p style="color:var(--text-muted);">暫無此關煞的詳細私人班註解。</p>`;
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
 
 function closeModal(event) {
     document.getElementById('gsModal').style.display = 'none';
@@ -1540,7 +1768,7 @@ function runCalculation() {
         let nyStr = getNaYin(p.s, p.b);
         let nyHtml = "";
         if (idx < 4) {
-            nyHtml = `<span class="nayin-clickable" onclick="showNaYinInfo('${nyStr}')" title="點擊查看【${nyStr}】正音/失音心性象意詳解">${nyStr} 🔍</span>`;
+            nyHtml = `<span class="nayin-clickable" data-name="${nyStr}" title="點擊查看【${nyStr}】正音/失音心性象意詳解">${nyStr} 🔍</span>`;
         } else {
             nyHtml = `${nyStr}`;
         }
@@ -1579,7 +1807,9 @@ function runCalculation() {
     html += `</div>`;
 
     let natalGsList = evaluateAllGuanSha(natalPillars, natalPillars);
-    let gsDisplayHtml = natalGsList.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+    let gsDisplayHtml = natalGsList.map(g => {
+        return `<span class="sheng-ji-tag tag-gs" data-name="${g}" title="點擊查看【${g}】詳解">${g}</span>`;
+    }).join('');
 
     if (natalGsList.length > 0) {
         html += `<div class="sheng-ji-box guansha">
@@ -1690,7 +1920,7 @@ function runCalculation() {
         html += `<div style="font-size:0.85em; color:var(--text-muted); margin-top:-3px;">${startYear}年</div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyS, true)}</div>`;
         html += `<div style="font-size:0.85em; margin-bottom: 2px; color: var(--primary-blue); font-weight: 700;">${getTenGod(dStem, dyS)}</div>`;
-        html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.65em;font-weight:normal;color:var(--text-muted); cursor:pointer;" onclick="showNaYinInfo('${dyNaYin}')" title="點擊查看納音解釋">${dyNaYin}</span></div>`;
+        html += `<div class="t-bold t-large">${Tiangan[dyS]}<br>${Dizhi[dyB]}<br><span style="font-size:0.65em;font-weight:normal;color:var(--text-muted); cursor:pointer;" class="nayin-clickable" data-name="${dyNaYin}" title="點擊查看納音解釋">${dyNaYin}</span></div>`;
         html += `<div>${getShenSha(dTaiSuiBranch, dyB, false)}</div>`;
         html += `<div style="font-size:0.8em; line-height: 1.2;">${getHiddenStemsHtml(dStem, dyB)}</div>`;
         html += `</div>`;
@@ -1708,7 +1938,9 @@ function runCalculation() {
         let dyGsListNew = dyGsListAll.filter(g => !natalGsList.includes(g));
         if(dyGsListNew.length > 0) {
             dayunGuanShaHtml += `<li style="margin-bottom:10px;"><b>[${ageLabel}大運] ${dyGZ_loop}：</b><div style="margin-top:6px;">`;
-            let dyGsDisplay = dyGsListNew.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+            let dyGsDisplay = dyGsListNew.map(g => {
+                return `<span class="sheng-ji-tag tag-gs" data-name="${g}" title="點擊查看【${g}】詳解">${g}</span>`;
+            }).join('');
             dayunGuanShaHtml += dyGsDisplay;
             dayunGuanShaHtml += `</div></li>`;
         }
@@ -1847,7 +2079,9 @@ function runCalculation() {
         let lnGsListNew = lnGsListAll.filter(g => !dyGsListAll.includes(g));
 
         if (lnGsListNew.length > 0) {
-            let lnGsDisplay = lnGsListNew.map(g => `<span class="sheng-ji-tag tag-gs" onclick="showGuanShaInfo('${g}')">${g}</span>`).join('');
+            let lnGsDisplay = lnGsListNew.map(g => {
+                return `<span class="sheng-ji-tag tag-gs" data-name="${g}" title="點擊查看【${g}】詳解">${g}</span>`;
+            }).join('');
             html += `<div style="margin-top: 14px; padding: 12px 16px; background: #fff5f5; border: 1px dashed var(--color-red); border-radius: var(--radius-sm);">
                 <div style="color: var(--color-red); font-weight: 700; margin-bottom: 6px; font-size:14px;">⚠️ 當局流年新增觸發關煞 (點擊可看詳情)：</div>
                 <div>${lnGsDisplay}</div>
@@ -2040,6 +2274,26 @@ function getPrevJieQi(d) {
     fallback.setDate(d.getDate() - 30);
     return fallback;
 }
+
+// 點擊事件委派 (完全避免引號衝突與非法字元中斷)
+document.addEventListener('click', function(e) {
+    let target = e.target;
+    if (target.classList.contains('tag-gs')) {
+        let name = target.getAttribute('data-name');
+        if (name) {
+            showGuanShaInfo(name);
+        } else {
+            showGuanShaInfo(target.innerText.trim());
+        }
+    } else if (target.classList.contains('nayin-clickable')) {
+        let name = target.getAttribute('data-name');
+        if (name) {
+            showNaYinInfo(name);
+        } else {
+            showNaYinInfo(target.innerText.replace('🔍', '').trim());
+        }
+    }
+});
 </script>
 
 </body>
