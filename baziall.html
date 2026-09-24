@@ -1,0 +1,2688 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子平八字 | 專業排盤系統 (30納音+12神煞+關煞私人班完整版)</title>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --surface-color: #ffffff;
+            --surface-card: #ffffff;
+            --primary-blue: #1e293b;
+            --primary-hover: #0f172a;
+            --accent-blue: #334155;
+            --border-color: #e2e8f0;
+            --border-focus: #3b82f6;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            
+            --color-green: #15803d;
+            --color-green-bg: #f0fdf4;
+            --color-purple: #7e22ce;
+            --color-purple-bg: #faf5ff;
+            --color-red: #b91c1c;
+            --color-red-bg: #fef2f2;
+            --color-gold: #b45309;
+            --color-gold-bg: #fffbeb;
+            --color-gold-border: #fde68a;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 32px 16px;
+            color: var(--text-main);
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .main-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 24px;
+            font-size: 22px;
+            font-weight: 800;
+            border-radius: var(--radius-md);
+            margin-bottom: 28px;
+            letter-spacing: 4px;
+            box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.35);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 26px;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 12px 30px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-muted);
+            background: #e2e8f0;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab:hover { color: var(--primary-blue); background: #cbd5e1; }
+        
+        .tab.active {
+            background: var(--surface-color);
+            color: #0f172a;
+            border-bottom: 3px solid #0f172a;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            background-color: #f8fafc;
+            padding: 22px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 18px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 8px;
+        }
+        .flex-row select {
+            flex: 1;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .input-group input, .input-group select {
+            padding: 11px 14px;
+            font-size: 15px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 700;
+            background: var(--surface-color);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
+        }
+
+        .btn-section {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 30px 0 10px 0;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .btn {
+            padding: 13px 40px;
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 2px;
+        }
+
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.25); 
+        }
+        .btn:active { transform: translateY(0); }
+        .btn-run { background: linear-gradient(135deg, #0f172a, #334155); }
+        .btn-clear { background: linear-gradient(135deg, #64748b, #94a3b8); }
+
+        .section-title {
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 800;
+            color: white;
+            margin-top: 36px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .yuan-ju-header { background: linear-gradient(135deg, #1e293b, #334155); }
+        .dayun-header { background: linear-gradient(135deg, #334155, #475569); }
+
+        .chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 14px;
+            text-align: center;
+            font-size: 14px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-table th, .chart-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 10px;
+            vertical-align: middle;
+        }
+        
+        .chart-table th { 
+            background-color: #f8fafc; 
+            color: var(--text-muted); 
+            font-weight: 700;
+        }
+        
+        .highlight-bg { 
+            background-color: #f8fafc; 
+            font-size: 1.3em; 
+            font-weight: 800; 
+            color: var(--primary-blue); 
+        }
+        .shensha-row { font-size: 0.9em; background-color: #ffffff; }
+        
+        .converted-date-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #0284c7;
+            padding: 12px 18px;
+            margin-top: 14px;
+            font-size: 14px;
+            color: #0369a1;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        .dayun-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 0;
+            border: 1px solid var(--border-color);
+            margin-top: 14px;
+            border-radius: var(--radius-md);
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+        .dayun-col {
+            flex: 0 0 92px;
+            border-right: 1px solid var(--border-color);
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+            transition: background-color 0.15s ease;
+        }
+        .dayun-col:hover { background-color: #f8fafc; }
+        .dayun-col:last-child { border-right: none; }
+        .dayun-col div { padding: 3px 0; }
+
+        .nayin-box {
+            margin-top: 36px;
+            background: var(--color-gold-bg);
+            border: 1.5px solid var(--color-gold-border);
+            padding: 22px 26px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+        .nayin-title {
+            color: var(--color-gold);
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nayin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid var(--color-gold-border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .nayin-table th {
+            border: 1px solid var(--color-gold-border);
+            padding: 12px 14px;
+            text-align: left;
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: 800;
+            font-size: 13.5px;
+        }
+        .nayin-table td {
+            border: 1px solid #fef3c7;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+        
+        .status-sheng { color: var(--color-green) !important; font-weight: 800; }
+        .status-fu { color: var(--color-red) !important; font-weight: 800; }
+        .status-ji { color: var(--color-red) !important; font-weight: 800; }
+
+        .decade-wrapper {
+            margin-top: 36px;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        .decade-header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+        .decade-content {
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .liunian-details {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: white;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: block;
+        }
+        .liunian-details:last-child { margin-bottom: 0; }
+        
+        .liunian-header {
+            background-color: #f1f5f9;
+            color: var(--primary-blue);
+            padding: 12px 20px;
+            font-size: 14.5px;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .liunian-body { padding: 20px; }
+
+        .liunian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 28px;
+        }
+
+        @media (max-width: 768px) {
+            .liunian-grid { grid-template-columns: 1fr; }
+            .container { padding: 20px 14px; }
+        }
+
+        .subtitle {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .subtitle.red { color: var(--color-red); border-bottom-color: #fecaca; }
+        .subtitle.green { color: var(--color-green); border-bottom-color: #bbf7d0; }
+        .subtitle.blue { color: var(--primary-blue); border-bottom-color: #cbd5e1; margin-top: 22px; }
+
+        .complex-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 11px 0;
+            font-size: 14px;
+        }
+        .complex-row .label { width: 55px; font-weight: 700; color: var(--text-muted); }
+        .complex-row .content { flex: 1; display: flex; justify-content: space-around; text-align: center; }
+
+        .bazi-list-row {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 11px 4px;
+            font-size: 14px;
+        }
+        .bazi-list-row:last-child { border-bottom: none; }
+        .bazi-list-row .label { width: 65px; text-align: left; color: var(--text-muted); font-weight: 700; }
+        .bazi-list-row .center-val { flex: 1; text-align: center; font-weight: 700; color: var(--text-main); }
+        .bazi-list-row .status { width: 65px; text-align: right; font-weight: 800; }
+
+        .ten-gods-summary {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: #f8fafc;
+            border-radius: var(--radius-sm);
+            border: 1px dashed #cbd5e1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: space-around;
+        }
+        .tg-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 44px;
+        }
+        .tg-item .tg-name { color: var(--text-muted); font-size: 12px; margin-bottom: 4px; font-weight: 700; }
+        .tg-item .tg-count { font-weight: 800; font-size: 19px; }
+
+        .sheng-ji-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 5px solid var(--color-gold);
+            padding: 16px 20px;
+            margin-top: 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+        .sheng-ji-box.guansha {
+            background-color: var(--color-red-bg);
+            border-color: #fecaca;
+            border-left-color: var(--color-red);
+        }
+        .sheng-ji-box .sheng-ji-header {
+            font-weight: 800;
+            color: var(--color-gold);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sheng-ji-box.guansha .sheng-ji-header { color: var(--color-red); }
+        
+        .sheng-ji-box ul {
+            margin: 0;
+            padding-left: 20px;
+            list-style-type: square;
+        }
+        .sheng-ji-box li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            color: #334155;
+        }
+        .sheng-ji-box li:last-child { margin-bottom: 0; }
+        
+        .sheng-ji-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-right: 6px;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .tag-sheng { background-color: var(--color-green); }
+        .tag-fu { background-color: var(--color-red); }
+        .tag-ji { background-color: var(--color-red); }
+        
+        .tag-gs { 
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            margin-bottom: 6px; 
+            cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tag-gs:hover { 
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(185, 28, 28, 0.3);
+        }
+        
+        .sheng-ji-desc {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .c-green { color: var(--color-green); }
+        .c-purple { color: var(--color-purple); }
+        .c-red { color: var(--color-red); }
+        .t-bold { font-weight: 800; }
+        .t-large { font-size: 1.1em; }
+
+        .nayin-clickable {
+            cursor: pointer;
+            border-bottom: 1.5px dotted #64748b;
+            transition: all 0.2s ease;
+            color: #334155;
+            font-weight: 700;
+            padding-bottom: 1px;
+        }
+        .nayin-clickable:hover {
+            color: var(--color-purple);
+            border-bottom: 1.5px solid var(--color-purple);
+        }
+
+        .shensha-clickable {
+            cursor: pointer;
+            border-bottom: 1.5px dashed currentColor;
+            padding-bottom: 1px;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .shensha-clickable:hover {
+            opacity: 0.8;
+            transform: scale(1.06);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: white;
+            padding: 28px 32px;
+            border-radius: var(--radius-md);
+            max-width: 620px;
+            width: 92%;
+            max-height: 82vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 30px -5px rgba(0,0,0,0.25);
+            position: relative;
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-close {
+            position: absolute;
+            top: 18px; right: 20px;
+            font-size: 26px;
+            cursor: pointer;
+            color: var(--text-subtle);
+            background: none;
+            border: none;
+            line-height: 1;
+            transition: color 0.15s ease;
+        }
+        .modal-close:hover { color: var(--color-red); }
+        .modal-title {
+            color: var(--primary-blue);
+            font-size: 18px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .modal-body ul {
+            padding-left: 20px;
+            color: #334155;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+        .modal-body li { margin-bottom: 8px; }
+
+        .nayin-detail-section {
+            margin-bottom: 14px;
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+        .nayin-detail-section.zhengyin { background-color: var(--color-green-bg); border: 1px solid #bbf7d0; }
+        .nayin-detail-section.shiyin { background-color: var(--color-red-bg); border: 1px solid #fecaca; }
+        .nayin-detail-section.bingying { background-color: var(--color-gold-bg); border: 1px solid var(--color-gold-border); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="main-header">子 平 八 字 | 專 業 排 盤</div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchMode('date')" id="tab-date">西曆排盤</div>
+        <div class="tab" onclick="switchMode('ganzhi')" id="tab-ganzhi">直接干支排盤</div>
+    </div>
+
+    <div id="date-inputs" class="input-section">
+        <div class="input-group">
+            <label>出生年 (西元)</label>
+            <input type="number" id="inpYear" value="1980">
+        </div>
+        <div class="input-group">
+            <label>出生月</label>
+            <input type="number" id="inpMonth" value="1">
+        </div>
+        <div class="input-group">
+            <label>出生日</label>
+            <input type="number" id="inpDay" value="1">
+        </div>
+        <div class="input-group">
+            <label>出生時 (0-23)</label>
+            <input type="number" id="inpHour" value="12">
+        </div>
+    </div>
+
+    <div id="ganzhi-inputs" class="input-section" style="display:none;">
+        <div class="input-group">
+            <label>年柱</label>
+            <div class="flex-row">
+                <select id="gzYStem"></select>
+                <select id="gzYBranch"></select>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>月柱</label>
+            <div class="flex-row">
+                <select id="gzMStem"></select>
+                <select id="gzMBranch"></select>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>日柱</label>
+            <div class="flex-row">
+                <select id="gzDStem"></select>
+                <select id="gzDBranch"></select>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>時柱</label>
+            <div class="flex-row">
+                <select id="gzHStem"></select>
+                <select id="gzHBranch"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-section" style="margin-top: -5px; background: transparent; border: none; padding-top: 0;">
+        <div class="input-group">
+            <label>性別</label>
+            <select id="inpGender">
+                <option value="男" selected>男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>顯示區間</label>
+            <select id="inpRange">
+                <option value="0-9">0-9歲</option>
+                <option value="10-19">10-19歲</option>
+                <option value="20-29">20-29歲</option>
+                <option value="30-39" selected>30-39歲</option>
+                <option value="40-49">40-49歲</option>
+                <option value="50-59">50-59歲</option>
+                <option value="60-69">60-69歲</option>
+                <option value="70-79">70-79歲</option>
+                <option value="80-89">80-89歲</option>
+                <option value="90-99">90-99歲</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="btn-section">
+        <button class="btn btn-run" onclick="runCalculation()">開始排盤</button>
+        <button class="btn btn-clear" onclick="clearData()">清除數據</button>
+    </div>
+
+    <div id="resultArea"></div>
+</div>
+
+<div class="modal-overlay" id="gsModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal(event)">&times;</button>
+        <div class="modal-title" id="gsModalTitle">定義解釋</div>
+        <div class="modal-body" id="gsModalBody"></div>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// 1. 日家十二神煞私人班手稿原話庫 (先秦日者學說)
+// ==========================================
+var shenShaDescriptions = {
+    "太歲": "<ul>" +
+        "<li><b>【源流訓詁】</b>陰陽家先秦日者學說：日者即日元。太歲遊方，可放於原命、大運、流年全盤推斷。十二神煞之首，值符掌權印，建交之動象。</li>" +
+        "<li><b>【神面特質】</b>尊貴大官格局。掌權掌管、值符印令、夠魄力、有貴氣、受到長輩上司庇佑。身體健康時極好運。有堅忍耐力，能擔重任。在大公司大機構任管理、顧問、專業人士。喜名牌、上電視發言代表公司、多與政府打交道或做政府工。</li>" +
+        "<li><b>【煞面盲點】</b>控制欲極強，著重話語權、喜表態、喜批評指點人。脾氣差、脾氣大、行事至尊至大、固執。喜點人做嘢（尤其年月柱），多要求、搞麻煩嘢、極高要求（若帶兩粒太歲，對伴侶要求門當戶對極其嚴苛）。若逢病符同宮或衝照，運勢與健康會大幅拖差。</li>" +
+        "<li><b>【宮位斷事】</b><br>" +
+            "• <b>年月柱：</b>辛苦命，工作極其辛勞；年月支逢之容易因脾氣與霸道影響公司人緣。<br>" +
+            "• <b>時柱：</b>喜用貴嘢、名牌（時干太歲喜用更頂級名牌）；若入時柱運逢病符，健康轉差且工作同步受挫；高位當權者多病。但若時干太歲逢吉運入局，亦有高升掌權之應。</li>" +
+        "<li><b>【病應負面】</b>下屬不得力；三高、血脂、痛風等富貴病，腳患傷損。</li>" +
+    "</ul>",
+    "青龍": "<ul>" +
+        "<li><b>【源流訓詁】</b>太陽星，又名「陷星（泥足深陷）」、「羅星（羅網）」、「除（徐；二人中招受纏繞）」。仁愛之星，亦為長壽星。</li>" +
+        "<li><b>【神面特質】</b>出事必有人打救；唔出事時積極救人。心地極好、有慈善心、悲天憫人、極具同情心與人情味。善於填補凹陷、修補人際關係，團隊協作佳。患難必得貴人相助，絕不寂寞，易遇良醫。</li>" +
+        "<li><b>【適合行業】</b>救人工作、醫護行業、消防、輔導（Counselling）、教育工作、心理治療、藝術家、術數指點迷津、修補裝修工程。</li>" +
+        "<li><b>【煞面盲點】</b>易蝕底、蛇𠺌、細膽驚死、多管閒事；易成日睇醫生。若走向鐵石心腸、自私獨行則盡失天助。</li>" +
+        "<li><b>【宮位斷事】</b><br>" +
+            "• <b>時支：</b>百寶袋，身邊滿是錦囊法寶；喜愛學習分享、喜教導人、喜睇醫生保健、積極做義工慈善；易同小朋友打成一片、愛養寵物、細心呵護人。<br>" +
+            "• <b>月柱：</b>與兄弟手足多互助（兄弟有難借錢若不借反而行煞面）；草藥中藥緣深。<br>" +
+            "• <b>年柱：</b>父輩多從事健康醫護。</li>" +
+        "<li><b>【病應負面】</b>皮膚病、濕疹、中毒、食物過敏、特殊性癖。調頻宜多用中草藥。</li>" +
+    "</ul>",
+    "喪門": "<ul>" +
+        "<li><b>【源流訓詁】</b>喪者，失也、傷也。又名「彼（破）」、「作陰」、「傷符（權力有傷）」、「盈（流失不能再增加）」。滿招損，防外人爭奪陰性傷害。</li>" +
+        "<li><b>【神面用法】</b>守窮修德。行事要夠 Poor（低調樸素、不張揚），反而有人憐憫扶助（餓佢唔死但食佢唔飽）。宜執屋斷捨離，忌堆積雜物。適合冷門、爆破拆除、化解難題（如術數諮詢）或面向愁雲慘霧之行業（如殯儀）。</li>" +
+        "<li><b>【煞面盲點】</b>卑下卑賤、分開分離。常遇「無你份、無人預你」之孤立冷落；緣淺緣薄、孤獨、緣慳一面。不能堅持，常被迫改變原有生活方式。固執硬頸計較、對人不信任。拍拖易無疾而終、感情關係易疏遠變淡。</li>" +
+        "<li><b>【宮位斷事】</b><br>" +
+            "• <b>年月柱（工作公司）：</b>適合污糟工作、工廠區、機械維修、倒垃圾、清盤審計會計。若強行在甲級寫字樓或奢華環境工作，反而易食物敏感、嘔吐肚瀉、破財。<br>" +
+            "• <b>日時柱（身邊人與興趣）：</b>親友緣薄，嗜好冷門偏門。<br>" +
+            "• <b>流年：</b>易有喪事白事、破無謂之財、多繁雜麻煩事要處理；心態想極度低調不願應酬。</li>" +
+        "<li><b>【病應負面】</b>皮膚病、紅腫、撞瘀、土破之病、體味異味（蚊叮蟲咬）。</li>" +
+    "</ul>",
+    "六合": "<ul>" +
+        "<li><b>【源流訓詁】</b>太陰星，主平達（和平、穩定、通達、順暢）。極具耐性與庇佑之力。</li>" +
+        "<li><b>【神面特質】</b>和平平實、簡單生活、容易開心、對人毫無架子、朋友多、福氣之星。溝通傳達、善於融洽解決問題，且能快刀斬亂麻，越快解決好處越多。具強大自我修復能力的健康之星。實在穩重、一諾千金、脾氣好、為人 Nice。</li>" +
+        "<li><b>【適合行業】</b>公關溝通、客戶服務、維修工程、Marketing、Sales、會計專才、常規專業持牌技術。</li>" +
+        "<li><b>【煞面盲點】</b>容忍度過高，附近若凶星多易「自己呃自己」。唔識拒絕人，易畀人煩。六合星重（命帶兩粒以上）雖易識朋友但姻緣往往發展快亦結束快、不懂珍惜緣份。衣著隨便求其（除非見太歲方會講究品牌）。月柱逢破時易被豬朋狗友拖累。</li>" +
+        "<li><b>【宮位與感情】</b>有利姻緣，關係實在難離婚（婚姻出問題亦易修補挽回）；日支見之亦主經商獨善其身、可遠地經營或身兼多職。年月見之常「返工放工兩個樣」；月支見之與同事關係極好，常幫人解決困難；時柱見之多興趣、愛同朋友一齊玩。流年見之主多問題需奔走解決。</li>" +
+        "<li><b>【病應負面】</b>下半身機能、婦科及男性生殖排泄系統疾患。</li>" +
+    "</ul>",
+    "官符": "<ul>" +
+        "<li><b>【源流訓詁】</b>成於外、寧。功名之星、文印之星。主管理有政績、貴顯、揚名於外。</li>" +
+        "<li><b>【神面特質】</b>精神爽利、聰明福祿、氣定神閒、不慌不忙、脾氣好。容易讀書讀得叻、易融入體制制度、易掌權印。做事凡事定規矩、流程 SOP、安排妥當、安份守己、按部就班。有章法讓人放心交託重任，大多問題皆能解決，能帶領團隊落實成果。易得長輩上司賞識提攜、易升職。女命主旺夫。</li>" +
+        "<li><b>【煞面盲點】</b>死板固執、強迫症傾向、儀式感極重。承擔極重、責任與壓力遠大於常人。<b>【極度警告：必須守規矩！】</b>凡事不能急躁妄動，若行事投機亂來、不守程序法規，一旦失勢破敗極易招引官非訴訟甚至牢獄之災。</li>" +
+        "<li><b>【病應負面】</b>土病：脾胃失調、血糖糖尿病、肌肉筋骨痛楚、性情鬱結急躁。</li>" +
+    "</ul>",
+    "小耗": "<ul>" +
+        "<li><b>【源流訓詁】</b>死符星，又名「執」、「空」、「摯」。陽氣虛耗，能量散失。</li>" +
+        "<li><b>【神面用法】</b>反應快、轉數快、靈活豪爽。適合負責動腦計算、花費預算、汰舊換新的崗位；適合人員流失率高的行業、或「空咗先搵你幫手」的補缺職務；適合賠償性行業（如保險理賠）。平時錢財交另一半打理、不計較小利方能守財。</li>" +
+        "<li><b>【煞面盲點】</b>空亡虛耗、身體氣力較差。精打細算、小事精明小認叻，但大事易因小失大。月頭豪爽、月尾無錢；無錢時過度格價浪費心神計較。做事節奏常失常（一時太快一時太慢）而錯失時機。易失魂、文件小事出錯、投資輸錢、容易無端被騙搵笨。屋企物件易壞，經常需要補鑊拆彈。</li>" +
+        "<li><b>【宮位與感情】</b>要求過高導致難以擇偶，易遲婚；感情宜早年經歷幾次失敗以應散緣之象。年柱見之父母較計較、工作常替老闆執手尾且老闆孤寒；月柱適合偏門；日支見之伴侶宜常被人搵笨，否則反過來成日計住自己。流年逢之防暗中慢性破財。</li>" +
+        "<li><b>【病應負面】</b>氣虛血弱、陰陽失調、慢性疲勞。</li>" +
+    "</ul>",
+    "大耗": "<ul>" +
+        "<li><b>【源流訓詁】</b>破、碎、披、卒。物質金錢遭徹底粉碎、破壞沖破之象。</li>" +
+        "<li><b>【神面用法】</b>大膽大器、具商人揮金之豪氣（Aim high 做大事）。做事前無古人、破舊立新，具吞併開拓之能。適合拆樓爆破、二手收購、名牌奢侈品店。化解法：主動定期破耗（搭的士、買 Fast fashion、請客吃飯以破財祭天）；主動斷捨離，專買平嘢用爛即掉；多旅行出差、多去健身拉筋或主動付費就醫保養。</li>" +
+        "<li><b>【煞面盲點】</b>敗家特質，不聚財且極忌盲目投資；好賭者逢賭必輸。買嘢易買到過期、用唔著又堆積丟棄。開車易炒車不宜駕車；體力勞動過度致筋骨受損。家道容易中落（祖上曾富貴過）。命帶大小耗者感情容易多次破裂婚姻不穩。住處樓上樓下經常有裝修噪音聲煞、屋易漏水。</li>" +
+        "<li><b>【病應負面】</b>骨病、骨肉損傷、筋腱損傷、筋骨痛症、坐骨神經痛、喉部肺部問題。</li>" +
+    "</ul>",
+    "朱雀": "<ul>" +
+        "<li><b>【源流訓詁】</b>危、盍絕、剽。主口舌是非、爭端波折，但亦為異路功名之星。應變神速（追風特質）。</li>" +
+        "<li><b>【神面特質】</b>決策力與口才極佳、牙尖嘴利、反應神速。合適有工作高峰期、具「快－慢－快－慢」節奏之行業（狂衝 OT 後放長假）。急時扶危，亂世英雄。</li>" +
+        "<li><b>【適合行業】</b>新潮科技、資訊傳媒、緊急維修（通渠開鎖）、突發投訴處理、送貨快遞、娛樂圈風潮、On-call 醫護、武職消防、業務 Sales。外資企業發展優於本地企業。</li>" +
+        "<li><b>【煞面盲點】</b>橫災橫禍、行事大意睇漏嘢、工傷撞傷跌倒、突發急病。手法強硬威嚇、易淪為騙子或遭人欺騙。自坐朱雀者為粗口與八卦指標，愛管控追問另一半；男命自己不罵人亦易娶得潑辣罵人之妻。感情宜閃婚或低調完婚後再通知親友。月干逢之工作成日需處理突發危機。</li>" +
+        "<li><b>【病應負面】</b>心火上炎、突發炎症、喉部發炎、意外創傷出血。</li>" +
+    "</ul>",
+    "白虎": "<ul>" +
+        "<li><b>【源流訓詁】</b>陰陽成缺、外成決（成於外缺於內，有變無之象）、小德。主血光橫禍、決絕煞氣，亦帶異路功名、背井離鄉之兆。</li>" +
+        "<li><b>【神面特質】</b>適合按部就班、照章辦事、毋須繁複思考之常規工作。處事果決無情、能壯士斷臂停損。讀書所學往往與工作無關（異路功名）。適合建築工程、起樓營造、機械維修、銀行體系、正骨推拿、醫護動刀、偏門危險工種。</li>" +
+        "<li><b>【煞面盲點】</b>虛有其表、大而無當、愛講官腔。做事固執難轉彎、不夠靈活。性格衝動、婦人之仁或過度多愁善感。喜歡結交虛有其表之人，過度重視物質、追求門面外表。自坐白虎者工作如機械人，配偶易有骨骼傷患。</li>" +
+        "<li><b>【病應傷患】</b>易遭血光之災、骨折、跌打勞損、脊柱骨骼移位。<br>" +
+            "• <b>年柱：</b>頸椎（特別易傷）、頸部疾患。<br>" +
+            "• <b>月柱：</b>大椎至腰椎。<br>" +
+            "• <b>時柱：</b>腰腳骨受損；興趣偏好追求實在物質嘢。<br>" +
+            "• <b>日柱：</b>全身痛、椎間盤突出。</li>" +
+    "</ul>",
+    "貴神": "<ul>" +
+        "<li><b>【源流訓詁】</b>龍德吉星，主天地化育、復秀生機、通達順暢。萬物逢春之大吉星。</li>" +
+        "<li><b>【神面特質】</b>近貴通達。命中大靠山、常得天助拯救，遇大難能神奇逢凶化吉。正面積極、易遇名醫良師、長輩提攜帶挈。難被解僱炒魷，工作易一行做到尾。資源豐沛、處境悠閒舒服。學嘢比人快、練得精，具絕對行業優勢。健康長壽指標（「難死」之星）。</li>" +
+        "<li><b>【適合行業】</b>傳統名牌行業、大公司大機構、政府公職、顧問智囊、醫療健康、師徒傳承傳統專業。宜考取專業技術證書，多參加商會建立人脈。多見人則越見貴氣。</li>" +
+        "<li><b>【煞面盲點】</b>遇事切忌死撐不作聲，必須「主動向人請教、主動開口搵人幫手」，方能啟動貴神生機。若心高氣傲看不起前輩老闆、自命不凡，反落得一事無成、自覺不如人。</li>" +
+        "<li><b>【宮位斷事】</b>年月柱見之易得貴人上司賞識，但為人挑剔朋友；日柱自坐一生多貴人相扶。</li>" +
+    "</ul>",
+    "吊客": "<ul>" +
+        "<li><b>【源流訓詁】</b>客即外來陰寒之氣。主「實」（心被屋宇所困，死氣沉實閉塞）。心氣不通、常懷鬱結。</li>" +
+        "<li><b>【處事能耐】</b>在極端惡劣匱乏之環境下打逆境波能力極強（限米煮限飯），擅長灰色地帶遊走與自保。明辨是非、防禦心重、對朋友極挑剔、平時沉默寡言。適合獨自作業、毋須過多社交交流的工作。</li>" +
+        "<li><b>【適合行業】</b>夕陽行業、被淘汰行業、冷門偏門、二手古舊老店（Old school）、行頭極窄行業（如玉器翡翠、鑽石進出口）、醃製醬料泡菜、合規審計（Audit）、IT Debug、深宵夜班。</li>" +
+        "<li><b>【煞面盲點】</b>心緒不寧、心情低落悲傷、不樂觀、懶散消極、想躺平、提不起勁；一無客戶或失業就徹底躺平不前。自卑畏縮、缺乏信心、心魔心理關口多。嚴重社交恐懼（社恐）、開不了口與人溝通。心陽不足引致荷爾蒙失調、抑鬱焦慮。易受損友影響染上不良嗜好。</li>" +
+        "<li><b>【病應負面】</b>中醫以心為能量中樞，吊客死氣沉實傷及心肺機能；寒病、抽筋筋縮、靜脈曲張、骨痛。</li>" +
+    "</ul>",
+    "病符": "<ul>" +
+        "<li><b>【源流訓詁】</b>羸弱之象。主陽氣不足、精氣神虧損。門戶不閉則家財耗散。</li>" +
+        "<li><b>【處事原則】</b>知所進退、極度惜身。注重養生保健以固護元陽。合適短時間、散件、逐單、合約工（炒散、Slasher、地產代理等彈性不確定工作）。工作宜依循既定守則章程、挑選輕鬆舒服滋陰的工作；退縮保守反而能避災免禍。</li>" +
+        "<li><b>【煞面盲點】</b>精氣神虧虛、做事無魄力、三分鐘熱度、虎頭蛇尾、易半途而廢。下巴輕輕、輕易應承人卻無頭無尾。<b>【切忌死撐硬捱！】</b>陽氣不足若過度打拼硬頂，必致精疲力竭（Burnout）大病一場。不善關閉財門，容易把錢財花光。</li>" +
+        "<li><b>【宮位斷事】</b>年柱見之主童年體弱多病、衛氣不足；年月柱若見病符再逢太歲，工作與身心耗損加倍。</li>" +
+        "<li><b>【病應負面】</b>氣虛表衛不固、慢性消耗性疾病、元氣虛損、精神萎靡。</li>" +
+    "</ul>"
+};
+
+// ==========================================
+// 2. 40 關煞私人班手稿原話庫 (全文字逐句還原完整版)
+// ==========================================
+var gsDescriptions = {
+    "白虎關": "<ul>" +
+        "<li>日柱納音對出（日支不作計算）</li>" +
+        "<li>破財關</li>" +
+        "<li>資產 突然大破財或無左一大筆</li>" +
+        "<li>喜錢一次過大花錢出去</li>" +
+        "<li>流年見：屋企裝修駛大錢，投資輸錢，要計劃長期睇醫生都可以（買plan)</li>" +
+    "</ul>",
+    "鐵蛇關": "<ul>" +
+        "<li>（日支唔計）</li>" +
+        "<li>皮膚唔好 要花錢護膚 易暗瘡易紅</li>" +
+        "<li>容貌皮膚問題 濕疹 易留疤</li>" +
+        "<li>食物過敏 酒精過敏 有敏感問題</li>" +
+        "<li>自身免疫力問題 易有敏感症狀</li>" +
+        "<li>運滯 如在月柱影響事業</li>" +
+        "<li>流年：易生蛇</li>" +
+    "</ul>",
+    "直難星": "<ul>" +
+        "<li>困難 艱辛 易給人為難，身邊人會給很多阻礙困難自己，要靠自己，唔靠人唔信人，對人不信任，不會主動開口求人幫手，自己死頂</li>" +
+        "<li>不喜借人助力，有病唔睇醫生，易拖延治療，硬頸</li>" +
+        "<li>唔想表達自己 不喜表達不滿，會暗底自己解決困難</li>" +
+    "</ul>",
+    "夜啼關": "<ul>" +
+        "<li>只中A得一半力</li>" +
+        "<li>怕黑</li>" +
+        "<li>夜晚易受驚嚇、小朋友要食保嬰丹，大人食珍珠未、睡覺易醒易受擾，靈異指標，多神秘體驗（唔鐘意）因擾佢心神，成日遇事會諗會唔會影響自己，細膽怕事，喜逃避，腎氣出問題，細個易尿床，要好需要安全感如不喜關燈睡覺，唔睇鬼片 易驚恐，夜媽媽情緒到會喊</li>" +
+        "<li>成年人會好保護自己，易推卸責任，易錯失機會，不喜負責任，流年見陰氣聚，夜晚易有麻煩，返夜班可以應關。 夜晚放工搵野學搵野做下，夜晚要工作用腦應關。喜夜視鏡，照明系統工作</li>" +
+        "<li>流年見易OT</li>" +
+        "<li>深夜易有疾病問題</li>" +
+    "</ul>",
+    "桃花煞": "<ul>" +
+        "<li>（日支）</li>" +
+        "<li>唔識處理人際關係，易向人吐苦水，溝通分享，積極與唔同人溝通，喜與人共鳴，職業喜見客，有虛情假意現象去應付應酬，玻璃心，不善人際關係，吸引唔到交心既人</li>" +
+        "<li>流年見會多不喜的應酬</li>" +
+        "<li>多無謂應酬，多假情假意關係</li>" +
+        "<li>朋友間易有轉淡現象，損人緣，損兄弟姐妹，易糖心風暴，合適做虛情假意行業，有呢粒星會多講自己真誠（但唔真誠），多門面功夫。</li>" +
+        "<li>易遇到虛情假意人</li>" +
+    "</ul>",
+    "直難關": "<ul>" +
+        "<li>（只應原命）</li>" +
+        "<li>硬頸、固執 死撐、橫沖直撞</li>" +
+        "<li>見到問題會迎難而上，唔逃避</li>" +
+        "<li>會選擇最辛苦既路，直面對問題</li>" +
+        "<li>會覺得人地做到 自己點會做唔到</li>" +
+        "<li>擁抱困難，拿苦來身，唔想放棄</li>" +
+        "<li>會易延誤治療（病應）</li>" +
+        "<li>積累成疾</li>" +
+    "</ul>",
+    "雷公打腦關": "<ul>" +
+        "<li>用日元對</li>" +
+        "<li>原命大運 病應較重</li>" +
+        "<li>月柱就16-30歲特別打腦（一生都打）</li>" +
+        "<li>病應：小朋友長期高燒 易感冒 一路燒 頭熱 會易腦膜炎 燒壞腦 會傻</li>" +
+        "<li>損壞腦神經會有痛楚</li>" +
+        "<li>神經性痛症 精神崩緊 易偏頭痛 頭暈</li>" +
+        "<li>傷災：會易破相，破眉破眼角 頭易傷，長期唔夠訓 訓唔著，會多憂慮 大壓力 長期緊張，回答人問題易kick住，易緊張通宵讀書，但考試差，易考試緊張，易扁平足 ，筋膜炎，手震口震，d筋會扯緊</li>" +
+        "<li>觸電、燒傷、神經緊張、筋鍵崩緊、易抽筋</li>" +
+        "<li>成年人：做野要慢慢做，按步就班，有自己流程，易OT，父母關係差或聚少離多難見</li>" +
+        "<li>工作壓力大 多OT，易換上司，上司要求，難服侍，控制唔到肢體，易跌傷腳踩空，工作繁重，胃酸逆流，易有突發性問題，留意腳部問題，下肢疾病，著緊工作，情緒鬱結。頭痛頸痛、不善表達、怕對多人公眾說話</li>" +
+        "<li>可用針灸 化解</li>" +
+    "</ul>",
+    "紅艷煞": "<ul>" +
+        "<li>多訴苦，內心想講野比人知，自己攪唔掂，想搵人依靠，想人幫佢做野解決困難，會求人做事，多煩惱，多憂愁想人了解，講左比人知會開心d，想人了解想人分憂。人地會覺得聽懶人到，慣左唔想話事。</li>" +
+        "<li>會多向人吐苦水，多煩惱，多放負，成日搵唔同人傾計，古時會周圍去與人約會，多愁善感，會把好多私隱與人分享，會易吸引到人易收兵，會易有諗多左既朋友。岩做娛樂圈，KOL，多姿多彩，岩做sales</li>" +
+        "<li>流年見：突然間有感情問題，多左煩惱與人傾訴，喜吐苦水。會去求人幫忙，會有多扮工室政治，流年要勾心鬥角，拉攏fans 人情。多公務應酬勾心鬥角，要做拉關係角色，岩做公關，外交PR。</li>" +
+        "<li>情緒憂鬱指標，要留意情緒問題。做外交關係可以應事，岩做區議員，法團，社福界。</li>" +
+        "<li>化解：多參加興趣班，多識人，多上堂。</li>" +
+        "<li>大運流年有機會應外人，自己多左公開講野，唔適應</li>" +
+    "</ul>",
+    "流霞": "<ul>" +
+        "<li>（病應神煞）</li>" +
+        "<li>心血管問題 血液問題 心腦血壓血脂 血氣</li>" +
+        "<li>內出血 氣血 面青 面色白 身體弱 手術動刀 少用刀利器 花錢可以消災 不可捐血應數（因氣虛血弱）</li>" +
+        "<li>唔應身體災 就會破財 花錢如流水</li>" +
+        "<li>流年見多破財去化（命局有要破6成財）</li>" +
+        "<li>女士見就月經 月崩問題 子宮肌瘤 難產之應，婦科疾病重點</li>" +
+        "<li>男士 痣瘡問題 流牙血 牙周疾病 損傷流血，三高會有血脂高問題</li>" +
+    "</ul>",
+    "千日關": "<ul>" +
+        "<li>與家人緣淺，與家人同住易出問題，給外人照顧會較好，外婆都算外人，家人照顧會易出問題，急性疾病，健康差，發羊吊發高燒 抽筋 痾嘔，跟父母同住照顧易出問題，早搬離家較好，沒祖輩助力無家人支持。 親近外婆外人乾爹乾父母多過親生父母</li>" +
+        "<li>成年：與父母關係不好或疏離或上司老闆對你多意見，與父母關係差疏離，上司老闆會給多助力。</li>" +
+        "<li>父母疼愛 則公司上司長輩沒助力；父母關係差 公司上司長輩會有助力</li>" +
+    "</ul>",
+    "取命關": "<ul>" +
+        "<li>3粒要中2粒，病關</li>" +
+        "<li>不宜去法會，因有大竹棚，小朋友會爬高 跌落</li>" +
+        "<li>會易跌倒 高處跌下 床/沙發碌落地，爬梯/樹上跌下</li>" +
+        "<li>易有畏高症 細膽</li>" +
+        "<li>易在飛機有意外問題</li>" +
+        "<li>易傷頭或腳 易失足</li>" +
+        "<li>要避免跳樓機 高空遊戲 過山車</li>" +
+        "<li>頭疼腳痛</li>" +
+        "<li>易傷過頭 頭有疤</li>" +
+    "</ul>",
+    "閻王關": "<ul>" +
+        "<li>易有靈異經歷，體質陰</li>" +
+        "<li>人易陰聲細氣，人婆媽，岩學術數，醫卜星相指標，喜宗教玄學</li>" +
+        "<li>易有宗教傾向（易受規矩限制）</li>" +
+        "<li>喜靈異鬼故</li>" +
+        "<li>情緒問題 情緒困擾 轉牛角尖</li>" +
+        "<li>會有自尋短見想法 對生死灑脫</li>" +
+        "<li>岩做偏門行業</li>" +
+    "</ul>",
+    "雞飛關": "<ul>" +
+        "<li>要中兩粒</li>" +
+        "<li>令人驚嚇 人會驚青 細膽 成日想逃避問題</li>" +
+        "<li>成日要人陪 壯膽 易發惡夢 訓覺要開燈</li>" +
+        "<li>合適做團隊工作 有團隊支持較好</li>" +
+        "<li>流年：會有驚嚇 驚怕 成日講唔得 第一想法會易抗拒 快say no，要多鼓勵先得</li>" +
+    "</ul>",
+    "落井關": "<ul>" +
+        "<li>（水喉關）</li>" +
+        "<li>水厄 酒水有險 （要戒酒）</li>" +
+        "<li>屋企水喉易滲水 牆易滲水 發霉 喜出街</li>" +
+        "<li>流年（出街煞）：屋企住唔舒服 唔想留屋企 會鐘意出街 或唔想留公司</li>" +
+    "</ul>",
+    "急腳煞": "<ul>" +
+        "<li>急急腳 好心急 好快好急 無耐性</li>" +
+        "<li>易粗心大意 易求求其其 無咩忍耐力 會爆炸</li>" +
+        "<li>小小事就忍唔住易爆炸 坐唔定 燥底</li>" +
+        "<li>心急又求其 急又錯 易招災禍</li>" +
+        "<li>如果自己慢 多人地急催你 身邊多人事急催</li>" +
+    "</ul>",
+    "斷腸關": "<ul>" +
+        "<li>多愁善感 易哭 哭斷腸</li>" +
+        "<li>易唔開心 易情緒低落 負面心態多</li>" +
+        "<li>覺得被人冷落 人地對佢唔好</li>" +
+        "<li>想太多 放負多 抑鬱情緒疾病指標</li>" +
+        "<li>會食素 或食素感覺會好d</li>" +
+        "<li>覺得殺生係傷感事</li>" +
+        "<li>多禁忌，否則對身邊人差 表現黑人僧，會係無情既人</li>" +
+        "<li>六親緣淺 象徵</li>" +
+    "</ul>",
+    "和尚關": "<ul>" +
+        "<li>要中兩粒或而上</li>" +
+        "<li>忌入寺廟 見僧人</li>" +
+        "<li>忌見去白事</li>" +
+        "<li>避免佢去出家，會有興趣出家</li>" +
+        "<li>喜宗教 對宗教興趣</li>" +
+        "<li>比較獨立獨行 比較孤僻 喜神秘學</li>" +
+        "<li>喜自己行動 享受自己時間 科幻小說 仙劍小說</li>" +
+        "<li>喜思考 喜科幻興趣 古靈精怪興趣 喜超現實</li>" +
+        "<li>對感情不利 拍拖易散 不喜拍拖 或喜自己空間 不喜痴身</li>" +
+    "</ul>",
+    "天狗關": "<ul>" +
+        "<li>（天狗星）</li>" +
+        "<li>童限：未上運前/15歲前（年柱限），四柱流限法、十年大運法</li>" +
+        "<li>細個 會易與人吵架/爭吵，招是非口舌，會易成日比人罵，易無自信，父母不疼愛，內向</li>" +
+        "<li>會易自殘傾向</li>" +
+        "<li>細個會易發燒 入醫院 發炎、爛肉情況，疤痕，影響容貌 破相，濕疹，易被貓狗追或給寵物抓傷</li>" +
+        "<li>流年大運見：多是非麻煩多爭吵，皮膚問題發炎敏感，濕疹</li>" +
+        "<li>鐵蛇十天狗：生蛇，易蚊咬</li>" +
+    "</ul>",
+    "五鬼關": "<ul>" +
+        "<li>靈異關、術數指標</li>" +
+        "<li>岩做術數或冷門行業</li>" +
+        "<li>易吸死氣（殯醫院 死氣、廟宇有死氣 出孤寡 黑仔）</li>" +
+        "<li>死氣重就無錢 健康差</li>" +
+        "<li>易撞野 靈異經驗 姻緣差</li>" +
+        "<li>吸穢氣死氣 易有罕見疾病 疑難雜症</li>" +
+        "<li>面色多灰暗 墨屎雀斑 易受細菌感染</li>" +
+        "<li>易有負面情緒困擾 有自殺傾向 死氣沉沉</li>" +
+        "<li>生離死別之應 生死事 喜宗教，負面要搵寄托</li>" +
+    "</ul>",
+    "撞命關": "<ul>" +
+        "<li>（撞擊）</li>" +
+        "<li>易有撞損 撞傷 瘀傷 斷韌帶 跌傷 斷骨脊椎唔舒服 腰椎間盤突出 坐骨神經痛 多突發問題打亂節奏</li>" +
+        "<li>岩做多突發事行業 工作行業突出問題要轉行</li>" +
+        "<li>變動性大的關</li>" +
+        "<li>流年注意交通意外 出門危險</li>" +
+    "</ul>",
+    "埋兒關": "<ul>" +
+        "<li>（大運流年都應）</li>" +
+        "<li>長輩父母緣淺</li>" +
+        "<li>不喜與父母相處</li>" +
+        "<li>唔痴家 搬出去住 去外國讀書</li>" +
+        "<li>父母長見關係差，工作上司會有小小助力</li>" +
+        "<li>與父母關係好，就公司上司同事關係差 ，不受賞識，工作易轉換</li>" +
+        "<li>不喜小朋友 唔想生小朋友</li>" +
+    "</ul>",
+    "鬼門關": "<ul>" +
+        "<li>(靈異指標）</li>" +
+        "<li>心悸 心緒不寧 失眠 疑神疑鬼</li>" +
+        "<li>驚死 易靈異經歷 不喜隨波逐流</li>" +
+        "<li>衣著有自己特別開好 有自己style</li>" +
+        "<li>工作易與上司同事意見不合 不合群</li>" +
+        "<li>易有有獨特喜好口味 有自己另類睇法</li>" +
+        "<li>會易想開燈訓覺</li>" +
+        "<li>一律建議宗教信仰</li>" +
+    "</ul>",
+    "短命關": "<ul>" +
+        "<li>（失眠關 ）</li>" +
+        "<li>訓唔好 睡眠質量差 成日醒 夜訓</li>" +
+        "<li>成日神不守舍 心緒不寧</li>" +
+        "<li>流年：訓得差 多野煩 成日OT 無得訓，精神差</li>" +
+    "</ul>",
+    "劫煞關": "<ul>" +
+        "<li>駛錢破財 喜花錢 駛好多錢</li>" +
+        "<li>破歡喜財 為開心駛錢</li>" +
+        "<li>易比人借錢 比人借錢唔還</li>" +
+        "<li>不能做擔保</li>" +
+        "<li>理財差d</li>" +
+    "</ul>",
+    "天吊關": "<ul>" +
+        "<li>（見兩只勁，大運流年見再勁）</li>" +
+        "<li>原命兩粒 病應重 早產 發育不建全 內向，手腳神經有事</li>" +
+        "<li>一粒：自閉 不喜理會人 內向 自得其樂，不喜聊天 沉迷自己興趣事</li>" +
+        "<li>兩粒：人蠢 反應慢 呆呆滯滯 遲鈍（注意眼；反白眼可能發羊吊、神經問題）</li>" +
+        "<li>流年大運中 就個年on on居居，手腳神經痛楚</li>" +
+        "<li>流年：唔想見朋友，想收埋自己，人群疏離感重，距離感重</li>" +
+    "</ul>",
+    "湯火煞": "<ul>" +
+        "<li>易燙傷 （疾病侵害）</li>" +
+        "<li>易發燒 不宜浸溫泉 有煞氣對身體唔好</li>" +
+        "<li>不宜浸浴 不宜做消防員 熱底躁底</li>" +
+        "<li>不宜入廚房 地獄廚房 燒壞野</li>" +
+        "<li>易給油燙傷 不宜艾灸 慢性炎症</li>" +
+        "<li>體溫比一般人高 怕熱</li>" +
+        "<li>流年：發燒 廚房易壞野 爛野 燒壞野 易身體熱 出汗 換電磁爐 可化解</li>" +
+    "</ul>",
+    "金鎖匙": "<ul>" +
+        "<li>喜潮流名牌 建議追名牌就算</li>" +
+        "<li>價值遺失、無左價值，錢銀神煞</li>" +
+        "<li>帶金器首飾出街，金器會遺失，易遺失飾物</li>" +
+        "<li>買手機易壞/唔岩用</li>" +
+        "<li>不利投資 投資理財易失誤 出錯</li>" +
+        "<li>對擁有既野會睇得輕 不守財 易比人劫財搵著數 易被呃 買無用野 買名牌野 多請朋友食野</li>" +
+        "<li>喜門面 米芝連 喜包裝 開心駛錢 買靚野貴野 貪愛大名氣</li>" +
+    "</ul>",
+    "浴盆關": "<ul>" +
+        "<li>（疾病關）</li>" +
+        "<li>身體易有毒素，肝差，肝膽筋神經，易受感染（皮膚感染細菌感染），濕疹指標，生癬，去游水易被感染</li>" +
+        "<li>成年：無主見，易受人影響，小心被朋友欺騙，意志不堅定，好受配偶影響，為伴侶犧牲</li>" +
+    "</ul>",
+    "將軍箭": "<ul>" +
+        "<li>（兩箭先有料到）</li>" +
+        "<li>出門遇險，意外急病橫禍</li>" +
+        "<li>工作問題令身體出現問題 職業病</li>" +
+        "<li>道路受阻 飛機延遲</li>" +
+        "<li>因出行旅遊出健康問題，工作變動可應身體健康問題</li>" +
+        "<li>出遠門易出問題，將軍中箭不利動</li>" +
+        "<li>農曆應期：一箭三月、二箭六月、三箭九月、四箭十二月</li>" +
+    "</ul>",
+    "血刃關": "<ul>" +
+        "<li>（血光關）</li>" +
+        "<li>暗瘡多 刀傷𠝹傷流血 血症健康問題</li>" +
+        "<li>血壓高低</li>" +
+        "<li>突然跳掣脾氣大 無名火起 皮膚敏感</li>" +
+        "<li>流年：脾氣差 突然跳掣 刀傷 𠝹傷 無名火起，多是非爭執 嚴重會手術動刀流血，要控制情緒</li>" +
+    "</ul>",
+    "基敗關": "<ul>" +
+        "<li>（破財關）</li>" +
+        "<li>存錢困難，存到咁上下要用，公司成日要注資，想分紅又要駛大錢</li>" +
+        "<li>一存到錢就要用錢</li>" +
+        "<li>會買工具駛錢或投資用左錢</li>" +
+        "<li>不宜投資，錢駛自己到好d或鎖住錢定期，買保險</li>" +
+        "<li>流年：多花錢破財，唔駛錢易健康問題醫生駛錢 ，腰下疾病 腳 坐骨神經 便秘 食少少都肥 飲水都肥 （破財可解） 女士婦科</li>" +
+    "</ul>",
+    "下情關": "<ul>" +
+        "<li>（一刀兩斷）</li>" +
+        "<li>情感關，破壞情感關係，與父母關係差，生活習慣模式不同</li>" +
+        "<li>如果家庭融洽，工作上司會多問題，宜獨立工作，自由工作無事</li>" +
+        "<li>否則姻緣不利，易離婚感情易散</li>" +
+        "<li>流年見感情考驗</li>" +
+    "</ul>",
+    "百日關": "<ul>" +
+        "<li>（四中二）</li>" +
+        "<li>障礙多麻煩多，唔識拒絕人，人善天真</li>" +
+        "<li>要加緊提防人，諗野理所當然，心存僥倖</li>" +
+        "<li>多人性考驗，易招麻煩，易比人搵笨</li>" +
+        "<li>老好人性格，易被人欺負</li>" +
+        "<li>細個會比較遲鈍，要較多時間思考</li>" +
+    "</ul>",
+    "斷橋關": "<ul>" +
+        "<li>（古時第一關）（疾病關）</li>" +
+        "<li>易水險</li>" +
+        "<li>易有呼吸系統問題</li>" +
+        "<li>心肺功能差 鼻敏感 鼻問題 孝喘 流鼻血</li>" +
+        "<li>一緊張會扯哈 過敏反應</li>" +
+        "<li>流年：流感</li>" +
+    "</ul>",
+    "四柱關": "<ul>" +
+        "<li>（2粒上多危）：道路交通關煞</li>" +
+        "<li>交通意外、塞車，行程有險 有麻煩意外</li>" +
+    "</ul>",
+    "水火關": "<ul>" +
+        "<li>唔可以衛生差 不能不乾淨 不能隨便麻甩</li>" +
+        "<li>否則易怪病 身有臭味 唔開運 工作貴人弱 孤獨</li>" +
+        "<li>岩賣清潔劑 賣清潔用品 但做清潔唔得 不能面對污糟 多做清潔 要乾淨整潔</li>" +
+        "<li>不能做陶瓷 會成手成屋污糟 成屋麵粉污糟都唔得 汗味重</li>" +
+    "</ul>",
+    "深水關": "<ul>" +
+        "<li>家族糾紛 家族遺留問題</li>" +
+        "<li>家族 背祖離鄉之應</li>" +
+        "<li>家族曾經風光 已末落 家道中落</li>" +
+        "<li>家族宗教信仰不同</li>" +
+        "<li>家族易矛盾 家族意見多分歧</li>" +
+        "<li>家族緣淺 無凝聚力 家庭觀念差</li>" +
+    "</ul>",
+    "四季關": "<ul>" +
+        "<li>轉季易病 夏天易病（因入冷氣房）</li>" +
+        "<li>一生命運合適做唔同野，不宜死守一個地方，否則易懶散，岩做裝修（不同地點工作），異地工作或輪班工作都較合適，岩做保險地產彈性職業，否則易病，打風來會易唔舒服。</li>" +
+        "<li>做死一行易破財。退休要搵野做，不宜長期待家，除非在家多世藝變動。</li>" +
+        "<li>流年：令人多走動，易節外生枝，多額外處理問題，要多野兼顧，易發病。</li>" +
+    "</ul>",
+    "急腳關": "<ul>" +
+        "<li>慢吞吞 不願動 懶散 拖延症</li>" +
+        "<li>不主動做 比較是但隨緣 被動</li>" +
+        "<li>要比人拉住做 拖到最后先做野</li>" +
+        "<li>成日無心做事 陪人做野多</li>" +
+        "<li>腳唔好 易扭傷腳 易撞腳指</li>" +
+        "<li>行行下易仆街 跌到 踩空樓梯</li>" +
+        "<li>儲錢買儲蓄保險</li>" +
+        "<li>減肥要搵營養師</li>" +
+        "<li>因為自己太拖延，要人提醒監督住</li>" +
+    "</ul>",
+    "金鎖關": "<ul>" +
+        "<li>（疾病關）（無大運流年）</li>" +
+        "<li>男時支到辰戍，女時支到丑未</li>" +
+        "<li>頸 甲狀線 呼吸系統 喉嚨有事</li>" +
+        "<li>氣味過敏 少用化學香精香料</li>" +
+        "<li>會易成日覺得比人管制 操縱</li>" +
+        "<li>會成日想反抗 憤世嫉俗 過激行為</li>" +
+        "<li>易有紋身 （如有紋身會再衰d)</li>" +
+        "<li>會成日頂撞上司長輩</li>" +
+        "<li>但都有部分好細膽怕事 極端</li>" +
+    "</ul>"
+};
+
+// ==========================================
+// 3. 40 關煞標準計算規則映射庫 (辛日主 7 徹底無斷腸關)
+// ==========================================
+var gsRules = [
+    { name: "1. 白虎關", type: "nayin_day", mapping: { "火":[0], "金":[3], "水":[6], "土":[6], "木":[9] } },
+    { name: "2. 鐵蛇關", type: "nayin_day", mapping: { "火":[7,8], "金":[10], "水":[1,2], "土":[1,2], "木":[4] } }, 
+    { name: "3. 直難星", type: "day_stem_to_year", mapping: { 0:[4,10,1,7], 4:[4,10,1,7], 8:[4,10,1,7], 2:[2,8,5,11], 6:[2,8,5,11] } },
+    { name: "夜啼關A", type: "day_branch", mapping: { 0:[5,11], 6:[5,11], 3:[5,11], 9:[5,11], 2:[4,10], 8:[4,10], 5:[4,10], 11:[4,10], 4:[0,1], 10:[0,1], 1:[0,1], 7:[0,1] } }, 
+    { name: "夜啼關B", type: "month_branch", mapping: { 2:[6], 3:[6], 4:[6], 5:[7], 6:[7], 7:[7], 8:[0], 9:[0], 10:[0], 11:[3], 0:[3], 1:[3] } },
+    { name: "5. 桃花煞", type: "day_branch", mapping: { 2:[3], 6:[3], 10:[3], 8:[9], 0:[9], 4:[9], 11:[0], 3:[0], 7:[0], 5:[6], 9:[6], 1:[6] } },
+    { name: "6. 直難關", type: "day_stem", mapping: { 0:[4,10,1,7], 4:[4,10,1,7], 6:[4,10,1,7], 2:[2,8,5,11] } },
+    { name: "7. 雷公打腦關", type: "day_stem", mapping: { 0:[1], 1:[6], 2:[0], 3:[0], 4:[9], 5:[9], 6:[2], 7:[2], 8:[9], 9:[11] } },
+    { name: "8. 紅艷煞", type: "day_stem", mapping: { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] } },
+    { name: "9. 流霞", type: "day_stem", mapping: { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] } },
+    { name: "10. 千日關", type: "day_stem", mapping: { 0:[6], 1:[4], 2:[9], 3:[8], 4:[5], 5:[11], 6:[2], 7:[10], 8:[1], 9:[7] } },
+    { name: "11. 取命關 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[8,0,4], 4:[11,3,7], 5:[11,3,7], 6:[11,3,7], 8:[2,6,10], 9:[2,6,10] } },
+    { name: "11. 取命關", type: "day_stem", mapping: { 7:[8] } },
+    { name: "閻王關A", type: "month_branch", mapping: { 2:[1,7], 3:[1,7], 4:[1,7], 5:[4,10], 6:[4,10], 7:[4,10], 8:[0,6], 9:[0,6], 10:[0,6], 11:[2,3], 0:[2,3], 1:[2,3] } },
+    { name: "閻王關B", type: "day_stem", mapping: { 0:[8,0,4], 1:[8,0,4], 2:[8,0,4], 3:[8,0,4], 4:[11,3,7], 5:[11,3,7], 6:[11,3,7], 7:[2,6,10], 8:[2,6,10], 9:[2,6,10] } },
+    { name: "13. 雞飛關 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[5,9,1], 1:[5,9,1], 2:[5,9,1], 3:[8,0,4], 4:[8,0,4], 5:[8,0,4], 6:[11,3,7], 7:[11,3,7], 8:[2,6,10], 9:[2,6,10] } },
+    { name: "14. 落井關", type: "day_stem", mapping: { 0:[5], 5:[5], 1:[0], 6:[0], 2:[8], 7:[8], 3:[10], 8:[10], 4:[3], 9:[3] } },
+    { name: "15. 急腳煞 (要中2粒)", type: "day_stem", count: 2, mapping: { 0:[8,9], 1:[8,9], 2:[11,0], 3:[11,0], 4:[2,3], 5:[2,3], 6:[5,6], 7:[5,6], 8:[4,10,1,7], 9:[4,10,1,7] } },
+    { name: "16. 斷腸關", type: "day_stem", mapping: { 0:[6,7], 1:[6,7], 2:[4,5], 6:[2,8], 8:[1], 9:[1] } },
+    { name: "17. 和尚關 (要中2粒)", type: "day_branch", count: 2, mapping: { 0:[4,10,1,7], 6:[4,10,1,7], 3:[4,10,1,7], 9:[4,10,1,7], 4:[0,6,3,9], 10:[0,6,3,9], 1:[0,6,3,9], 7:[0,6,3,9], 2:[2,8,5,11], 8:[2,8,5,11], 5:[2,8,5,11], 11:[2,8,5,11] } },
+    { name: "18. 天狗關", type: "day_branch", mapping: { 0:[10], 1:[11], 2:[0], 3:[1], 4:[2], 5:[3], 6:[4], 7:[5], 8:[6], 9:[7], 10:[8], 11:[9] } },
+    { name: "19. 五鬼關", type: "day_branch", mapping: { 0:[4], 1:[3], 2:[2], 3:[1], 4:[0], 5:[11], 6:[10], 7:[8], 8:[9], 9:[7], 10:[6], 11:[5] } },
+    { name: "20. 撞命關", type: "day_branch", mapping: { 0:[3], 1:[10], 2:[11], 3:[0], 4:[4], 5:[8], 6:[6], 7:[1], 8:[2], 9:[9], 10:[7], 11:[5] } },
+    { name: "21. 埋兒關", type: "day_branch", mapping: { 0:[1], 6:[1], 3:[1], 9:[1], 2:[8], 8:[8], 5:[8], 11:[8], 4:[3], 10:[3], 1:[3], 7:[3] } },
+    { name: "22. 鬼門關 (要中2粒)", type: "day_branch", count: 2, mapping: { 0:[9,10,11], 1:[9,10,11], 2:[9,10,11], 3:[8,9,10], 4:[8,9,10], 5:[8,9,10], 6:[2,3,4], 7:[2,3,4], 8:[2,3,4], 9:[5,6,7], 10:[5,6,7], 11:[5,6,7] } },
+    { name: "23. 短命關", type: "day_branch", mapping: { 2:[4,10], 8:[4,10], 5:[2,8], 11:[2,8], 4:[5,11], 10:[5,11], 1:[1,7], 7:[1,7], 0:[3,9], 6:[3,9], 3:[1,7], 9:[1,7] } }, 
+    { name: "24. 劫煞關", type: "day_to_month_or_luck", mapping: { 8:[5], 0:[5], 4:[5], 2:[11], 6:[11], 10:[11], 11:[8], 3:[8], 7:[8], 5:[2], 9:[2], 1:[2] } },
+    { name: "25. 天吊關", type: "day_branch", mapping: { 8:[2,6,10], 0:[2,6,10], 4:[2,6,10], 2:[8,0,4], 6:[8,0,4], 10:[8,0,4], 11:[5,9,1], 3:[5,9,1], 7:[5,9,1], 5:[11,3,7], 9:[11,3,7], 1:[11,3,7] } },
+    { name: "26. 湯火煞", type: "day_branch", mapping: { 0:[6], 6:[6], 3:[6], 9:[6], 2:[2], 8:[2], 5:[2], 11:[2], 4:[7], 10:[7], 1:[7], 7:[7] } },
+    { name: "27. 金鎖匙", type: "month_branch", mapping: { 2:[8], 8:[8], 3:[9], 9:[9], 4:[10], 10:[10], 5:[11], 11:[11], 6:[0,5], 0:[0,5], 1:[1], 7:[1] } },
+    { name: "28. 浴盆關", type: "month_branch", mapping: { 2:[4], 3:[4], 4:[4], 5:[7], 6:[7], 7:[7], 8:[10], 9:[10], 10:[10], 11:[1], 0:[1], 1:[1] } },
+    { name: "29. 將軍箭 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[9,10,4], 3:[9,10,4], 4:[9,10,4], 5:[7,3,0], 6:[7,3,0], 7:[7,3,0], 8:[6,2,10], 9:[6,2,10], 10:[6,2,10], 11:[11,8,5], 0:[11,8,5], 1:[11,8,5] } },
+    { name: "30. 血刃關", type: "month_branch", mapping: { 2:[1], 3:[7], 4:[2], 5:[8], 6:[3], 7:[9], 8:[4], 9:[10], 10:[5], 11:[11], 0:[6], 1:[0] } },
+    { name: "31. 基敗關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[7,10,11], 3:[7,10,11], 4:[7,10,11], 5:[0,4], 6:[0,4], 7:[0,4], 8:[8,9], 9:[8,9], 10:[8,9], 11:[2,3,6], 0:[2,3,6], 1:[2,3,6] } },
+    { name: "32. 下情關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[2,9,0], 3:[2,9,0], 4:[2,9,0], 5:[10,11,5], 6:[10,11,5], 7:[10,11,5], 8:[8,1], 9:[8,1], 10:[8,1], 11:[0,6], 0:[0,6], 1:[0,6] } },
+    { name: "33. 百日關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[4,10,1,7], 8:[4,10,1,7], 5:[4,10,1,7], 11:[4,10,1,7], 4:[0,6,3,9], 10:[0,6,3,9], 1:[0,6,3,9], 7:[0,6,3,9], 0:[2,8,5,11], 6:[2,8,5,11], 3:[2,8,5,11], 9:[2,8,5,11] } },
+    { name: "34. 斷橋關", type: "month_branch", mapping: { 2:[2], 3:[3], 4:[8], 5:[1], 6:[10], 7:[9], 8:[4], 9:[5], 10:[6], 11:[7], 0:[11], 1:[0] } },
+    { name: "35. 四柱關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[5,11], 8:[5,11], 3:[4,10], 9:[4,10], 4:[3,9], 10:[3,9], 5:[2,8], 11:[2,8], 6:[1,7], 0:[1,7], 7:[0,6], 1:[0,6] } },
+    { name: "36. 水火關 (要中2粒)", type: "month_branch", count: 2, mapping: { 2:[10,7], 3:[10,7], 4:[10,7], 5:[0,4], 6:[0,4], 7:[0,4], 8:[1,10], 9:[1,10], 10:[1,10], 11:[7,4], 0:[7,4], 1:[7,4] } },
+    { name: "37. 深水關", type: "month_branch", mapping: { 2:[2,8], 3:[2,8], 4:[2,8], 5:[7,10], 6:[7,10], 7:[7,10], 8:[9], 9:[9], 10:[9], 11:[0,1], 0:[0,1], 1:[0,1] } },
+    { name: "38. 四季關", type: "month_branch", mapping: { 2:[5,1], 3:[5,1], 4:[5,1], 5:[8,4], 6:[8,4], 7:[8,4], 8:[11,7], 9:[11,7], 10:[11,7], 11:[2,3], 0:[2,3], 1:[2,3] } },
+    { name: "39. 急腳關", type: "month_branch", mapping: { 2:[11,0], 3:[11,0], 4:[11,0], 5:[3,7], 6:[3,7], 7:[3,7], 8:[2,10], 9:[2,10], 10:[2,10], 11:[4,10], 0:[4,10], 1:[4,10] } }
+];
+
+// ==========================================
+// 4. 雙星斷事 36 組完整版資料庫 (完全根據 PDF《八字雙星斷集合版》逐字收錄)
+// ==========================================
+var dualStarData = {
+    // A, 6組單純組合
+    "人緣-人緣": "<b>【純粹人緣組】（青龍、六合）</b><br>" +
+        "• 天干、地支全由【青龍】和【六合】互配組成。<br>" +
+        "• 此乃人緣極旺的組合，命主必多朋友，以及社交應酬。[cite: 6]",
+    "血光-血光": "<b>【純粹血光橫禍組】（白虎、朱雀）</b><br>" +
+        "• 天干、地支全由【白虎】和【朱雀】互配組成。<br>" +
+        "• 此乃凶險的組合，主開刀、入醫院、慢性痛症（不計部位）。<br>" +
+        "• 若生於亂世，此組合之人往往會從軍打仗。現代則多數為異路功名，或從事一些帶有血光、危險性質的工作，比如屠夫、跌打正骨、醫護類的工作。<br>" +
+        "• 女命見此組合必定影響姻緣，感情路上多艱辛，古代會直斷為小三命格。[cite: 6]",
+    "孤獨-孤獨": "<b>【純粹孤獨組】（喪門、吊客）</b><br>" +
+        "• 八字有此組合之人容易心情抑鬱，患上情緒病，以及容易有輕生的念頭出現，故宜有宗教信仰作為寄託。<br>" +
+        "• 由於此組合之人自我思想較重和主觀，想法獨特，甚或偏激，難受社會認同，亦容易有社交障礙，故在外表和行為上會給人較為文靜的感覺。<br>" +
+        "• 此組合亦不利男女感情和姻緣。<br>" +
+        "• 在工作方面，不宜與人合作，亦不宜做任何處理人事的工作。此組合利做藝術工作或自由職業。<br>" +
+        "• 老師實例解說：若幼時得到良好培育，可委曲求全去應對世界，但思想與世界始終有隔閡，求學升學亦多獨自一人、無同伴同行。[cite: 6]",
+    "事業-事業": "<b>【純粹事業功名組】（官符、貴神）</b><br>" +
+        "• 八字有此組合之人必定事業心重，非常拼搏，極有上進心和勤力工作。<br>" +
+        "• 屬於專業人士格局，在工作上表現優秀、有章法規矩。[cite: 6]",
+    "障礙-障礙": "<b>【純粹障礙組】（太歲、病符）</b><br>" +
+        "• 此組合之人，一生必多難關、不順、障礙、挫折，故活得比別人辛苦。<br>" +
+        "• 比如買東西，別人進店就買到，但此組之人則往往遇到缺貨的情況，要等一段時間才能買到。此組純粹多障礙、活得辛苦，與個人能力無關。<br>" +
+        "• 在病痛方面，容易患上一些阻礙活動的疾病，比如五十肩、肩緊膊痛等。建議多做針灸應凶，如身體健康許可的話，亦可捐血應凶。[cite: 6]",
+    "破財-破財": "<b>【純粹破財組】（大耗、小耗）</b><br>" +
+        "• 此乃開心花錢的組合。身上不留半點財，只要一有錢就會花掉，屬於徹頭徹尾的漏財格，無法累積財富。<br>" +
+        "• 雖然無法累積財富，但並不等於賺不到錢。<br>" +
+        "• 因此，此組合之人不利投資，即使置業，物業都會跌價，倒不如自己花掉更開心。<br>" +
+        "• 若錢留住而不花，死後被政府沒收或被家人分去，亦是破財的一種。[cite: 6]",
+
+    // B, 天干【大耗、小耗】加地支的各種組合 (破財+X)
+    "破財-人緣": "<b>【破財 + 人緣】（天干大耗/小耗 + 地支青龍/六合）</b><br>" +
+        "• 即為了社交應酬而花錢，這種花錢是開心的。<br>" +
+        "• 此乃【破歡喜財】的組合，命主喜歡社交應酬，愛與一大班人吃喝玩樂，也肯花錢請客送禮，故在朋友圈子內非常吃得開。<br>" +
+        "• 此類人喜歡與一大班人應酬，如不應數，便易被親朋連累。[cite: 6]",
+    "破財-血光": "<b>【破財 + 血光橫禍】（天干大耗/小耗 + 地支白虎/朱雀）</b><br>" +
+        "• 即因災難或健康而破財。<br>" +
+        "• 此乃【破財擋災】的組合，命主一生多災多難，建議此類人士買大額保險，一來會經常用到保險賠償，二來可應破財擋災之象。<br>" +
+        "• 此類人亦有慣性看醫生的習慣，小小問題就會去看醫生。<br>" +
+        "• 此乃為他人作嫁衣裳的組合，容易無端破財，或替他人出錢。[cite: 6]",
+    "破財-孤獨": "<b>【破財 + 孤獨】（天干大耗/小耗 + 地支喪門/吊客）</b><br>" +
+        "• 即是花錢獨自享受，不會與人分享。<br>" +
+        "• 此乃自私之人，錢都花在自己身上，命主會一個人去旅行、吃好東西。亦可能是花錢在昂貴的個人興趣上，比如買貴價音響、相機、手辦模型等。<br>" +
+        "• 喜歡獨樂樂，為興趣和享受花錢，容易有賭博、酒精成癮的問題，亦容易有不婚主義的傾向（為個人興趣敗家）。[cite: 6]",
+    "破財-事業": "<b>【破財 + 事業功名】（天干大耗/小耗 + 地支官符/貴神）</b><br>" +
+        "• 即願意在工作上投放金錢。<br>" +
+        "• 此類人士適合在工作上不斷進修，比如從事資訊科技行業的人，就要不斷學習和進修最新技能。應花錢進修，盡量考取多一些證書與專業資格，對事業發展極有幫助。<br>" +
+        "• 此類人亦多喜名牌和高級享受，且喜向人炫耀。若錢不花在自己身上，即沒有跟著命運走，錢最終還是會破在其他地方。[cite: 6]",
+    "破財-障礙": "<b>【破財 + 障礙】（天干大耗/小耗 + 地支太歲/病符）</b><br>" +
+        "• 一生浮浮沉沉，雖然肯花錢學習，但卻一事無成，或無論怎學習都學不好。<br>" +
+        "• 此類人多數讀書難成，除非肯不斷花錢補習。另一個情況則是所讀的專業，出來很難找到工作（行頭很窄）。<br>" +
+        "• 此類人喜歡用錢解決問題，宜用錢解決問題，若不捨得花錢便會出問題。[cite: 6]",
+
+    // C, 天干【喪門、吊客】加地支的各種組合 (孤獨+X)
+    "孤獨-破財": "<b>【孤獨 + 破財】（天干喪門/吊客 + 地支大耗/小耗）</b><br>" +
+        "• 此乃經常花冤枉錢、做冤大頭的組合。命主買東西總會買貴了，或一買完東西便跌價，總是花更多的錢去買同一件東西。<br>" +
+        "• 容易買了東西之後就覺得不合心意，然後囤積在家，故家中有很多雜物（買一堆衣服而不穿）。建議選擇購買平價物品，即使買了不用也不會太浪費。<br>" +
+        "• 亦可能經常學習，但所學的知識都是不合時宜、對自己沒實質用途的。<br>" +
+        "• 此類人孤寒、自我設限、很多事情不敢去做，經常覺得不足。適合做 HR、獵頭公司、金融、會計等行業，或從事偏門、冷門工作。[cite: 6]",
+    "孤獨-人緣": "<b>【孤獨 + 人緣】（天干喪門/吊客 + 地支青龍/六合）</b><br>" +
+        "• 此組合之人不愛主動找人幫手、麻煩別人，但別人卻喜歡主動找命主幫忙，造成命主的苦惱。<br>" +
+        "• 與家族之間的聯繫薄弱，喜歡獨處（不等於關係差，只是少聯繫），亦有背祖離鄉的特質。<br>" +
+        "• 很挑朋友，只局限於與某一個特定圈子內的人來往應酬（如只與行山圈子交朋友），社交圈子過於單一固定。最好將工作與興趣掛鉤。<br>" +
+        "• 在工作和私下的態度不一，給人虛情假意的感覺。可以融入群體並令氣氛和諧，但內心與人格格不入，難有知心朋友，離職後可完全不與舊同事聯絡。[cite: 6]",
+    "孤獨-血光": "<b>【孤獨 + 血光橫禍】（天干喪門/吊客 + 地支白虎/朱雀）</b><br>" +
+        "• 此乃容易因受騙而導致人財兩失的組合，命主一生忌投資。<br>" +
+        "• 容易患上罕見疾病、奇難雜症（如對咖啡因敏感、嚴重食物過敏需要戒口），容易有手術動刀的機會。<br>" +
+        "• 腳頭較差，容易進入一些輝煌已過的公司，甚至做到公司倒閉。若從事冷門、小眾、偏門、專門的行業，則可減其凶應。<br>" +
+        "• 需留意情緒問題，有自殘傾向，亦容易惹是非。[cite: 6]",
+    "孤獨-事業": "<b>【孤獨 + 事業功名】（天干喪門/吊客 + 地支官符/貴神）</b><br>" +
+        "• 不宜做團隊工作，宜單獨一人工作，且能在工作上有所發揮。<br>" +
+        "• 多數不願轉工，願意在一家公司長做下去，即使公司要結業，命主也會是最後一個被辭退的人。<br>" +
+        "• 在自己行業內薄有名氣、有份量和地位。工作多數極為忙碌辛苦，若不忙碌就容易人浮於事、碌碌無為。為人較固執，深信一分耕耘一分收穫，不以工作忙碌為苦。[cite: 6]",
+    "孤獨-障礙": "<b>【孤獨 + 障礙】（天干喪門/吊客 + 地支太歲/病符）</b><br>" +
+        "• 此乃擁有靈異體質的組合，宗教緣份深厚，容易接觸身心靈事物，對神秘學感興趣。<br>" +
+        "• 喜歡親力親為做事，不放心將事情交託給他人處理，故在命運上較多煩惱和艱辛。<br>" +
+        "• 工作平穩很少轉工，思慮多，行事不會拼搏冒險。[cite: 6]",
+
+    // D, 天干【官符、貴神】加地支的各種組合 (事業+X)
+    "事業-破財": "<b>【事業功名 + 破財】（天干官符/貴神 + 地支大耗/小耗）</b><br>" +
+        "• 會為工作投放資金和精力，在工作上必定需要時時進修，且在付出後會有收穫。<br>" +
+        "• 工作上需要打扮得體，購買名牌衣飾。容易在出名的大公司工作，工作環境必定有派頭，對職員衣著儀容有要求。<br>" +
+        "• 肯為了工作花錢在裝備和學歷上，極利於將個人興趣變成自己的工作。[cite: 6]",
+    "事業-人緣": "<b>【事業功名 + 人緣】（天干官符/貴神 + 地支青龍/六合）</b><br>" +
+        "• 此乃官運亨通的組合，容易得到上司、老闆的賞識、重視與禮遇，極適合在大公司大機構打工，可以做到公司的管理層。<br>" +
+        "• 若為自由職業者或個體戶，則客戶與自己關係良好。<br>" +
+        "• 上司緣極佳，容易出人頭地（純粹事業組是專業人士，此組合則能晉升為最高管理層）。[cite: 6]",
+    "事業-血光": "<b>【事業功名 + 血光橫禍】（天干官符/貴神 + 地支白虎/朱雀）</b><br>" +
+        "• 此組合之人乃是處理公司危機的能手。比如公司處於危機需要縮減開支裁員，往往就是主管裁員的負責人。<br>" +
+        "• 平時工作可以很悠閒，但一有事情發生就是其發揮之時，適合做有淡旺季之分的行業。<br>" +
+        "• 職場上的【鬼見愁】，老闆喜歡將不受歡迎的苦差（裁員、削減福利）交託給他。同事敬畏他，某程度上所面對的是非反而較少。<br>" +
+        "• 適合競爭激烈的行業，有挑戰權威傾向。工作常臨危受命，處理十萬火急的急事急務，工作帶有飄忽不定特性。[cite: 6]",
+    "事業-孤獨": "<b>【事業功名 + 孤獨】（天干官符/貴神 + 地支喪門/吊客）</b><br>" +
+        "• 工作上很強勢，手段強硬，作風霸道勇猛，有領導能力但卻是職場鬼見愁，不受同事下屬歡迎。敢與老闆據理力爭，絕不卑躬屈膝。若作風親民反而會被下屬欺負。<br>" +
+        "• 適合從事週期變化快（瞬息萬變）和高風險行業。<br>" +
+        "• 若為家庭主婦可直斷【妻奪夫權】。<br>" +
+        "• 亦常默默耕耘、忍氣吞聲完成工作，像牛馬一樣勞累辛苦、壓力極大，常擔任開荒牛角色。適合獨立工作或冷門偏門，不宜團隊合作。[cite: 6]",
+    "事業-障礙": "<b>【事業功名 + 障礙】（天干官符/貴神 + 地支太歲/病符）</b><br>" +
+        "• 喜歡面對和挑戰困難，專向難度挑戰，從而獲取成功感。主動承擔重責和麻煩工作，給人【抵得諗】的印象（俗稱犯賤），但因此容易得人信服。<br>" +
+        "• 若從事普通簡單工作反而多阻礙、不順、難獲升遷且經常轉工；若從事偏門工作（如催收難賬、處理問題）反而順利。<br>" +
+        "• 想升職必須靠考試，需經一番折騰辛苦才能如願。做生意需經常轉換不同行業才能賺到錢。適合在較遠較差環境或外國公司工作。[cite: 6]",
+
+    // E, 天干【白虎、朱雀】加地支的各種組合 (血光+X)
+    "血光-破財": "<b>【血光橫禍 + 破財】（天干白虎/朱雀 + 地支大耗/小耗）</b><br>" +
+        "• 較差的破財組合，只要有錢在身就會出事，或一有錢就被親朋劫財；只要身上有閒錢就會生病。<br>" +
+        "• 此乃【為他人作嫁衣裳】，賺到的錢不會花在自己身上，悉數用於照顧家人（如為子女置業）。<br>" +
+        "• 為身體破財，覺得身體稍有問題就會看醫生，應買保險。若不肯花錢身體就會出狀況（正宗財多身弱）。<br>" +
+        "• 應避開高危活動。買東西經常買到破損缺陷或不合用之物，買完即跌價。[cite: 6]",
+    "血光-人緣": "<b>【血光橫禍 + 人緣】（天干白虎/朱雀 + 地支青龍/六合）</b><br>" +
+        "• 此乃多管閒事而受連累的組合。切記一生不要為人作擔保！小心遇到情騙，感情上不要有金錢瓜葛。<br>" +
+        "• 容易因應酬太多而疲累，或朋友常找自己訴苦而浪費寶貴時間（人際拖累）。<br>" +
+        "• 多豬朋狗友，忌借錢給朋友，忌合夥做生意，忌聽朋友建議去投資，重要事情不要與朋友商量。[cite: 6]",
+    "血光-孤獨": "<b>【血光橫禍 + 孤獨】（天干白虎/朱雀 + 地支喪門/吊客）</b><br>" +
+        "• 思想負面、不信任別人的組合。表現得非常功利現實，精於利益計算。<br>" +
+        "• 即使八字有人緣組亦難改善此心性。<br>" +
+        "• 帶有藝術家脾氣，鬥心強，能死撐到底。為人自我、難相處，適合單獨做事、少與人接觸，宜有一技之長（如會計、精算、設計）。[cite: 6]",
+    "血光-事業": "<b>【血光橫禍 + 事業功名】（天干白虎/朱雀 + 地支官符/貴神）</b><br>" +
+        "• 容易患上職業病，會因工作而受傷患。<br>" +
+        "• 工作往往與【處理問題、查找問題】有關，如核數師、醫護（急症室救急扶危者尤佳）。<br>" +
+        "• 適合偏門行業（金融、證券、借貸財務等）或危險工種（警察、消防）。事業先破後成，宜武職、異路功名。[cite: 6]",
+    "血光-障礙": "<b>【血光橫禍 + 障礙】（天干白虎/朱雀 + 地支太歲/病符）</b><br>" +
+        "• 常常出入醫院的組合，若不做醫護就只能做病人了！宜從事救護員、醫療、消防，否則一生多危難障礙。多患有痛症（如神經痛）。<br>" +
+        "• 多有特殊專業技能，但往往局限於個人興趣，不一定用來賺錢（如極擅長烹飪達到大廚水準但不以此為業）。容易痴迷一種愛好達到廢寢忘餐（如巴士迷、功夫迷、術數迷）。容易患上難以醫治的特殊疾病。<br>" +
+        "• 不宜在一個地方長期工作。吉星多可打風流工，凶星多工作容易不斷被炒。[cite: 6]",
+
+    // F, 天干【青龍、六合】加地支的各種組合 (人緣+X)
+    "人緣-破財": "<b>【人緣 + 破財】（天干青龍/六合 + 地支大耗/小耗）</b><br>" +
+        "• 社交應酬多，但不主破大財，多數是朋友之間平均分擔費用（AA制）。花的是有限錢。<br>" +
+        "• 切勿借錢給人，更不要為人做擔保！宜特立獨行免受拖累。<br>" +
+        "• 會因朋友家人而破財，切勿聽從朋友和家人的意見去投資，必招虧損。[cite: 6]",
+    "人緣-血光": "<b>【人緣 + 血光橫禍】（天干青龍/六合 + 地支白虎/朱雀）</b><br>" +
+        "• 代表【樂極生悲】，一生多交損友，容易受朋友拖累。社交圈子複雜，極多是非與麻煩事。<br>" +
+        "• EQ和容忍力較高，對人對事包容力強，適合社福界工作，有能力面對智障兒童、老人或弱勢社群。<br>" +
+        "• 容易患上突發急性病（如突然呼吸困難或某部位劇痛而入院）。<br>" +
+        "• 事業較穩定，工作中即使遇到能力差的同事亦能包容。性格怕事怕麻煩，宜團隊工作，遇到麻煩有人相助。[cite: 6]",
+    "人緣-孤獨": "<b>【人緣 + 孤獨】（天干青龍/六合 + 地支喪門/吊客）</b><br>" +
+        "• 非常矛盾的組合。社交圈子經常變換，轉工後便不與舊同事聯絡，一批一批地換朋友。<br>" +
+        "• 俗稱【世界仔】，沒有情義可言，純憑環境與利益需要建立關係。<br>" +
+        "• 工作與私下是兩個完全不同的模樣（工作時滔滔不絕，返屋企一句不發），表裡不一，知心朋友極少。<br>" +
+        "• 喜歡與擁有相同興趣的人交朋友，多群體活動，但與一般同事關係平淡。[cite: 6]",
+    "人緣-事業": "<b>【人緣 + 事業功名】（天干青龍/六合 + 地支官符/貴神）</b><br>" +
+        "• 事業多貴人的組合。工作必定帶有極重的人際關係性質，適合團隊合作與溝通。人脈極廣，多助力多貴人，易獲介紹工作。<br>" +
+        "• 極在乎工作是否做得開心，不把薪金前途放第一位，只要做得開心即使外界高薪挖角亦不跳槽，並非積極上進之人。<br>" +
+        "• 主婦見之為開心的家庭主婦，絕不為難自己，不想煮飯便全家外出吃，絕非勤力型主婦。適合玩樂娛樂性質工作（如迪士尼），工作輕鬆，寓工作於娛樂。[cite: 6]",
+    "人緣-障礙": "<b>【人緣 + 障礙】（天干青龍/六合 + 地支太歲/病符）</b><br>" +
+        "• 愛抱打不平，有正義感和慈悲心，熱心助人，會為不公義之事發聲。<br>" +
+        "• 較無主見、怕事，做事缺乏信心，經常尋求他人意見和幫忙。<br>" +
+        "• 見義勇為但多管閒事，容易招惹是非、吃力不討好。適合做 HR 與 Marketing。[cite: 6]",
+
+    // G, 天干【太歲、病符】加地支的各種組合 (障礙+X)
+    "障礙-破財": "<b>【障礙 + 破財】（天干太歲/病符 + 地支大耗/小耗）</b><br>" +
+        "• 容易買很多用不著、不合用的東西造成家中雜物堆積，或買的東西很快就壞。所學的知識多對自己無太大用處。<br>" +
+        "• 若無上述情況，則多出現【有錢即破】，只要身上一有閒錢就會有事破財。不是存不到錢，只是破耗比別人多。<br>" +
+        "• 喜歡用錢解決問題，為人實在貼地。學術數應花錢找名師，比自己鑽研有效得多。<br>" +
+        "• 經常頭頭碰著黑，入新公司容易遇上公司倒閉。適合令人花錢的行業（清盤、抄牌罰款、回收等）以減低霉運。<br>" +
+        "• 讀書容易留班重讀；工作待遇常低於同等學歷者。女命宜打工，不宜做家庭主婦。[cite: 6]",
+    "障礙-人緣": "<b>【障礙 + 人緣】（天干太歲/病符 + 地支青龍/六合）</b><br>" +
+        "• 容易對親友造成困擾，因經常拿不定主意，有嚴重的【選擇困難症】，喜歡到處尋求別人意見。<br>" +
+        "• 喜歡搜集資料與到處格價，精打細算。看醫生必看第二個醫生求取 Second opinion。<br>" +
+        "• 學術數障礙多，因拿不定主意而難以一門深入。喜歡扮客觀，有一百個好評卻執著於五個差評，信數據多過朋友。<br>" +
+        "• 不怕吃虧、心軟，順得人意，容易被人搵笨且吃力不討好。只要不多管閒事即可免除困擾。[cite: 6]",
+    "障礙-事業": "<b>【障礙 + 事業功名】（天干太歲/病符 + 地支官符/貴神）</b><br>" +
+        "• 較差的組合。總是懷才不遇，不受上級賞識，與上級關係差，職場常受不公平待遇而心灰意冷。<br>" +
+        "• 不宜在大公司打工（架構複雜更容易被埋沒），小公司反而只需面對一兩個老闆，凶應較輕。適合創業、偏門或需處理問題的行業。背祖離鄉往外地發展可減凶應。<br>" +
+        "• 喜歡掌權話事點人做野，不喜被控制。家庭主婦會嚴厲鞭策丈夫上進並榨取薪金，古代美其名曰【持家有道、旺夫益子】，實為【母老虎】。<br>" +
+        "• 職業女性則屬女強人，若再見喪門吊客極易離婚。事業多障礙常轉行。天干帶太歲者宜動，每隔數年轉工一次；帶病符者適合做公務員政府工。[cite: 6]",
+    "障礙-孤獨": "<b>【障礙 + 孤獨】（天干太歲/病符 + 地支喪門/吊客）</b><br>" +
+        "• 自覺與眾不同，喜歡獨特行事風格，不走大眾路線，有唱反調、包拗頸的特質。<br>" +
+        "• 相信自己而不信別人，性格較自私冷漠，給人虛情假意之感。<br>" +
+        "• 思想負面，常與人比較而感到命運不公，專往壞處想，埋怨多、怨念多。<br>" +
+        "• 喜歡對抗命運，適合做社工或心理輔導（因深刻理解別人的痛苦），宜從事非主流工作。[cite: 6]",
+    "障礙-血光": "<b>【障礙 + 血光橫禍】（天干太歲/病符 + 地支白虎/朱雀）</b><br>" +
+        "• 非常【惜身】（驚青、怕事），做事極其謹慎穩陣，凡事必須事先計劃妥當、做足百分之百準備與裝備才安心。<br>" +
+        "• 男命見之會給人婆婆媽媽、做事不夠乾脆之感，有欠男子氣概。<br>" +
+        "• 甚少公開表態或與人爭辯，盡量避免麻煩和危險，行事內斂常保持沉默。<br>" +
+        "• 容易脊骨出問題，或會整容應身體破損之災。工作節奏時急時閒（一陣子極忙、一陣子極閒），宜儲備後備應急財。[cite: 6]"
+};
+
+// ==========================================
+// 5. 納音 30 組正音/失音詳解庫
+// ==========================================
+var nayinExplanationData = {
+    "海中金": {
+        gz: "甲子、乙丑",
+        zhengyin: "<b>【心性特質】</b>有料但不表露，尊重別人表達，謙虛禮貌。遇問題默默承受，比較收埋自己。同神秘學、術道、偏門學識有關，具秘方、秘密、秘傳。少與人接觸，衣著簡樸。<br>• <b>月柱：</b>後勤、Thinker、心理學，社交圈較窄且挑擇朋友，交淺言深（只在神秘學範疇下）。<br>• <b>日柱：</b>伴侶易從事偏門行業。<br>• <b>時柱：</b>興趣較靜態（如繪畫、術數相關、瑜伽、Pilates）。<br>• <b>年柱：</b>與父親關係疏離，自成一套，唔理人。",
+        shiyin: "<b>【盲點表現】</b>交淺言深，凡事都要問朋友意見。<br>• <b>月柱：</b>難升職。<br>• <b>日柱：</b>退婚，伴侶條件或不如事主。<br>• 敏感體質。",
+        bingying: "肺部、皮膚、大腸系統。"
+    },
+    "爐中火": {
+        gz: "丙寅、丁卯",
+        zhengyin: "<b>【心性特質】</b>好推得、Tough頑強、固執堅持，可重複做同一件事。情緒EQ高，沉穩、不溫不火，耐性高、具大將之風。適合專業人士、Chef廚師、科研。<br>• <b>月柱：</b>一份工做好耐，重複性工作（如政府工），艱辛較多，工作環境較惡劣。<br>• <b>時柱：</b>沉迷興趣，極具潛力將興趣轉化為事業，入對行業就唔走。<br>• <b>處事感情：</b>好多原則框架，衣著固定（好古板）。較長情，難離婚，有情有義；若離婚易有手尾。有橫財投資運。",
+        shiyin: "<b>【盲點表現】</b>三分鐘熱度、脾氣火爆即發、衣著常變追潮流、八卦追求新刺激。經常轉工，或同時做好多份兼職批散（Slasher）。ADHD傾向。<br>• <b>日柱：</b>關係較短、散拖多。<br>• <b>年柱：</b>默默耕耘，讀到書，有長輩助力。",
+        bingying: "心血管、血液、長期慢性病。"
+    },
+    "大林木": {
+        gz: "戊辰、己巳",
+        zhengyin: "<b>【心性特質】</b>認第一、做大哥、做領袖。義不容辭、義無反顧，擔子雖重但有掌聲、講義氣。容易於行業中成為老行尊，通常有自己的班底團隊，轉工常整隊帶走。家庭觀念重，千金散盡還復來，在大公司容易升遷。做大機構可以好襟做。",
+        shiyin: "<b>【盲點表現】</b>無承擔、自私、只計自己數。難以獨當一面，做到第一把手就變差（上限最多只能做二把手）。煞氣重：推大林木上位送佢一程。無事業心，升職只為人工福利，不會維護同事。沒有天助，做得唔長，容易被裁員。常覺得被搵笨，不照顧同伴，有苦勞無功勞，人脈極弱。",
+        bingying: "肝膽火旺、易怒、容易瘀傷且難止血。"
+    },
+    "路旁土": {
+        gz: "庚午、辛未",
+        zhengyin: "<b>【心性特質】</b>生財之物，具強烈投資傾向，善於計算創業經商。生活上精明花錢，若遇大小耗星則無寶不落搞投資。實事求是，腳踏實地。對數字敏感（金融、地產），不會衝動消費，該花則花，唔算孤寒但親疏有別。至抵精明眼，有耐性紀律。可靠可信賴，一句到尾，有難時很多人衝出來幫手，屬隱形富豪格。",
+        shiyin: "<b>【盲點表現】</b>對數字不敏感，只計小數卻失大數，斤斤計較。亂花錢，對生活用度與未來儲蓄完全沒有計劃。聽消息就衝動投資買野，對生活無太高要求，不守規矩，情緒心情主導，容易揮金如土。<b>【警告：千祈不要搞投資！】</b>避險意識極低，得把口話自己好有人脈。",
+        bingying: "脾胃、肌肉、肉瘡肉瘤。"
+    },
+    "劍鋒金": {
+        gz: "壬申、癸酉",
+        zhengyin: "<b>【心性特質】</b>不怒而威、一將功成萬骨枯，氣場極強。駕馭資源能力強，多長輩上司助力，近貴之象。處事手腕硬、斬釘截鐵。宜做外國公司，做本地公司易惹是非。與人關係較疏離，對朋友挑剔，要麼管晒所有人，要麼單打獨鬥。動刀開刀之象。<br>• <b>月柱：</b>挨刀受傷，或從事金融、醫美。<br>• <b>日柱：</b>辛苦命指標，多勞損。<br>• <b>時柱：</b>寵物養唔熟，踢頭踢腳之應。<br>• <b>年/時柱：</b>整容、開刀應劫。",
+        shiyin: "<b>【盲點表現】</b>極度淋善、優柔寡斷、拖泥帶水（年柱易被長輩拖累，月柱被朋輩兄弟拖累），容易被拖累。性格隨和包容，對大眾慈善，常因幫人信人而被拖累失財。多朋友心，對所有人都好。",
+        bingying: "哮喘、息肉、睡眠失調、骨骼損傷。"
+    },
+    "山頭火": {
+        gz: "甲戌、乙亥",
+        zhengyin: "<b>【心性特質】</b>多姿多彩、異常八卦，容易玩得出神入化。興趣極多，四處加入教會或組織，行程排滿。越吃喝玩樂人際越旺，好多路數門道。人生得意須盡歡，多數有人結伴同行。適合Sales、Network Marketing、Digital Marketing，極跟得上潮流，有暴發、學術數、發橫財狗屎運的質。",
+        shiyin: "<b>【盲點表現】</b>極宅、好摺。固定品牌、固定餐廳，不太喜社交，一成不變求安穩。用壞先換，過於實際簡樸，思想脫節封閉。固執死板、固步自封導致成就有限。<br>• <b>攝住先建議：</b>必須做需要持續進修的行業，或租樓代替買樓迫自己走動。",
+        bingying: "心血管、血液、全身出疹、淋巴神經、紅斑狼瘡、三高。"
+    },
+    "澗下水": {
+        gz: "丙子、丁丑",
+        zhengyin: "<b>【心性特質】</b>低調隨和、上善若水、無架子，易同人打成一片。實際實用、謙卑謙厚，和光同塵的君子。抵得諗，甚至肯幫人做擔保，容易儲落深厚人情，有難時多人出手相救。人脈長久，行業中易積累江湖地位，老實實幹，苦盡甘來。有貴人帶挈，沉潛內斂，多做義工慈善。<br>• <b>月柱日柱雙生：</b>有老闆養、工作輕鬆、有家庭助力。",
+        shiyin: "<b>【盲點表現】</b>算死草、極度孤寒計較。死命記住自己幫過人並要求回報，愛炫耀吹噓講到停唔到口。易有是非口舌，名聲有損，專業失德。只著重眼前數目而忽略中長線，容易計錯數，少貴人扶持。",
+        bingying: "泌尿系統、腎氣虛、水土不服。"
+    },
+    "城頭土": {
+        gz: "戊寅、己卯",
+        zhengyin: "<b>【心性特質】</b>固執、硬頸、多原則規矩，儀式感極重。做事不喜變通但堅毅不放棄，深信將勤補拙，能在同一行業深耕。承諾過的事一定落實，絕不輕易應承人，誠信極高，絕不說謊。感情上從一而終。具匠人精神，有承擔，適合一成不變的工作。",
+        shiyin: "<b>【盲點表現】</b>虎頭蛇尾、毫無誠信、朝秦暮楚，容易被替換。三分鐘熱度，無規矩無規律，放任隨意。日柱拍散拖，行徑投機古惑。<br>• <b>攝住先建議：</b>幫人執行既定規矩，或在小公司長做。",
+        bingying: "脾胃弱、消化不良、皮膚慢性問題。"
+    },
+    "白蠟金": {
+        gz: "庚辰、辛巳",
+        zhengyin: "<b>【心性特質】</b>可以不斷重複做同一件事而不覺煩悶，為人極度專注。耐得住獨處孤獨，適合獨立工作（如糕點師、咖啡師、廚師、會計、科研、考古、程式設計師）。凡事親力親為，精挑細選（合做Merchandiser採購）。即使升為高層，底層技術依然純熟，有需要時能自己落手做。要忙、長情。",
+        shiyin: "<b>【盲點表現】</b>凡事必須找人陪伴。外向愛社交，但牙痛爪利、刀子嘴豆腐心，八卦愛吸收新知卻只學皮毛、毫無深度。愛做指揮點人做野，自身容易疏忽大意，被投閒置散。",
+        bingying: "肩頸、五十肩、筋腱骨骼、脊柱側彎。"
+    },
+    "楊柳木": {
+        gz: "壬午、癸未",
+        zhengyin: "<b>【心性特質】</b>牆頭草、世界仔、做人極其圓滑。少得罪人，能吃四方飯。懂得順勢而為，有投資運容易投資成功。轉數快、身兼多職、人脈廣闊。節目多多，適合Networking、商業商會與市場行銷，決斷神速。",
+        shiyin: "<b>【盲點表現】</b>不喜被固定，怕悶要新鮮感，工作隨性。缺乏主見，猶豫不決，不夠果斷。不擅辭令，常講錯話惹是非，拒絕深入探究新知識。",
+        bingying: "腰腿、膀胱、乳房婦科。"
+    },
+    "泉中水": {
+        gz: "甲申、乙酉",
+        zhengyin: "<b>【心性特質】</b>樂於與人交際分享，朋友圈中的開心果。與人打成一片，朋友會有好帶挈，具無私奉獻與助人精神。做團隊工作容易發揮，樂善好施、知足常樂，重視人情勝過金錢。適合NGO、區議員、社福界、傳銷、飲食小店。笨實有運，少病痛。",
+        shiyin: "<b>【盲點表現】</b>非常計較，凡事求回報，交往必帶強烈目的。人際交往極少，比澗下水更加孤僻孤獨。<br>• <b>調頻建議：</b>多做善事義工，宜選大路主流職業。",
+        bingying: "腎氣、水腫、泌尿功能。"
+    },
+    "屋上土": {
+        gz: "丙戌、丁亥",
+        zhengyin: "<b>【心性特質】</b>不愛改變，對另一半認定了就不會變，願意為對方默默付出。穩重如山，甚至帶點呆氣。有祖蔭、父蔭、政府資助或前輩相助，易中籤公屋。適合大機構、大公司、政府公職。家庭觀念極重，有儲物癖傾向。<br>• <b>年柱：</b>人在遠方之地，父母之命媒妁之言。",
+        shiyin: "<b>【盲點表現】</b>怕悶，追求新鮮感與多花臣，ADHD傾向。勢派助力弱，缺乏貴人扶持。擇偶上容易與父母對著幹，引發婆媳糾紛。<br>• <b>攝住先建議：</b>做創意、非傳統、虛擬AI相關工作。",
+        bingying: "皮膚、情緒焦慮、消化機能弱。"
+    },
+    "霹靂火": {
+        gz: "戊子、己丑",
+        zhengyin: "<b>【心性特質】</b>百足咁多爪、即興、不顧後果，衝勁十足。一想到就做，常令人難以跟隨。具橫財運、神神化化、反應極快。工作上不斷尋求新挑戰，適合專案型、創意廣告、Marketing。經常轉行也不影響前程。說話語速極快，對術數與宗教皆有深厚緣份。",
+        shiyin: "<b>【盲點表現】</b>極度不想改變，強烈要求在生活中建立固定秩序，家中雜物多。經常有突發亂子打亂生活節奏。控制狂、愛話事。若從事刻板工作容易抱怨發脾氣，常感被打壓不滿。<br>• <b>攝住先建議：</b>收藏Figure模型、玩3D Printing，投入固定宗教修持。",
+        bingying: "神經衰弱、全身性奇難雜症、突發炎症。"
+    },
+    "松柏木": {
+        gz: "庚寅、辛卯",
+        zhengyin: "<b>【心性特質】</b>頑強堅持、死頂到底，堅毅不放棄，極具耐性。答應過的事不計成本必定完成，迎難而上。傾向以不變應萬變，念舊，只要有恆心鐵柱磨成針。具工匠手藝，在同一行業能留很久並建立江湖地位。知心朋友較少，常自省自律。",
+        shiyin: "<b>【盲點表現】</b>三分鐘熱度，不會深入練習鑽研。競爭力不足，缺乏專業秘技，流於表面易被淘汰。缺乏耐性，孤獨焦躁。多交際應酬、酒色財氣，容易破財。多做炒散Slasher。<br>• <b>攝住先建議：</b>多考取專業資格，建立硬實力。",
+        bingying: "關節痛症、手腳受傷、肝膽筋腱、風寒感冒。"
+    },
+    "長流水": {
+        gz: "壬辰、癸巳",
+        zhengyin: "<b>【心性特質】</b>長命工夫長命做。一行到尾、事業心極重、工作至上的工作狂。過度專注事業，甚至無暇顧及伴侶。對事業極具Passion，甚至唔放假。工作適合大機構、政府工。不愁沒有工作，個天自會給工作養活，帶有一定權力慾望。",
+        shiyin: "<b>【盲點表現】</b>工作毫無熱情，追求極致Work-life balance，返工純粹為搵錢玩樂。財來財去，難以累積財富。工作缺乏連續性，朝不保夕。感情生活多姿多彩但自身碌碌無為。",
+        bingying: "腰腿、腎臟膀胱功能差。"
+    },
+    "沙中金": {
+        gz: "甲午、乙未",
+        zhengyin: "<b>【心性特質】</b>做事重複但慢條斯理、極度仔細有耐性，能勝任長工時。極擅長查找問題，能精準分析資料找出盲點並修正完善。思想與生活細節井井有條、整潔分明。能見微知著發掘投資商機，具良好社交與獨立思考能力，管理風格穩健踏實。",
+        shiyin: "<b>【盲點表現】</b>性急冒失，覺得執輸行頭慘過敗家。神昏志昧、懶醒、急於搶答。未深入分析就作決定，短視且治標不治本。今朝有酒今朝醉，成日忙於應付突發危機與補鑊拆彈，多失誤，難以攀升。",
+        bingying: "肺部大腸、腸胃敏感腹瀉、皮膚面色灰暗沉、無名腫毒。"
+    },
+    "山下火": {
+        gz: "丙申、丁酉",
+        zhengyin: "<b>【心性特質】</b>韜光養晦，知自身形勢不如人時絕不盲目出頭。不認叻、謙厚受教以保存實力。服從性高，善於收集他人意見並貫徹執行。寧可逍遙自在做二、三把手也不急於擔大旗，深明進退之位。穩陣保守，跟隨有力前輩發展。重團隊助力，知恩圖報。",
+        shiyin: "<b>【盲點表現】</b>狼死獨食、好大喜功。明明能力不足卻自傲自滿，十個瓦遮九個蓋。為求自保不惜損害名聲、鋌而走險。愛出風頭要排場。常搞秘撈私幫導致正職仕途蹭蹬，即使風光過亦常全盤吐回，冤枉來瘟疫去。",
+        bingying: "心血眼目、小腸消化系統、荷爾蒙、腸道情緒皮膚問題。"
+    },
+    "平地木": {
+        gz: "戊戌、己亥",
+        zhengyin: "<b>【心性特質】</b>無腰骨、無膊頭、隨風轉舵。好相處、無稜角，圓滑隨和的極致。八面玲瓏，合做生意吃四方飯。最大原則就是沒有固定原則，絕不得罪人。適應力極強，隨遇而安。和光同塵，常做義工慈善。合社福界或高壓厭惡性行業。靠人際關係搞管理。",
+        shiyin: "<b>【盲點表現】</b>有膊頭有主見卻極端硬頸不服輸，橫衝直撞容易得罪人。要求過多，不願妥協屈就，拒絕改變。經常抱怨投訴、怨天怨地，成牢騷王，拒絕嘗試新事物。",
+        bingying: "肝膽經絡、筋腱僵硬、偏頭痛。"
+    },
+    "壁上土": {
+        gz: "庚子、辛丑",
+        zhengyin: "<b>【心性特質】</b>一大班人柴娃娃、團結一致。顧家、極重視家庭與原生家庭牽絆。對所屬公司團隊歸屬感極強，適合大公司大機構及團隊工作。具犧牲奉獻精神與領導才能，熱心投入組織體系與集體義工。",
+        shiyin: "<b>【盲點表現】</b>家庭關係疏離、不給家用甚至離家出走。不願融入群體，獨善其身。工作受環境困身局限，工時長或資金常被拖欠。缺乏家庭與人際實質助力，升職受限發展慢。<br>• <b>攝住先建議：</b>參加團體運動，在公開互惠團體中磨練。",
+        bingying: "脾胃病、皮膚頑疾（牛皮癬、濕疹、凹凸洞）。"
+    },
+    "金箔金": {
+        gz: "壬寅、癸卯",
+        zhengyin: "<b>【心性特質】</b>蛇魄（膽小謹慎），不敢自己草率做決定。食屎食著豆，傻人有傻福。易收禮物、易受照顧資助，異性緣重。人脈廣，容易得到周遭援助。依賴心強，遇到困局愛求神問卜。學術數雖只學少少，但往往能一語中的直斷批中。",
+        shiyin: "<b>【盲點表現】</b>自視過高、天不怕地不怕（卻極易出事翻車）。橫禍之應，易走火入魔陷入迷信。情緒病高危，想唔開。<br>• <b>攝住先建議：</b>從事身心靈或靈媒相關工作。",
+        bingying: "皮膚泛紅過敏、飲酒出紅斑、荷爾蒙失調、心律不齊、怪病。"
+    },
+    "覆燈火": {
+        gz: "甲辰、乙巳",
+        zhengyin: "<b>【心性特質】</b>深具宗教指標，適合學術研究，耐性極高。唔怕悶、可靠堅持、鐵柱磨成針。能在同一行業堅持很久。樂意幫助他人解惑排難，適合做術數師、宗教人士、上師、人生教練。大方且提攜後輩，與宗教名校緣份深厚。",
+        shiyin: "<b>【盲點表現】</b>易行歪路、偷呃拐騙、搞偏門甚至淪為騙子。防禦心過強，少言自身之事。孤寒刻薄，說話時情緒激動且急躁。",
+        bingying: "心血管、心肌梗塞、小腸吸收弱、體內毒素積聚、邪病撞邪。"
+    },
+    "天河水": {
+        gz: "丙午、丁未",
+        zhengyin: "<b>【心性特質】</b>我為人人、人人為我，好好先生/小姐，唔怕蝕底。見義勇為，具兼濟天下的慈善心，熱心公益。人緣極佳，與鄰里大眾關係良好。熱愛幫助弱勢社群，在職場提拔同事。逢困危必有人挺身報恩救助。適合教育（尤其是特殊教育SEN）、社工、動物救援。",
+        shiyin: "<b>【盲點表現】</b>孤寒自私、斤斤計較，絕不肯為別人付出半點。姻緣較差，孤獨冷漠，易被家庭冷暴力或遭遇邊緣化（社恐）。<br>• <b>攝住先建議：</b>做不需要直接面對人群的自私位工作。",
+        bingying: "腎臟膀胱、泌尿系統、乳房腺體、淋巴病變。"
+    },
+    "大驛土": {
+        gz: "戊申、己酉",
+        zhengyin: "<b>【心性特質】</b>世界仔，極懂與人相處溝通。為人圓滑，主動結交朋友，人脈極廣。有好東西會樂於介紹給他人，適合做業務Sales。不怕冒險，好奇寶寶，四海之內皆兄弟。賺錢門路多，利做商業地產、娛樂圈、商會經商，吃得開四方飯，常有意外收穫。",
+        shiyin: "<b>【盲點表現】</b>過度有原則、高傲傲氣、嘴巴不饒人、坐唔定。在社交圈與工作圈中顯得鶴立雞群且過於冷酷。死撐固執、頑固不化、強迫症。滿口「應該點、唔應該點」，不能放下身段。<br>• <b>攝住先建議：</b>尋找有嚴格既定流程、工作內容固定的崗位。",
+        bingying: "消化系統脾胃、偏頭痛、頸椎肩頸痛、富貴包。"
+    },
+    "釵釧金": {
+        gz: "庚戌、辛亥",
+        zhengyin: "<b>【心性特質】</b>慢條斯理、眼界高有要求、寧缺勿濫。因過於挑剔，較為享受孤獨，姻緣往往較遲。越處於正音狀態越追求完美主義。對自己和外人都極高標準，如坐針氈。外形儀態永遠整潔得體，熱愛進修，追求高學歷，講求生活儀式感。適合高端專業研發領域。",
+        shiyin: "<b>【盲點表現】</b>容忍度表面極高、隨和社群，但事業始終難以起步。不修邊幅，極少打扮化妝。",
+        bingying: "肺部、大腸、皮膚極易過敏發癬。"
+    },
+    "桑柘木": {
+        gz: "壬子、癸丑",
+        zhengyin: "<b>【心性特質】</b>個人魅力獨特，容易吸引貴人出手扶一把。多與人溝通更能放大其魅力。學習進度雖不快，但為人老實踏實、默默耕耘。行事慢工出細活，肯捱肯擔當。雖然初期學習或事業容易被低估睇少，但後勁凌厲，大器晚成，令人刮目相看。處事極謙卑低調。",
+        shiyin: "<b>【盲點表現】</b>先易後難、少年得志便猖狂。語速急躁，開頭看似不錯，但越做越差。甚至出古惑、以權謀私。雖可一炮而紅，但如煙花般短暫，無以為繼，易招破產與生意失敗。",
+        bingying: "精神衰弱、肝膽經絡、筋腱受損、全身慢性炎症。"
+    },
+    "大溪水": {
+        gz: "甲寅、乙卯",
+        zhengyin: "<b>【心性特質】</b>自信心爆棚，愛面子。凡事拍心口承擔，應承了就死掂佢都要完成。親力親為、勞心勞力。輸人不輸陣，行事裝備必須齊全。老行尊形態，認受性極高。能獨當一面，一呼百應，深得大老闆信任。適合緊急任務、24小時On-call或高新科技產業。行事花費大方。",
+        shiyin: "<b>【盲點表現】</b>為人小家子氣，欠缺氣魄，不敢承擔，表現能力低。循規蹈矩只求大公司打份工混日子。與人相處能力較弱，社交退縮。",
+        bingying: "腰腿婦科疾患、易扭傷拗柴、水腫、椎間盤突出。"
+    },
+    "沙中土": {
+        gz: "丙辰、丁巳",
+        zhengyin: "<b>【心性特質】</b>爭勝心極強，必須給自己設定競爭對手與目標。極度害怕退步，怕自己變得無用，靠將勤補拙不斷攀升。唔係一定要贏，純粹係唔想輸；一旦輸了就再埋頭鑽研求進步。工作把關嚴苛極度盡責，深得老闆喜愛，但因不近人情導致職場朋友少。自我要求極高，重視現實。",
+        shiyin: "<b>【盲點表現】</b>消遙快活，對自己要求極度寬鬆隨意，毫無原則。在感情上挑剔嚴苛，常被伴侶抱怨，六親緣薄。<br>• <b>建議：</b>不適合高壓競爭行業，宜找互補包容的伴侶。",
+        bingying: "經常看醫生、身形暴肥或過瘦、消化機能、胰臟脾胃、不知飢餓。"
+    },
+    "天上火": {
+        gz: "戊午、己未",
+        zhengyin: "<b>【心性特質】</b>術數與宗教最高指標。願為崇高信仰與使命奉獻所有，使命感強烈，理念先行，並身體力行去完成。勇於追夢，合娛樂圈、KOL、創業。常有宏大理念，具經營NGO傾向。錢財並非首要考量，為理想可以傾盡全力，常有伯樂出資贊助追夢。",
+        shiyin: "<b>【盲點表現】</b>嘲笑理想主義者，過於現實功利。完全不相信宗教信仰，行事只能求基本安穩，缺乏遠大抱負與發圍良機。",
+        bingying: "精神焦慮、心血管梗塞、腫瘤癌症風險。"
+    },
+    "石榴木": {
+        gz: "庚申、辛酉",
+        zhengyin: "<b>【心性特質】</b>手頭資源極度豐沛，且非常樂意與他人共享自身資源。因經常施予人情，身邊多貴人扶持回饋，適合做生意。重視生活玩樂與享受，朋友極多。生意越做越大，轉工常獲高薪挖角。適合高額大宗交易（如豪宅地產、奢侈名品）。對數字極敏感。",
+        shiyin: "<b>【盲點表現】</b>極度不願分享資源，凡事怕蝕底。缺少貴人與帶挈機遇，眼睜睜看著別人成功，輪到自己出手就虧輸。對數字不敏感。<br>• <b>建議：</b>適合不用面對人群的工作（如單純對電腦操作）。",
+        bingying: "肝膽經絡、纖維結節腫瘤、關節痛症、行動不便。"
+    },
+    "大海水": {
+        gz: "壬戌、癸亥",
+        zhengyin: "<b>【心性特質】</b>慢活代表，說話語速慢、滋悠淡定、氣定神閒。絕不適應高壓工作，適合手作藝術、生活美學小店（如手沖咖啡、精品零售）。從事高價位精緻商品，沉浸於藝術或研究工作。自得其樂，不太追求功利金錢，帶二世祖守業之清閒福氣，順其自然。",
+        shiyin: "<b>【盲點表現】</b>急性子、急急子，語速飛快。一味求快卻雜亂無章，盲目衝入競爭激烈的行業，往往吃力不討好，損手離場。",
+        bingying: "耳疾聽力、耳水不平衡、坐骨神經、腰腿痠軟、婦科失調。"
+    }
+};
+
+var yingSongData = {
+    "有迎有送": "<li>適合在體制內爬升，宜在大機構、大公司、政府部門工作。</li><li>創業亦宜與大型機構或政府接洽。</li>",
+    "無迎無送": "<li>浪子格，事業宜「動」、漂泊、自由，適合創業或小型靈活公司。</li><li>大機構中需做經常出差、外勤之崗位。</li>",
+    "有迎無送": "<li>「迎」在前，適合前線、公關、演藝、業務、客務等面對群眾之工作。</li>",
+    "無迎有送": "<li>「送」在後，適合後勤、幕僚、支援、研發、技術與維修類工作，少接觸人群。</li>"
+};
+
+var Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+var Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+var ShenSha = ["太歲","青龍","喪門","六合","官符","小耗","大耗","朱雀","白虎","貴神","吊客","病符"];
+var TenGodsYang = ["比肩","劫財","食神","傷官","偏財","正財","七殺","正官","偏印","正印"];
+var TenGodsYin = ["比肩","傷官","食神","正財","偏財","正官","七殺","正印","偏印","劫財"];
+
+var HiddenStems = [
+    [9],
+    [5, 9, 7],
+    [0, 2, 4],
+    [1],
+    [4, 1, 9],
+    [2, 4, 6],
+    [3, 5],
+    [5, 3, 1],
+    [6, 8, 4],
+    [7],
+    [4, 7, 3],
+    [8, 0]
+];
+
+var JieQiCVal = [5.4055, 3.87, 5.63, 4.81, 5.52, 5.678, 7.108, 7.5, 7.646, 8.318, 7.438, 7.18];
+var NaYinList = ("海中金,爐中火,大林木,路旁土,劍鋒金,山頭火,澗下水,城頭土,白蠟金,楊柳木," + 
+                  "泉中水,屋上土,霹靂火,松柏木,長流水,沙中金,山下火,平地木,壁上土,金箔金," + 
+                  "覆燈火,天河水,大驛土,釵釧金,桑柘木,大溪水,沙中土,天上火,石榴木,大海水").split(",");
+
+var ShengRules = [
+    { A: ["戊午", "己未"], B: ["丙子", "丁丑"], desc: "戊午己未天上火 勝 丙子丁丑澗下水" },
+    { A: ["戊辰", "己巳"], B: ["壬寅", "癸卯"], desc: "戊辰己巳大林木 勝 壬寅癸卯金箔金" },
+    { A: ["戊辰", "己巳"], B: ["庚戌", "辛亥"], desc: "戊辰己巳大林木 勝 庚戌辛亥釵釧金" },
+    { A: ["甲寅", "乙卯"], B: ["丙辰", "丁巳"], desc: "甲寅乙卯大溪水 勝 丙辰丁巳沙中土" },
+    { A: ["甲子", "乙丑"], B: ["甲辰", "乙巳"], desc: "甲子乙丑海中金 勝 甲辰乙巳覆燈火" }
+];
+
+var JiRules = [
+    { A: ["壬子", "癸丑"], B: ["壬申", "癸酉"], desc: "壬子癸丑桑柘木 忌 壬申癸酉劍鋒金" },
+    { A: ["甲戌", "乙亥"], B: ["丙午", "丁未"], desc: "甲戌乙亥山頭火 忌 丙午丁未天河水" },
+    { A: ["庚辰", "辛巳"], B: ["丙寅", "丁卯"], desc: "庚辰辛巳白蠟金 忌 丙寅丁卯爐中火" },
+    { A: ["甲子", "乙丑"], B: ["戊子", "己丑"], desc: "甲子乙丑海中金 忌 戊子己丑霹靂火" },
+    { A: ["丙辰", "丁巳"], B: ["戊辰", "己巳"], desc: "丙辰丁巳沙中土 忌 戊辰己巳大林木" },
+    { A: ["甲申", "乙酉"], B: ["戊申", "己酉"], desc: "甲申乙酉井泉水 忌 戊申己酉大驛土" }
+];
+
+var currentMode = 'date';
+var globalTgOrder = ["比肩", "劫財", "食神", "傷官", "偏財", "正財", "七殺", "正官", "偏印", "正印"];
+
+window.onload = function() {
+    initGanzhiSelects(); // 只初始化下拉選單，不自動排盤
+};
+
+function initGanzhiSelects() {
+    var stemsHtml = Tiangan.map(function(t, i) { return "<option value='" + i + "'>" + t + "</option>"; }).join('');
+    var branchesHtml = Dizhi.map(function(d, i) { return "<option value='" + i + "'>" + d + "</option>"; }).join('');
+    ['gzYStem', 'gzMStem', 'gzDStem', 'gzHStem'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = stemsHtml;
+    });
+    ['gzYBranch', 'gzMBranch', 'gzDBranch', 'gzHBranch'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = branchesHtml;
+    });
+}
+
+function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('tab-date').classList.remove('active');
+    document.getElementById('tab-ganzhi').classList.remove('active');
+    
+    if (mode === 'date') {
+        document.getElementById('tab-date').classList.add('active');
+        document.getElementById('date-inputs').style.display = 'grid';
+        document.getElementById('ganzhi-inputs').style.display = 'none';
+    } else {
+        document.getElementById('tab-ganzhi').classList.add('active');
+        document.getElementById('date-inputs').style.display = 'none';
+        document.getElementById('ganzhi-inputs').style.display = 'grid';
+    }
+}
+
+function safeMod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+function findDateFromGanzhi(baseYear, targetMBranch, targetDStem, targetDBranch, targetHBranch, targetYStem, targetYBranch) {
+    var searchStart = new Date(baseYear - 60, 0, 1);
+    var searchEnd = new Date(baseYear + 60, 11, 31);
+    
+    for (var d = new Date(searchStart); d <= searchEnd; d.setDate(d.getDate() + 1)) {
+        var loopYY = d.getFullYear();
+        var offY = safeMod(loopYY - 4, 60);
+        var testYStem = offY % 10;
+        var testYBranch = offY % 12;
+        
+        var liChunD = getJieQiDate(loopYY, 1);
+        if (d < liChunD) {
+            testYStem = safeMod(testYStem - 1, 10);
+            testYBranch = safeMod(testYBranch - 1, 12);
+        }
+
+        if (testYStem !== targetYStem || testYBranch !== targetYBranch) continue;
+
+        var baseD = new Date(1900, 0, 31);
+        var timeDiff = d - baseD;
+        var daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+        var testDStem = safeMod(daysDiff, 10);
+        var testDBranch = safeMod(4 + daysDiff, 12);
+        
+        if (testDStem === targetDStem && testDBranch === targetDBranch) {
+            var mm = d.getMonth() + 1;
+            var testMBranch;
+            var foundJie = false;
+            
+            for (var scanM = mm; scanM >= mm - 1; scanM--) {
+                var checkYY = loopYY;
+                var checkM = scanM;
+                if (checkM < 1) { checkM = 12; checkYY = loopYY - 1; }
+                var scanJieIdx = checkM - 1; 
+                var testJieDate = getJieQiDate(checkYY, scanJieIdx);
+
+                if (d >= testJieDate) {
+                    testMBranch = safeMod(scanJieIdx + 1, 12);
+                    foundJie = true;
+                    break;
+                }
+            }
+            if (!foundJie) testMBranch = safeMod(mm + 12, 12);
+            
+            if (testMBranch === targetMBranch) {
+                var hourVal = targetHBranch * 2; 
+                return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hourVal);
+            }
+        }
+    }
+    return null;
+}
+
+function evaluateAllGuanSha(basePillars, targetPillars) {
+    var triggered = [];
+    var dayPillar = basePillars.find(function(p) { return p.name === '日柱'; }) || {};
+    var monthPillar = basePillars.find(function(p) { return p.name === '月柱'; }) || {};
+    
+    var dayStem = (dayPillar.stem !== undefined) ? dayPillar.stem : null;
+    var dayBranch = (dayPillar.branch !== undefined) ? dayPillar.branch : null;
+    var monthBranch = (monthPillar.branch !== undefined) ? monthPillar.branch : null;
+
+    var nayinDayStr = (dayStem !== null && dayBranch !== null) ? getNaYin(dayStem, dayBranch) : "";
+    var nayinDayWx = nayinDayStr ? nayinDayStr.slice(-1) : "";
+
+    gsRules.forEach(function(rule) {
+        var baseVal = null;
+        var searchPool = [];
+        
+        if (rule.type === "nayin_day") { 
+            baseVal = nayinDayWx; 
+            searchPool = targetPillars.filter(function(p) { return p.name !== '日柱'; }).map(function(p) { return p.branch; });
+        } else if (rule.type === "day_branch") { 
+            baseVal = dayBranch; 
+            searchPool = targetPillars.filter(function(p) { return p.name !== '日柱'; }).map(function(p) { return p.branch; });
+        } else if (rule.type === "month_branch") { 
+            baseVal = monthBranch; 
+            searchPool = targetPillars.filter(function(p) { return p.name !== '月柱'; }).map(function(p) { return p.branch; });
+        } else if (rule.type === "day_stem") { 
+            baseVal = dayStem; 
+            searchPool = targetPillars.map(function(p) { return p.branch; });
+        } else if (rule.type === "day_stem_to_year") {
+            baseVal = dayStem;
+            searchPool = targetPillars.filter(function(p) { return p.name === '年柱'; }).map(function(p) { return p.branch; });
+        } else if (rule.type === "day_to_month_or_luck") {
+            baseVal = dayBranch;
+            searchPool = targetPillars.filter(function(p) { return p.name === '月柱' || p.name === '大運' || p.name === '流年'; }).map(function(p) { return p.branch; });
+        }
+
+        if (baseVal === null || baseVal === undefined || baseVal === "") return;
+
+        var targets = rule.mapping[baseVal];
+        if (targets) {
+            if (rule.count) {
+                var count = searchPool.filter(function(b) { return targets.includes(b); }).length;
+                if (count >= rule.count) triggered.push(rule.name);
+            } else {
+                if (searchPool.some(function(b) { return targets.includes(b); })) triggered.push(rule.name);
+            }
+        }
+    });
+
+    var finalTriggers = [];
+    var hasYeTiA = false, hasYeTiB = false, hasYanWangA = false, hasYanWangB = false;
+
+    triggered.forEach(function(t) {
+        if (t.includes("夜啼關A")) hasYeTiA = true;
+        else if (t.includes("夜啼關B")) hasYeTiB = true;
+        else if (t.includes("閻王關A")) hasYanWangA = true;
+        else if (t.includes("閻王關B")) hasYanWangB = true;
+        else finalTriggers.push(t);
+    });
+
+    if (hasYeTiA && hasYeTiB) finalTriggers.push("4. 夜啼關");
+    if (hasYanWangA && hasYanWangB) finalTriggers.push("12. 閻王關");
+
+    // 掌訣排布（金鎖關：男順女逆排定）
+    var genderStr = document.getElementById('inpGender').value;
+    var isMale = (genderStr === "男");
+    var yB = basePillars.find(function(p) { return p.name === '年柱'; });
+    var mB = basePillars.find(function(p) { return p.name === '月柱'; });
+    var dB = basePillars.find(function(p) { return p.name === '日柱'; });
+    var hB = basePillars.find(function(p) { return p.name === '時柱'; });
+
+    if (yB && mB && dB && hB) {
+        var pos_y = isMale ? (10 + yB.branch) % 12 : safeMod(10 - yB.branch, 12);
+        var pos_m = isMale ? (pos_y + mB.branch) % 12 : safeMod(pos_y - mB.branch, 12);
+        var pos_d = isMale ? (pos_m + dB.branch) % 12 : safeMod(pos_m - dB.branch, 12);
+        var pos_h = isMale ? (pos_d + hB.branch) % 12 : safeMod(pos_d - hB.branch, 12);
+        
+        var hasJinSuo = isMale ? (pos_h === 4 || pos_h === 10) : (pos_h === 1 || pos_h === 7);
+        if (hasJinSuo) finalTriggers.push("40. 金鎖關 (掌訣)");
+    }
+
+    return [...new Set(finalTriggers)].sort(function(a, b) {
+        var numA = parseInt(a.match(/\d+/)) || 999;
+        var numB = parseInt(b.match(/\d+/)) || 999;
+        return numA - numB;
+    });
+}
+
+function getDualStarGroup(rawName) {
+    if (rawName.includes("白虎") || rawName.includes("朱雀")) return "血光";
+    if (rawName.includes("喪門") || rawName.includes("吊客")) return "孤獨";
+    if (rawName.includes("青龍") || rawName.includes("六合")) return "人緣";
+    if (rawName.includes("官符") || rawName.includes("貴神")) return "事業";
+    if (rawName.includes("小耗") || rawName.includes("大耗")) return "破財";
+    if (rawName.includes("太歲") || rawName.includes("病符")) return "障礙";
+    return "";
+}
+
+function getPureShenSha(startB, target, isStem) {
+    var targetB = target;
+    if (isStem) targetB = getStemMapping(target);
+    return ShenSha[safeMod(targetB - startB, 12)];
+}
+
+function generateNaYinCenturyTable(RealBaziYear, dyStartAge, isForward, mStem, mBranch, natalPillars) {
+    var nayinRowsHtml = "";
+
+    for (var age = 1; age <= 100; age++) {
+        var loopY = RealBaziYear + age - 1;
+        var off = safeMod(loopY - 4, 60);
+        var loopStem = off % 10;
+        var loopBranch = off % 12;
+        var loopGZ = Tiangan[loopStem] + Dizhi[loopBranch];
+        var loopNaYin = getNaYin(loopStem, loopBranch);
+
+        var dyStep = Math.floor((age - dyStartAge) / 10) + 1;
+        if (dyStep > 11) dyStep = 11;
+        var currDyStem = -1, currDyBranch = -1, currDyGZ = "";
+        
+        if (age >= dyStartAge) {
+            if (isForward) {
+                currDyStem = safeMod(mStem + dyStep, 10);
+                currDyBranch = safeMod(mBranch + dyStep, 12);
+            } else {
+                currDyStem = safeMod(mStem - dyStep, 10);
+                currDyBranch = safeMod(mBranch - dyStep, 12);
+            }
+            currDyGZ = Tiangan[currDyStem] + Dizhi[currDyBranch];
+        }
+
+        var targetPillars = [...natalPillars];
+        if (currDyStem !== -1) {
+            targetPillars.push({ name: "大運", gz: currDyGZ, stem: currDyStem, branch: currDyBranch });
+        }
+
+        var statusText = "";
+        var statusClass = "";
+
+        for (var i = 0; i < targetPillars.length; i++) {
+            var baseP = targetPillars[i];
+            for (var r1 = 0; r1 < ShengRules.length; r1++) {
+                var rule = ShengRules[r1];
+                if (rule.A.includes(baseP.gz) && rule.B.includes(loopGZ)) {
+                    statusText = "勝 (得利) ➔ [" + baseP.name + "] " + baseP.gz + " 勝 流年 " + loopGZ;
+                    statusClass = "status-sheng";
+                    break;
+                } else if (rule.B.includes(baseP.gz) && rule.A.includes(loopGZ)) {
+                    statusText = "負 (不利/衰運) ➔ [" + baseP.name + "] " + baseP.gz + " 負於 流年 " + loopGZ;
+                    statusClass = "status-fu";
+                    break;
+                }
+            }
+            if (statusText) break;
+
+            for (var r2 = 0; r2 < JiRules.length; r2++) {
+                var jRule = JiRules[r2];
+                if ((jRule.A.includes(baseP.gz) && jRule.B.includes(loopGZ)) || 
+                    (jRule.B.includes(baseP.gz) && jRule.A.includes(loopGZ))) {
+                    statusText = "忌 (犯忌) ➔ [" + baseP.name + "] " + baseP.gz + " 與 流年 " + loopGZ + " 犯忌";
+                    statusClass = "status-ji";
+                    break;
+                }
+            }
+            if (statusText) break;
+        }
+
+        if (statusText) {
+            nayinRowsHtml += "<tr>" +
+                "<td><b>" + age + " 歲</b></td>" +
+                "<td>" + loopY + "</td>" +
+                "<td><b>" + loopGZ + "</b></td>" +
+                "<td>" + loopNaYin + "</td>" +
+                "<td class='" + statusClass + "'>" + statusText + "</td>" +
+            "</tr>";
+        }
+    }
+
+    if (!nayinRowsHtml) {
+        nayinRowsHtml = "<tr><td colspan='5' style='text-align:center; color:var(--text-muted); padding:16px;'>1 至 100 歲流年間無觸發五勝六忌。</td></tr>";
+    }
+
+    return "<div class='nayin-box'>" +
+        "<div class='nayin-title'>" +
+            "<span>流年納音分析 (1 - 100 歲 五勝六忌)</span>" +
+            "<span style='font-size:12px; font-weight:normal; color:#744210;'>八字為主體：八字勝為綠字，八字負/忌為紅字</span>" +
+        "</div>" +
+        "<div style='overflow-x:auto;'><table class='nayin-table'><thead><tr><th>歲數</th><th>年份</th><th>干支</th><th>納音</th><th>狀態 (以八字為主體)</th></tr></thead><tbody>" +
+            nayinRowsHtml +
+        "</tbody></table></div></div>";
+}
+
+function runCalculation() {
+    try {
+        var gender = document.getElementById('inpGender').value;
+        var rangeVal = document.getElementById('inpRange').value.split("-");
+        var viewStartAge = parseInt(rangeVal[0]);
+        var viewEndAge = parseInt(rangeVal[1]);
+
+        var resultArea = document.getElementById('resultArea');
+        resultArea.innerHTML = ""; 
+
+        var yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch;
+        var RealBaziYear, dyStartAge, isForward, infoStr, daysToJieText;
+        var bDate = null; 
+        var showConvertedDate = false;
+
+        if (currentMode === 'date') {
+            var y = parseInt(document.getElementById('inpYear').value);
+            var m = parseInt(document.getElementById('inpMonth').value);
+            var d = parseInt(document.getElementById('inpDay').value);
+            var h = parseInt(document.getElementById('inpHour').value);
+
+            if (!y || isNaN(y)) { alert("請輸入正確年份"); return; }
+
+            var offY = safeMod(y - 4, 60);
+            yStem = offY % 10;
+            yBranch = offY % 12;
+            RealBaziYear = y;
+
+            bDate = new Date(y, m - 1, d, h); 
+            var liChunDate = getJieQiDate(y, 1); 
+
+            if (bDate < liChunDate) {
+                yStem = safeMod(yStem - 1, 10);
+                yBranch = safeMod(yBranch - 1, 12);
+                RealBaziYear = y - 1;
+            }
+
+            var foundJie = false;
+            for (var scanM = m; scanM >= m - 1; scanM--) {
+                var checkYY = y;
+                var checkM = scanM;
+                if (checkM < 1) { checkM = 12; checkYY = y - 1; }
+                var scanJieIdx = checkM - 1; 
+                var testDate = getJieQiDate(checkYY, scanJieIdx);
+
+                if (bDate >= testDate) {
+                    mBranch = safeMod(scanJieIdx + 1, 12);
+                    foundJie = true;
+                    break;
+                }
+            }
+            if (!foundJie) { mBranch = safeMod(m + 12, 12); }
+
+            var tempStartStem;
+            switch (yStem % 5) {
+                case 0: tempStartStem = 2; break; 
+                case 1: tempStartStem = 4; break; 
+                case 2: tempStartStem = 6; break; 
+                case 3: tempStartStem = 8; break; 
+                case 4: tempStartStem = 0; break; 
+            }
+            mStem = safeMod(tempStartStem + safeMod(mBranch - 2, 12), 10);
+
+            var baseD = new Date(1900, 0, 31); 
+            var targetD = new Date(y, m - 1, d);
+            var timeDiff = targetD - baseD;
+            var daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+            
+            dStem = safeMod(daysDiff, 10); 
+            dBranch = safeMod(4 + daysDiff, 12); 
+
+            if (h >= 23 || h < 1) hBranch = 0; 
+            else hBranch = Math.floor((h + 1) / 2);
+
+            var hStartStem;
+            switch (dStem % 5) {
+                case 0: hStartStem = 0; break; 
+                case 1: hStartStem = 2; break; 
+                case 2: hStartStem = 4; break; 
+                case 3: hStartStem = 6; break; 
+                case 4: hStartStem = 8; break; 
+            }
+            hStem = safeMod(hStartStem + hBranch, 10);
+
+        } else {
+            yStem = parseInt(document.getElementById('gzYStem').value);
+            yBranch = parseInt(document.getElementById('gzYBranch').value);
+            mStem = parseInt(document.getElementById('gzMStem').value);
+            mBranch = parseInt(document.getElementById('gzMBranch').value);
+            dStem = parseInt(document.getElementById('gzDStem').value);
+            dBranch = parseInt(document.getElementById('gzDBranch').value);
+            hStem = parseInt(document.getElementById('gzHStem').value);
+            hBranch = parseInt(document.getElementById('gzHBranch').value);
+            
+            var currentSystemYear = new Date().getFullYear(); 
+            bDate = findDateFromGanzhi(currentSystemYear, mBranch, dStem, dBranch, hBranch, yStem, yBranch);
+            
+            if (bDate) {
+                RealBaziYear = bDate.getFullYear();
+                var liChunTest = getJieQiDate(bDate.getFullYear(), 1);
+                if (bDate < liChunTest) RealBaziYear = RealBaziYear - 1;
+                showConvertedDate = true;
+            } else {
+                RealBaziYear = currentSystemYear; 
+            }
+        }
+
+        var isYangYear = (yStem % 2 === 0);
+        var isMale = (gender === "男");
+        isForward = ((isMale && isYangYear) || (!isMale && !isYangYear));
+        infoStr = isForward ? "順推" : "逆推";
+
+        if (bDate) {
+            var targetJieDate = isForward ? getNextJieQi(bDate) : getPrevJieQi(bDate);
+            var timeDiffMinutes = Math.abs((targetJieDate - bDate) / (1000 * 60));
+            dyStartAge = Math.floor(timeDiffMinutes / 4320); 
+            if ((timeDiffMinutes / 4320) > dyStartAge) dyStartAge += 1; 
+            if (dyStartAge < 1) dyStartAge = 1;
+            daysToJieText = (timeDiffMinutes / 1440).toFixed(1) + "天交運";
+        } else {
+            dyStartAge = 1;
+            daysToJieText = "(預設 1 歲起運)";
+        }
+
+        var mStartStem;
+        switch (yStem % 5) {
+            case 0: mStartStem = 2; break; 
+            case 1: mStartStem = 4; break; 
+            case 2: mStartStem = 6; break; 
+            case 3: mStartStem = 8; break; 
+            case 4: mStartStem = 0; break; 
+        }
+
+        var taiStem = safeMod(mStem + 1, 10);
+        var taiBranch = safeMod(mBranch + 3, 12);
+
+        var mNum = safeMod(mBranch - 2, 12) + 1;
+        var hNum = safeMod(hBranch - 2, 12) + 1;
+        var mingNum = safeMod(26 - (mNum + hNum), 12);
+        if (mingNum === 0) mingNum = 12;
+        var mingBranch = safeMod(mingNum + 1, 12); 
+        var mingStem = safeMod(mStartStem + safeMod(mingBranch - 2, 12), 10);
+
+        var shenNum = safeMod(2 + mNum + hNum, 12);
+        if (shenNum === 0) shenNum = 12;
+        var shenBranch = safeMod(shenNum + 1, 12);
+        var shenStem = safeMod(mStartStem + safeMod(shenBranch - 2, 12), 10);
+
+        var yGZ = Tiangan[yStem] + Dizhi[yBranch];
+        var mGZ = Tiangan[mStem] + Dizhi[mBranch];
+        var dGZ = Tiangan[dStem] + Dizhi[dBranch];
+        var hGZ = Tiangan[hStem] + Dizhi[hBranch];
+        
+        var natalPillars = [
+            {name: "年柱", gz: yGZ, stem: yStem, branch: yBranch, nayinWx: getNaYin(yStem, yBranch).slice(-1)},
+            {name: "月柱", gz: mGZ, stem: mStem, branch: mBranch, nayinWx: getNaYin(mStem, mBranch).slice(-1)},
+            {name: "日柱", gz: dGZ, stem: dStem, branch: dBranch, nayinWx: getNaYin(dStem, dBranch).slice(-1)},
+            {name: "時柱", gz: hGZ, stem: hStem, branch: hBranch, nayinWx: getNaYin(hStem, hBranch).slice(-1)}
+        ];
+
+        var html = "";
+        var dTaiSuiBranch = getStemMapping(dStem);
+
+        // 1. 原局命盤
+        html += "<div class='section-title yuan-ju-header'><span>【 原 局 命 盤 】</span><span>" + infoStr + " · " + daysToJieText + " (" + dyStartAge + "歲起運)</span></div>";
+        
+        if (showConvertedDate && bDate) {
+            var hrString = bDate.getHours().toString().padStart(2, '0') + ":00";
+            html += "<div class='converted-date-box'>📅 <b>反推公曆日期：</b> " + bDate.getFullYear() + " 年 " + (bDate.getMonth() + 1) + " 月 " + bDate.getDate() + " 日, " + hrString + " (時辰中點)</div>";
+        }
+
+        html += "<div style='overflow-x:auto;'><table class='chart-table'>";
+        html += "<tr><th>項目</th><th>時柱</th><th>日柱</th><th>月柱</th><th>年柱</th><th>胎元</th><th>命宮</th><th>身宮</th></tr>";
+        
+        html += "<tr><td><b>十神</b></td>";
+        html += "<td>" + getTenGod(dStem, hStem) + "</td><td><span style='color:var(--primary-blue); font-weight:700;'>【日主】</span></td><td>" + getTenGod(dStem, mStem) + "</td><td>" + getTenGod(dStem, yStem) + "</td>";
+        html += "<td>" + getTenGod(dStem, taiStem) + "</td><td>" + getTenGod(dStem, mingStem) + "</td><td>" + getTenGod(dStem, shenStem) + "</td></tr>";
+
+        html += "<tr class='shensha-row'><td><b>串宮(干)</b></td>";
+        html += "<td>" + getShenSha(dTaiSuiBranch, hStem, true) + "</td><td>-</td><td>" + getShenSha(dTaiSuiBranch, mStem, true) + "</td><td>" + getShenSha(dTaiSuiBranch, yStem, true) + "</td>";
+        html += "<td>" + getShenSha(dTaiSuiBranch, taiStem, true) + "</td><td>" + getShenSha(dTaiSuiBranch, mingStem, true) + "</td><td>" + getShenSha(dTaiSuiBranch, shenStem, true) + "</td></tr>";
+
+        html += "<tr><td><b>干支</b></td>";
+        var pillars = [
+            {s: hStem, b: hBranch, name: "時柱"}, {s: dStem, b: dBranch, name: "日柱"}, {s: mStem, b: mBranch, name: "月柱"}, {s: yStem, b: yBranch, name: "年柱"},
+            {s: taiStem, b: taiBranch, name: "胎元"}, {s: mingStem, b: mingBranch, name: "命宮"}, {s: shenStem, b: shenBranch, name: "身宮"}
+        ];
+        
+        pillars.forEach(function(p, idx) {
+            var nyStr = getNaYin(p.s, p.b);
+            var nyHtml = "";
+            if (idx < 4) {
+                nyHtml = "<span class='nayin-clickable' data-name='" + nyStr + "' title='點擊查看【" + nyStr + "】正音/失音心性象意詳解'>" + nyStr + " 🔍</span>";
+            } else {
+                nyHtml = nyStr;
+            }
+            html += "<td class='highlight-bg'>" + Tiangan[p.s] + Dizhi[p.b] + "<br><span style='font-size:0.7em;font-weight:normal;color:var(--text-muted);'>" + nyHtml + "</span></td>";
+        });
+        html += "</tr>";
+
+        html += "<tr class='shensha-row'><td><b>串宮(支)</b></td>";
+        pillars.forEach(function(p) {
+            html += "<td>" + getShenSha(dTaiSuiBranch, p.b, false) + "</td>";
+        });
+        html += "</tr>";
+        
+        html += "<tr><td><b>藏干</b></td>";
+        html += "<td>" + getHiddenStemsHtml(dStem, hBranch) + "</td>";
+        html += "<td>" + getHiddenStemsHtml(dStem, dBranch) + "</td>";
+        html += "<td>" + getHiddenStemsHtml(dStem, mBranch) + "</td>";
+        html += "<td>" + getHiddenStemsHtml(dStem, yBranch) + "</td>";
+        html += "<td colspan='3' style='background:#fafbfc'></td></tr>";
+        html += "</table></div>";
+
+        var yjStemsToCount = [yStem, mStem, hStem]; 
+        var yjBranchesToCount = [yBranch, mBranch, dBranch, hBranch];
+        var yjTgCounts = getTenGodsCount(dStem, yjStemsToCount, yjBranchesToCount);
+
+        html += "<div class='subtitle blue'>【原局十神總結】(含地支全藏干)</div>";
+        html += "<div class='ten-gods-summary'>";
+        globalTgOrder.forEach(function(tg) {
+            var count = yjTgCounts[tg] || 0;
+            var numColor = count > 0 ? "var(--color-red)" : "var(--text-subtle)";
+            html += "<div class='tg-item'>" +
+                "<span class='tg-name'>" + tg + "</span>" +
+                "<span class='tg-count' style='color: " + numColor + "'>" + count + "</span>" +
+            "</div>";
+        });
+        html += "</div>";
+
+        var natalGsList = evaluateAllGuanSha(natalPillars, natalPillars);
+        var gsDisplayHtml = natalGsList.map(function(g) {
+            return "<span class='sheng-ji-tag tag-gs' data-name='" + g + "' title='點擊查看【" + g + "】詳解'>" + g + "</span>";
+        }).join('');
+
+        if (natalGsList.length > 0) {
+            html += "<div class='sheng-ji-box guansha'>" +
+                "<div class='sheng-ji-header'>⚠️ 原局關煞統計 (點擊標籤可查看定義詳情)</div>" +
+                "<div>" + gsDisplayHtml + "</div>" +
+            "</div>";
+        }
+
+        var dualStarsHtml = "";
+        var pillarsToCheck = [
+            {name: "年柱", s: yStem, b: yBranch},
+            {name: "月柱", s: mStem, b: mBranch},
+            {name: "時柱", s: hStem, b: hBranch}
+        ];
+
+        pillarsToCheck.forEach(function(p) {
+            var sSS = getPureShenSha(dTaiSuiBranch, p.s, true);
+            var bSS = getPureShenSha(dTaiSuiBranch, p.b, false);
+            var sGroup = getDualStarGroup(sSS);
+            var bGroup = getDualStarGroup(bSS);
+            
+            if (sGroup && bGroup) {
+                var descKey1 = sGroup + "-" + bGroup;
+                var descKey2 = bGroup + "-" + sGroup;
+                var desc = dualStarData[descKey1] || dualStarData[descKey2] || "暫無對應解釋。";
+                dualStarsHtml += "<li style='margin-bottom: 12px; line-height: 1.7;'><b>【" + p.name + "】 " + sGroup + "(" + sSS + ") + " + bGroup + "(" + bSS + ")：</b><br>" + desc + "</li>";
+            }
+        });
+
+        if (dualStarsHtml) {
+            html += "<div class='sheng-ji-box' style='border-color:#cbd5e0; border-left-color:#4a6fa5; background-color:#f8fafc;'>" +
+                "<div class='sheng-ji-header' style='color:#2c3e50;'>⭐ 原局雙星斷事 (年月時柱)</div>" +
+                "<ul style='list-style-type: square; color:#4a5568; padding-left: 20px;'>" + dualStarsHtml + "</ul>" +
+            "</div>";
+        }
+
+        var tsBranch = getStemMapping(dStem);
+        var diffY = (yBranch - tsBranch + 12) % 12;
+        var hasYing = diffY <= 5;
+        var yingVal = hasYing ? diffY : null;
+
+        var diffH = (hBranch - tsBranch + 12) % 12;
+        var hasSong = diffH >= 6;
+        var songVal = hasSong ? (12 - diffH) : null;
+
+        var yingSongType = "";
+        var yingSongText = "";
+        if (hasYing && hasSong) {
+            yingSongType = "有迎有送";
+            yingSongText = yingVal + "迎 " + songVal + "送";
+        } else if (!hasYing && !hasSong) {
+            yingSongType = "無迎無送";
+            yingSongText = "無迎 無送";
+        } else if (hasYing && !hasSong) {
+            yingSongType = "有迎無送";
+            yingSongText = yingVal + "迎 無送";
+        } else if (!hasYing && hasSong) {
+            yingSongType = "無迎有送";
+            yingSongText = "無迎 " + songVal + "送";
+        }
+
+        html += "<div class='sheng-ji-box' style='border-color:#e2e8f0; border-left-color:#6a1b9a; background-color:#faf5ff;'>" +
+            "<div class='sheng-ji-header' style='color:#6a1b9a;'>💼 原局迎送格局 (論事業)</div>" +
+            "<div style='margin-bottom: 8px; color: #4a5568;'>" +
+                "<b>日主太歲：</b>" + Dizhi[tsBranch] + " (由日干 " + Tiangan[dStem] + " 轉化)<br>" +
+                "<b>年支【迎】：</b>" + Dizhi[yBranch] + " " + (hasYing ? "(距離 " + yingVal + "，屬迎方)" : "(落在送方，故無迎)") + "<br>" +
+                "<b>時支【送】：</b>" + Dizhi[hBranch] + " " + (hasSong ? "(距離 " + songVal + "，屬送方)" : "(落在迎方，故無送)") + "<br>" +
+                "<b>格局判定：</b><span style='font-size:1.1em; font-weight:700; color:#6a1b9a;'>【" + yingSongText + "】 (" + yingSongType + ")</span>" +
+            "</div>" +
+            "<ul style='list-style-type: square; color:#4a5568; padding-left: 20px; margin-top: 10px; line-height: 1.6;'>" +
+                (yingSongData[yingSongType] || "") +
+            "</ul>" +
+        "</div>";
+
+        var natalMatches = findShengJiMatches(natalPillars);
+        if (natalMatches.length > 0) {
+            html += "<div class='sheng-ji-box'>" +
+                        "<div class='sheng-ji-header'>⚠️ 原局內部觸發：五勝六忌</div>" +
+                        "<ul>";
+            natalMatches.forEach(function(m) { html += "<li>" + m + "</li>"; });
+            html += "</ul></div>";
+        }
+
+        // 2. 大運程
+        html += "<div class='section-title dayun-header'><span>【 大 運 程 】</span></div>";
+        html += "<div class='dayun-container'>";
+        
+        var dayunShengJiHtml = ""; 
+        var dayunGuanShaHtml = ""; 
+
+        for (var k = 1; k <= 11; k++) {
+            var dyS, dyB;
+            if (isForward) {
+                dyS = safeMod(mStem + k, 10);
+                dyB = safeMod(mBranch + k, 12);
+            } else {
+                dyS = safeMod(mStem - k, 10);
+                dyB = safeMod(mBranch - k, 12);
+            }
+            
+            var ageLabel = (dyStartAge + (k-1)*10) + "歲";
+            var startYear = RealBaziYear + (dyStartAge + (k-1)*10) - 1; 
+            var dyGZ_loop = Tiangan[dyS] + Dizhi[dyB];
+            var dyNaYin = getNaYin(dyS, dyB);
+            
+            html += "<div class='dayun-col'>" +
+                "<div style='font-weight:700;'>" + ageLabel + "</div>" +
+                "<div style='font-size:0.85em; color:var(--text-muted); margin-top:-3px;'>" + startYear + "年</div>" +
+                "<div>" + getShenSha(dTaiSuiBranch, dyS, true) + "</div>" +
+                "<div style='font-size:0.85em; margin-bottom: 2px; color: var(--primary-blue); font-weight: 700;'>" + getTenGod(dStem, dyS) + "</div>" +
+                "<div class='t-bold t-large'>" + Tiangan[dyS] + "<br>" + Dizhi[dyB] + "<br><span style='font-size:0.65em;font-weight:normal;color:var(--text-muted); cursor:pointer;' class='nayin-clickable' data-name='" + dyNaYin + "' title='點擊查看納音解釋'>" + dyNaYin + "</span></div>" +
+                "<div>" + getShenSha(dTaiSuiBranch, dyB, false) + "</div>" +
+                "<div style='font-size:0.8em; line-height: 1.2;'>" + getHiddenStemsHtml(dStem, dyB) + "</div>" +
+            "</div>";
+
+            var dyPillarsTest = [...natalPillars, { name: "大運", gz: dyGZ_loop, stem: dyS, branch: dyB, nayinWx: getNaYin(dyS, dyB).slice(-1) }];
+            
+            var dyM = findShengJiMatches(dyPillarsTest, true);
+            if (dyM.length > 0) {
+                dayunShengJiHtml += "<li style='margin-bottom:10px;'><b>[" + ageLabel + "大運] " + dyGZ_loop + "：</b><ul style='margin-top:4px;'>";
+                dyM.forEach(function(m) { dayunShengJiHtml += "<li>" + m + "</li>"; });
+                dayunShengJiHtml += "</ul></li>";
+            }
+            
+            var dyGsListAll = evaluateAllGuanSha(natalPillars, dyPillarsTest);
+            var dyGsListNew = dyGsListAll.filter(function(g) { return !natalGsList.includes(g); });
+            if (dyGsListNew.length > 0) {
+                dayunGuanShaHtml += "<li style='margin-bottom:10px;'><b>[" + ageLabel + "大運] " + dyGZ_loop + "：</b><div style='margin-top:6px;'>";
+                var dyGsDisplay = dyGsListNew.map(function(g) {
+                    return "<span class='sheng-ji-tag tag-gs' data-name='" + g + "' title='點擊查看【" + g + "】詳解'>" + g + "</span>";
+                }).join('');
+                dayunGuanShaHtml += dyGsDisplay;
+                dayunGuanShaHtml += "</div></li>";
+            }
+        }
+        html += "</div>";
+
+        if (dayunShengJiHtml) {
+            html += "<div class='sheng-ji-box'>" +
+                        "<div class='sheng-ji-header'>⚠️ 大運新增觸發：五勝六忌</div>" +
+                        "<ul style='list-style-type: none; padding-left: 0;'>" + dayunShengJiHtml + "</ul>" +
+                     "</div>";
+        }
+
+        if (dayunGuanShaHtml) {
+            html += "<div class='sheng-ji-box guansha'>" +
+                        "<div class='sheng-ji-header'>⚠️ 大運新增觸發：關煞 (點擊可看詳情)</div>" +
+                        "<ul style='list-style-type: none; padding-left: 0;'>" + dayunGuanShaHtml + "</ul>" +
+                     "</div>";
+        }
+
+        // 3. 獨立模組：1-100歲流年納音分析 (以八字為主體)
+        html += generateNaYinCenturyTable(RealBaziYear, dyStartAge, isForward, mStem, mBranch, natalPillars);
+
+        // 4. 流年十載詳解
+        html += "<div class='decade-wrapper'>" +
+            "<div class='decade-header'>【 " + viewStartAge + " 歲 - " + viewEndAge + " 歲 流年詳解 】</div>" +
+            "<div class='decade-content'>";
+
+        for (var age = viewStartAge; age <= viewEndAge; age++) {
+            var currentAge = (age === 0) ? 1 : age;
+            var loopY = RealBaziYear + currentAge - 1;
+            var off = safeMod(loopY - 4, 60);
+            var loopStem = off % 10;
+            var loopBranch = off % 12;
+
+            var dyStep = Math.floor((currentAge - dyStartAge) / 10) + 1;
+            if (dyStep > 11) dyStep = 11;
+            var currDyGZ = "未起運", currDyStem = -1, currDyBranch = -1;
+            
+            if (currentAge >= dyStartAge) {
+                 if (isForward) {
+                    currDyStem = safeMod(mStem + dyStep, 10);
+                    currDyBranch = safeMod(mBranch + dyStep, 12);
+                } else {
+                    currDyStem = safeMod(mStem - dyStep, 10);
+                    currDyBranch = safeMod(mBranch - dyStep, 12);
+                }
+                currDyGZ = Tiangan[currDyStem] + Dizhi[currDyBranch];
+            }
+
+            html += "<div class='liunian-details'>" +
+                "<div class='liunian-header'><span>" + loopY + "年 (" + Tiangan[loopStem] + Dizhi[loopBranch] + " / " + getNaYin(loopStem, loopBranch) + ") · " + currentAge + "歲 [大運: " + currDyGZ + "]</span></div>" +
+                "<div class='liunian-body'>" +
+                "<div class='liunian-grid'>" +
+                // 太歲入局
+                "<div>" +
+                    "<div class='subtitle red'>【太歲入局】(年支為君)</div>" +
+                    generateRowTypeA("年柱", yStem, yBranch, loopBranch) +
+                    generateRowTypeA("月柱", mStem, mBranch, loopBranch) +
+                    generateRowTypeA("日柱", dStem, dBranch, loopBranch) +
+                    generateRowTypeA("時柱", hStem, hBranch, loopBranch) +
+                    (currDyStem !== -1 ? generateRowTypeA("大運", currDyStem, currDyBranch, loopBranch) : "<div class='complex-row'><span class='label'>大運</span><span class='content' style='color:var(--text-subtle);'>未起運</span></div>") +
+                "</div>" +
+                // 串宮壓運
+                "<div>" +
+                    "<div class='subtitle green'>【串宮壓運】(日干為君)</div>" +
+                    generateListRow("流干", "(" + getTenGod(dStem, loopStem) + ") " + Tiangan[loopStem], getShenSha(dTaiSuiBranch, loopStem, true)) +
+                    generateListRow("流支", Dizhi[loopBranch] + " <span style='font-size:0.8em;font-weight:normal;color:var(--text-muted);'>(藏:" + HiddenStems[loopBranch].map(function(s){return Tiangan[s];}).join(',') + ")</span>", getShenSha(dTaiSuiBranch, loopBranch, false)) +
+                    (currDyStem !== -1 ? (
+                        generateListRow("運干", "(" + getTenGod(dStem, currDyStem) + ") " + Tiangan[currDyStem], getShenSha(dTaiSuiBranch, currDyStem, true)) +
+                        generateListRow("運支", Dizhi[currDyBranch] + " <span style='font-size:0.8em;font-weight:normal;color:var(--text-muted);'>(藏:" + HiddenStems[currDyBranch].map(function(s){return Tiangan[s];}).join(',') + ")</span>", getShenSha(dTaiSuiBranch, currDyBranch, false))
+                    ) : "") +
+                    (function() {
+                        var xxBranch = safeMod(mingBranch + yBranch - loopBranch, 12);
+                        var startStem = (loopStem % 5) * 2 + 2; 
+                        var stemDist = safeMod(xxBranch - 2, 12); 
+                        var xxStem = safeMod(startStem + stemDist, 10);
+                        return generateListRow("小限", Tiangan[xxStem] + Dizhi[xxBranch], getShenSha(dTaiSuiBranch, xxBranch, false));
+                    })() +
+                "</div>" +
+                "</div>"; 
+
+            var stemsToCount = [yStem, mStem, hStem];
+            var branchesToCount = [yBranch, mBranch, dBranch, hBranch];
+            if (currDyStem !== -1) {
+                stemsToCount.push(currDyStem);
+                branchesToCount.push(currDyBranch);
+            }
+            stemsToCount.push(loopStem);
+            branchesToCount.push(loopBranch);
+
+            var tgCounts = getTenGodsCount(dStem, stemsToCount, branchesToCount);
+
+            html += "<div class='subtitle blue'>【當局十神總結】(含原局+大運+流年地支全藏干)</div>" +
+                "<div class='ten-gods-summary'>";
+            globalTgOrder.forEach(function(tg) {
+                var count = tgCounts[tg] || 0;
+                var numColor = count > 0 ? "var(--color-red)" : "var(--text-subtle)";
+                html += "<div class='tg-item'>" +
+                    "<span class='tg-name'>" + tg + "</span>" +
+                    "<span class='tg-count' style='color: " + numColor + "'>" + count + "</span>" +
+                "</div>";
+            });
+            html += "</div>";
+
+            var lnPillarsTest = [...natalPillars];
+            if (currDyStem !== -1) {
+                lnPillarsTest.push({ name: "大運", gz: currDyGZ, stem: currDyStem, branch: currDyBranch, nayinWx: getNaYin(currDyStem, currDyBranch).slice(-1) });
+            }
+            var lnGZ = Tiangan[loopStem] + Dizhi[loopBranch];
+            lnPillarsTest.push({ name: "流年", gz: lnGZ, stem: loopStem, branch: loopBranch, nayinWx: getNaYin(loopStem, loopBranch).slice(-1) });
+
+            var lnM = findShengJiMatches(lnPillarsTest, true); 
+            if (lnM.length > 0) {
+                html += "<div class='sheng-ji-box'>" +
+                            "<div class='sheng-ji-header'>⚠️ 當局流年 / 大運新增觸發：五勝六忌</div>" +
+                            "<ul>";
+                lnM.forEach(function(m) { html += "<li>" + m + "</li>"; });
+                html += "</ul></div>";
+            }
+
+            var dyGsListAll = currDyStem !== -1 ? evaluateAllGuanSha(natalPillars, lnPillarsTest.slice(0, 5)) : natalGsList;
+            var lnGsListAll = evaluateAllGuanSha(natalPillars, lnPillarsTest);
+            var lnGsListNew = lnGsListAll.filter(function(g) { return !dyGsListAll.includes(g); });
+
+            if (lnGsListNew.length > 0) {
+                var lnGsDisplay = lnGsListNew.map(function(g) {
+                    return "<span class='sheng-ji-tag tag-gs' data-name='" + g + "' title='點擊查看【" + g + "】詳解'>" + g + "</span>";
+                }).join('');
+                html += "<div style='margin-top: 14px; padding: 12px 16px; background: #fff5f5; border: 1px dashed var(--color-red); border-radius: var(--radius-sm);'>" +
+                    "<div style='color: var(--color-red); font-weight: 700; margin-bottom: 6px; font-size:14px;'>⚠️ 當局流年新增觸發關煞 (點擊可看詳情)：</div>" +
+                    "<div>" + lnGsDisplay + "</div>" +
+                "</div>";
+            }
+
+            html += "</div></div>";
+        }
+        
+        html += "</div></div>";
+        resultArea.innerHTML = html;
+    } catch(err) {
+        alert("計算發生錯誤: " + err.message);
+        console.error(err);
+    }
+}
+
+function clearData() {
+    document.getElementById('resultArea').innerHTML = "";
+}
+
+function findShengJiMatches(pillars, excludeNatalOnly) {
+    var results = [];
+    for (var i = 0; i < pillars.length; i++) {
+        for (var j = i + 1; j < pillars.length; j++) {
+            var p1 = pillars[i];
+            var p2 = pillars[j];
+
+            if (excludeNatalOnly) {
+                var isP1Natal = ["年柱", "月柱", "日柱", "時柱"].includes(p1.name);
+                var isP2Natal = ["年柱", "月柱", "日柱", "時柱"].includes(p2.name);
+                if (isP1Natal && isP2Natal) continue; 
+            }
+
+            ShengRules.forEach(function(rule) {
+                if (rule.A.includes(p1.gz) && rule.B.includes(p2.gz)) {
+                    results.push(
+                        "<span class='sheng-ji-tag tag-sheng'>五勝</span> " +
+                        "<b>[" + p1.name + "] " + p1.gz + "</b> <span class='status-sheng'>勝</span> <b>[" + p2.name + "] " + p2.gz + "</b>" +
+                        "<span class='sheng-ji-desc'>" + rule.desc + "</span>"
+                    );
+                } else if (rule.A.includes(p2.gz) && rule.B.includes(p1.gz)) {
+                    results.push(
+                        "<span class='sheng-ji-tag tag-sheng'>五勝</span> " +
+                        "<b>[" + p2.name + "] " + p2.gz + "</b> <span class='status-sheng'>勝</span> <b>[" + p1.name + "] " + p1.gz + "</b>" +
+                        "<span class='sheng-ji-desc'>" + rule.desc + "</span>"
+                    );
+                }
+            });
+
+            JiRules.forEach(function(rule) {
+                if ((rule.A.includes(p1.gz) && rule.B.includes(p2.gz)) ||
+                    (rule.A.includes(p2.gz) && rule.B.includes(p1.gz))) {
+                    results.push(
+                        "<span class='sheng-ji-tag tag-ji'>六忌</span> " +
+                        "<b>[" + p1.name + "] " + p1.gz + "</b> 與 <b>[" + p2.name + "] " + p2.gz + "</b> <span class='status-ji'>犯忌</span>" +
+                        "<span class='sheng-ji-desc'>" + rule.desc + "</span>"
+                    );
+                }
+            });
+        }
+    }
+    return results;
+}
+
+function getTenGod(dStem, targetStem) {
+    if (dStem % 2 === 0) return TenGodsYang[safeMod(targetStem - dStem, 10)];
+    return TenGodsYin[safeMod(targetStem - dStem, 10)];
+}
+
+function getHiddenStemsHtml(dStem, branch) {
+    if (branch === undefined || branch === -1) return "";
+    var stems = HiddenStems[branch];
+    return stems.map(function(s) { 
+        return Tiangan[s] + "<span style='font-size:0.8em;color:var(--text-muted);margin-left:2px;'>" + getTenGod(dStem, s) + "</span>"; 
+    }).join("<br>");
+}
+
+function getTenGodsCount(dStem, stems, branches) {
+    var counts = {};
+    var allTG = ["比肩", "劫財", "食神", "傷官", "偏財", "正財", "七殺", "正官", "偏印", "正印"];
+    allTG.forEach(function(tg) { counts[tg] = 0; });
+
+    stems.forEach(function(s) {
+        if (s !== undefined && s !== -1) {
+            var tg = getTenGod(dStem, s);
+            counts[tg]++;
+        }
+    });
+
+    branches.forEach(function(b) {
+        if (b !== undefined && b !== -1) {
+            var hStems = HiddenStems[b];
+            hStems.forEach(function(hs) {
+                var tg = getTenGod(dStem, hs);
+                counts[tg]++;
+            });
+        }
+    });
+    return counts;
+}
+
+function getNaYin(s, b) {
+    for (var i = 0; i < 60; i++) {
+        if (i % 10 === s && i % 12 === b) {
+            var idx = Math.floor(i / 2);
+            return NaYinList[idx] || "";
+        }
+    }
+    return "";
+}
+
+function getStemMapping(s) {
+    var map = [2, 3, 5, 6, 10, 1, 8, 9, 11, 0];
+    return map[s];
+}
+
+function getShenSha(startB, target, isStem) {
+    var targetB = target;
+    if (isStem) targetB = getStemMapping(target);
+    var diff = safeMod(targetB - startB, 12);
+    var txt = ShenSha[diff];
+    return colorize(txt);
+}
+
+function colorize(txt) {
+    var cls = "c-red";
+    if (txt.includes("六合") || txt.includes("青龍") || txt.includes("官符") || txt.includes("貴神")) cls = "c-green";
+    else if (txt.includes("太歲")) cls = "c-purple";
+    return "<span class='" + cls + " shensha-clickable' data-name='" + txt + "' title='點擊查看【" + txt + "】定義詳情'>" + txt + "</span>";
+}
+
+function generateRowTypeA(title, s, b, loopB) {
+    var stemSS = getShenSha(loopB, s, true);
+    var diff = safeMod(b - loopB, 12);
+    var branchSS = ShenSha[diff];
+    var branchSSHtml = colorize(branchSS);
+
+    return "<div class='complex-row'>" +
+        "<span class='label'>" + title + "</span>" +
+        "<div class='content'>" +
+            "<span class='t-large'>" + Tiangan[s] + "<br><span style='font-size:0.8em'>" + stemSS + "</span></span>" +
+            "<span class='t-bold t-large' style='color:var(--primary-blue)'>" + Tiangan[s] + Dizhi[b] + "<br><span style='font-size:0.65em;font-weight:normal;color:var(--text-muted);'>" + getNaYin(s,b) + "</span></span>" +
+            "<span class='t-large'>" + Dizhi[b] + "<br><span style='font-size:0.8em'>" + branchSSHtml + "</span></span>" +
+        "</div>" +
+    "</div>";
+}
+
+function generateListRow(label, content, statusHtml) {
+    return "<div class='bazi-list-row'>" +
+        "<span class='label'>" + label + "</span>" +
+        "<span class='center-val'>" + content + "</span>" +
+        "<span class='status'>" + statusHtml + "</span>" +
+    "</div>";
+}
+
+function getJieQiDate(y, termIndex) {
+    var idx = termIndex;
+    if (idx < 0) idx = 0;
+    if (idx > 11) idx = idx % 12;
+    var C_Val = JieQiCVal[idx];
+    var yMod100 = y % 100;
+    var d = Math.floor(yMod100 * 0.2422 + C_Val) - Math.floor((yMod100 - 1) / 4);
+    if (d < 1) d = 1;
+    if (d > 31) d = 30;
+    return new Date(y, idx, d);
+}
+
+function getNextJieQi(d) {
+    var y = d.getFullYear();
+    for (var i = 0; i <= 11; i++) {
+        var testD = getJieQiDate(y, i);
+        if (testD > d) return testD;
+    }
+    for (var i = 0; i <= 11; i++) {
+        var testD = getJieQiDate(y + 1, i);
+        if (testD > d) return testD;
+    }
+    var fallback = new Date(d);
+    fallback.setDate(d.getDate() + 30);
+    return fallback;
+}
+
+function getPrevJieQi(d) {
+    var y = d.getFullYear();
+    for (var i = 11; i >= 0; i--) {
+        var testD = getJieQiDate(y, i);
+        if (testD <= d) return testD;
+    }
+    for (var i = 11; i >= 0; i--) {
+        var testD = getJieQiDate(y - 1, i);
+        if (testD <= d) return testD;
+    }
+    var fallback = new Date(d);
+    fallback.setDate(d.getDate() - 30);
+    return fallback;
+}
+
+function cleanGuanShaKey(rawName) {
+    var s = rawName.replace(/^[0-9]+[\.\s]*/, '');
+    s = s.replace(/\(.*?\)/g, '');
+    s = s.replace(/（.*?）/g, '');
+    return s.trim();
+}
+
+function showGuanShaInfo(gsName) {
+    var cleanKey = cleanGuanShaKey(gsName);
+    var desc = gsDescriptions[cleanKey];
+    var matchedTitle = cleanKey;
+
+    if (!desc) {
+        for (var key in gsDescriptions) {
+            if (cleanKey.includes(key) || key.includes(cleanKey)) {
+                desc = gsDescriptions[key];
+                matchedTitle = key;
+                break;
+            }
+        }
+    }
+
+    if (desc) {
+        document.getElementById('gsModalTitle').innerText = "【 " + matchedTitle + " 】私人班手稿原話庫";
+        document.getElementById('gsModalBody').innerHTML = desc;
+        document.getElementById('gsModal').style.display = 'flex';
+    } else {
+        document.getElementById('gsModalTitle').innerText = "【 " + gsName + " 】";
+        document.getElementById('gsModalBody').innerHTML = "<p style='color:var(--text-muted);'>手稿中未見此條目單獨註解。</p>";
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
+
+function showNaYinInfo(nayinName) {
+    var pureName = nayinName.trim();
+    var data = nayinExplanationData[pureName];
+    if (!data) {
+        for (var k in nayinExplanationData) {
+            if (pureName.includes(k) || k.includes(pureName)) {
+                data = nayinExplanationData[k];
+                pureName = k;
+                break;
+            }
+        }
+    }
+
+    if (data) {
+        document.getElementById('gsModalTitle').innerText = "【 納音 · " + pureName + " 】心性象意詳解";
+        var contentHtml = 
+            "<div style='font-size:13px; color:var(--text-muted); margin-bottom:12px;'><b>對應六十甲子：</b>" + data.gz + "</div>" +
+            "<div class='nayin-detail-section zhengyin'>" +
+                "<div style='font-weight:700; color:var(--color-green); margin-bottom:6px;'>正音 (陽) · 得天地能量之吉兆：</div>" +
+                "<div style='color:#2d3748;'>" + data.zhengyin + "</div>" +
+            "</div>" +
+            "<div class='nayin-detail-section shiyin'>" +
+                "<div style='font-weight:700; color:var(--color-red); margin-bottom:6px;'>失音 (陰) · 不得能量之盲點：</div>" +
+                "<div style='color:#2d3748;'>" + data.shiyin + "</div>" +
+            "</div>" +
+            "<div class='nayin-detail-section bingying'>" +
+                "<div style='font-weight:700; color:#b7791f; margin-bottom:4px;'>病應象徵：</div>" +
+                "<div style='color:#4a5568;'>" + data.bingying + "</div>" +
+            "</div>";
+        document.getElementById('gsModalBody').innerHTML = contentHtml;
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
+
+function showShenShaInfo(ssName) {
+    var cleanKey = ssName.replace(/<[^>]+>/g, '').trim();
+    var desc = shenShaDescriptions[cleanKey];
+
+    if (!desc) {
+        for (var key in shenShaDescriptions) {
+            if (cleanKey.includes(key) || key.includes(cleanKey)) {
+                desc = shenShaDescriptions[key];
+                cleanKey = key;
+                break;
+            }
+        }
+    }
+
+    if (desc) {
+        document.getElementById('gsModalTitle').innerText = "【 日家神煞 · " + cleanKey + " 】先秦日者/陰陽家手稿全解";
+        document.getElementById('gsModalBody').innerHTML = desc;
+        document.getElementById('gsModal').style.display = 'flex';
+    }
+}
+
+function closeModal(event) {
+    document.getElementById('gsModal').style.display = 'none';
+}
+
+// 點擊事件委派 (完全支援關煞、納音、神煞所有彈窗觸發)
+document.addEventListener('click', function(e) {
+    var target = e.target;
+    if (target.classList.contains('tag-gs')) {
+        var name = target.getAttribute('data-name');
+        if (name) {
+            showGuanShaInfo(name);
+        } else {
+            showGuanShaInfo(target.innerText.trim());
+        }
+    } else if (target.classList.contains('nayin-clickable')) {
+        var name = target.getAttribute('data-name');
+        if (name) {
+            showNaYinInfo(name);
+        } else {
+            showNaYinInfo(target.innerText.replace('🔍', '').trim());
+        }
+    } else if (target.classList.contains('shensha-clickable')) {
+        var name = target.getAttribute('data-name');
+        if (name) {
+            showShenShaInfo(name);
+        } else {
+            showShenShaInfo(target.innerText.trim());
+        }
+    }
+});
+</script>
+
+</body>
+</html>
