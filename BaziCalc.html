@@ -272,6 +272,20 @@
             letter-spacing: 1px;
         }
 
+        /* 藏干細字樣式 */
+        .hidden-item {
+            font-size: 0.95em;
+            line-height: 1.45;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .hidden-tg {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            font-weight: normal;
+            margin-left: 2px;
+        }
+
         /* 顏色規格 */
         .color-green { color: var(--color-green); font-weight: 800; }
         .color-purple { color: var(--color-purple); font-weight: 800; }
@@ -508,6 +522,23 @@
 
     const TenGodsYang = "比肩,劫財,食神,傷官,偏財,正財,七殺,正官,偏印,正印".split(",");
     const TenGodsYin = "比肩,傷官,食神,正財,偏財,正官,七殺,正印,偏印,劫財".split(",");
+    
+    // 完整地支藏干表 (包含本氣、中氣、餘氣)
+    const FullHiddenStems = [
+        [9],          // 子: 癸
+        [5, 9, 7],    // 丑: 己, 癸, 辛
+        [0, 2, 4],    // 寅: 甲, 丙, 戊
+        [1],          // 卯: 乙
+        [4, 1, 9],    // 辰: 戊, 乙, 癸
+        [2, 4, 6],    // 巳: 丙, 戊, 庚
+        [3, 5],       // 午: 丁, 己
+        [5, 3, 1],    // 未: 己, 丁, 乙
+        [6, 8, 4],    // 申: 庚, 壬, 戊
+        [7],          // 酉: 辛
+        [4, 7, 3],    // 戌: 戊, 辛, 丁
+        [8, 0]        // 亥: 壬, 甲
+    ];
+
     const BranchMainQi = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8]; // 子(9=癸)...
     
     // 簡易節氣C值
@@ -714,13 +745,13 @@
             </tr>
             <tr>
                 <td>藏干</td>
-                <td>${getBranchTenGod(dS, hB)}</td>
-                <td>${getBranchTenGod(dS, dB)}</td>
-                <td>${getBranchTenGod(dS, mB)}</td>
-                <td>${getBranchTenGod(dS, yB)}</td>
-                <td>${getBranchTenGod(dS, tB)}</td>
-                <td>${getBranchTenGod(dS, mnB)}</td>
-                <td>${getBranchTenGod(dS, ssB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, hB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, dB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, mB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, yB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, tB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, mnB)}</td>
+                <td>${getAllHiddenStemsHTML(dS, ssB)}</td>
             </tr>
         </table>`;
         
@@ -902,9 +933,19 @@
         return TenGodsYin[idx];
     }
     
+    // 單一本氣十神（流年流支顯示用）
     function getBranchTenGod(dStem, branch) {
         let mainS = BranchMainQi[branch];
         return getTenGod(dStem, mainS);
+    }
+
+    // 原局地支所有藏干及十神
+    function getAllHiddenStemsHTML(dStem, branch) {
+        if (branch === undefined || branch === -1) return "";
+        let stems = FullHiddenStems[branch];
+        return stems.map(s => {
+            return `<div class="hidden-item">${Tiangan[s]}<span class="hidden-tg">${getTenGod(dStem, s)}</span></div>`;
+        }).join("");
     }
     
     function getNaYin(s, b) {
