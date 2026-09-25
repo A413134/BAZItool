@@ -1,56 +1,146 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KK子平八字 - 神煞排盤 (小限公式優化版)</title>
+    <title>子平八字 - 神煞排盤 (現代UI雙色切換版)</title>
     <style>
+        /* 淺色（預設）變數 */
         :root {
-            --bg-color: #f5f7fa;
-            --header-bg: #2c3e50;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --border-color: #bdc3c7;
-            --accent-blue: #3498db;
-            --accent-purple: #9b59b6;
-            --accent-dark: #34495e;
-            --font-main: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            --bg-base: #f1f4f8;
+            --surface-white: #ffffff;
+            --surface-card: #f8fafc;
+            --surface-subtle: #edf2f7;
+            
+            --primary-navy: #0f172a;
+            --primary-accent: #2563eb;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+
+            --color-green: #15803d;
+            --color-purple: #7e22ce;
+            --color-red: #b91c1c;
+
+            --input-bg: #ffffff;
+            --table-alt-bg: #f8fafc;
+            --card-hover-bg: #ffffff;
+
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            
+            --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05);
+            --shadow-card: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
         }
 
+        /* 暗黑版本樣式 (切換 data-theme="dark") */
+        [data-theme="dark"] {
+            --bg-base: #0d1117;
+            --surface-white: #161b22;
+            --surface-card: #21262d;
+            --surface-subtle: #30363d;
+            
+            --primary-navy: #58a6ff;
+            --primary-accent: #388bfd;
+            --border-light: #30363d;
+            --border-medium: #484f58;
+            
+            --text-heading: #f0f6fc;
+            --text-body: #c9d1d9;
+            --text-muted: #8b949e;
+            --text-light: #6e7681;
+
+            --color-green: #3fb950;
+            --color-purple: #bc8cff;
+            --color-red: #ff7b72;
+
+            --input-bg: #0d1117;
+            --table-alt-bg: #12161f;
+            --card-hover-bg: #1c2128;
+
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background-color: var(--bg-base);
             margin: 0;
-            padding: 20px;
-            color: var(--text-color);
+            padding: 32px 16px;
+            color: var(--text-body);
+            line-height: 1.65;
+            transition: background-color 0.25s ease, color 0.25s ease;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1040px;
             margin: 0 auto;
-            background: var(--card-bg);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
+            background: var(--surface-white);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            transition: background-color 0.25s ease, border-color 0.25s ease;
         }
 
-        /* 標題區 */
-        .main-header {
-            background-color: var(--header-bg);
-            color: white;
-            text-align: center;
-            padding: 20px;
+        /* 標題與主題按鈕列 */
+        .header-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.25);
+            border: 1px solid var(--border-light);
         }
-        .main-header h1 { margin: 0; font-size: 26px; letter-spacing: 2px; }
 
-        /* 輸入區 */
+        .main-header-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin: 0;
+        }
+
+        .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+            transform: scale(1.03);
+        }
+
+        /* 輸入區塊 */
         .input-section {
-            padding: 20px;
-            background-color: #ecf0f1;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            border-bottom: 2px solid var(--border-color);
+            gap: 16px;
+            background-color: var(--surface-card);
+            padding: 24px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
         }
 
         .form-group {
@@ -59,163 +149,240 @@
         }
 
         .form-group label {
-            font-size: 14px;
-            color: #606060;
-            margin-bottom: 5px;
-            font-weight: bold;
+            font-size: 12.5px;
+            margin-bottom: 7px;
+            color: var(--text-muted);
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
 
         .form-group input, .form-group select {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 14.5px;
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-sm);
             text-align: center;
-            font-family: var(--font-main);
+            font-weight: 700;
+            background: var(--input-bg);
+            color: var(--text-heading);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
         }
 
         .btn-group {
             grid-column: 1 / -1;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 16px;
             margin-top: 10px;
+            padding-top: 18px;
+            border-top: 1px dashed var(--border-light);
         }
 
-        button {
-            padding: 12px 30px;
-            font-size: 16px;
+        button.btn-run, button.btn-clear {
+            padding: 12px 38px;
+            font-size: 14.5px;
+            font-weight: 700;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-weight: bold;
-            color: white;
-            transition: opacity 0.3s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 2px;
         }
 
-        .btn-run { background-color: #2980b9; }
-        .btn-clear { background-color: #95a5a6; }
-        button:hover { opacity: 0.9; }
+        .btn-run {
+            background: linear-gradient(135deg, #1f6feb, #238636);
+            color: white;
+        }
+        .btn-clear {
+            background: var(--surface-subtle);
+            color: var(--text-muted);
+            border: 1px solid var(--border-medium);
+        }
+        button:hover { 
+            transform: translateY(-1.5px); 
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2); 
+        }
+        button:active { transform: translateY(0); }
 
-        /* 排盤結果區 */
-        .result-section { padding: 20px; }
+        /* 結果展示標題 */
+        .result-section { padding-top: 10px; }
 
         .section-title {
-            padding: 10px 15px;
+            padding: 13px 20px;
+            font-size: 14.5px;
+            font-weight: 800;
             color: white;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 30px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-subtle);
         }
 
-        .title-yuanju { background-color: var(--accent-blue); }
-        .title-dayun { background-color: var(--accent-purple); }
-        .title-liunian { background-color: var(--accent-dark); }
+        .title-yuanju { background: linear-gradient(135deg, #1e293b, #334155); }
+        .title-dayun { background: linear-gradient(135deg, #334155, #475569); }
+        .title-liunian { background: linear-gradient(135deg, #0f172a, #1e293b); }
 
-        /* 表格樣式 */
+        /* 表格微架構 */
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13.5px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            background: var(--surface-white);
+            box-shadow: var(--shadow-subtle);
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            padding: 12px 10px;
             vertical-align: middle;
         }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
 
-        .highlight-bg { background-color: #ecf0f1; font-weight: bold; font-size: 1.2em; color: #2c3e50; }
-        
-        /* 顏色類別 */
-        .color-green { color: #009600; font-weight: bold; }
-        .color-purple { color: #9b59b6; font-weight: bold; }
-        .color-red { color: #e74c3c; font-weight: bold; }
-        .text-gray { color: #7f8c8d; }
+        th { 
+            background-color: var(--surface-card); 
+            color: var(--text-muted); 
+            font-weight: 700;
+            font-size: 12.5px;
+        }
+
+        .highlight-bg { 
+            background-color: var(--table-alt-bg); 
+            font-size: 1.3em; 
+            font-weight: 800; 
+            color: var(--text-heading); 
+            letter-spacing: 1px;
+        }
+
+        /* 顏色規格 */
+        .color-green { color: var(--color-green); font-weight: 800; }
+        .color-purple { color: var(--color-purple); font-weight: 800; }
+        .color-red { color: var(--color-red); font-weight: 800; }
+        .text-gray { color: var(--text-muted); }
         .text-bold { font-weight: bold; }
 
         /* 大運捲動區 */
         .dayun-container {
             overflow-x: auto;
-        }
-        .dayun-table td { white-space: nowrap; }
-
-        /* 流年卡片與分隔線設計 */
-        .liunian-card {
-            border: 1px solid #ccc;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            background: var(--surface-white);
+            box-shadow: var(--shadow-subtle);
             margin-bottom: 20px;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .dayun-container table {
+            border: none;
+            margin-bottom: 0;
+        }
+        .dayun-table td, .dayun-table th { white-space: nowrap; }
+
+        /* 流年卡片與網格 */
+        .liunian-card {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 22px;
+            background: var(--surface-white);
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden;
         }
         .liunian-header {
-            background-color: var(--accent-dark);
-            color: white;
-            padding: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        
-        .liunian-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 左右各半 */
-            gap: 0; /* 移除間距，讓邊框可以相連 */
+            background-color: var(--surface-subtle);
+            color: var(--text-heading);
+            padding: 12px 20px;
+            font-size: 14.5px;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-light);
+            letter-spacing: 0.3px;
         }
 
-        /* 左右欄位的樣式 */
-        .liunian-col {
-            padding: 15px; /* 增加內距 */
+        .liunian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 20px;
         }
-        
-        /* 左側欄位：加上右邊框作為分隔線 */
+
+        .liunian-col {
+            padding: 0;
+        }
+
         .liunian-left {
-            border-right: 2px dashed #dcdcdc;
+            border-right: 1px dashed var(--border-medium);
+            padding-right: 24px;
         }
 
         .sub-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-            font-size: 1.05em;
+            font-size: 13.5px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            border-bottom: 2px solid var(--border-light);
+            padding-bottom: 6px;
+            letter-spacing: 0.5px;
         }
+        .red-text { color: var(--color-red); }
+        .green-text { color: var(--color-green); }
 
-        .red-text { color: #c0392b; }
-        .green-text { color: #27ae60; }
-        
         .row-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #f8f8f8;
-            padding: 8px 0;
-            font-size: 14px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            font-size: 13.5px;
+            transition: all 0.15s ease;
         }
-        .row-item .label { width: 15%; color: #888; text-align: left; }
-        .row-item .gan-shen { width: 25%; font-size: 0.9em; text-align: center; }
-        .row-item .gan-zhi { width: 20%; font-weight: bold; font-size: 1.1em; text-align: center; }
-        .row-item .zhi-shen { width: 40%; font-size: 0.9em; text-align: right; }
-        
-        /* 隱藏元素 */
+        .row-item:hover {
+            background: var(--card-hover-bg);
+            border-color: var(--border-medium);
+        }
+        .row-item .label { width: 15%; color: var(--text-muted); text-align: left; font-weight: 700; font-size: 12.5px; }
+        .row-item .gan-shen { width: 25%; font-size: 0.95em; text-align: center; }
+        .row-item .gan-zhi { width: 25%; font-weight: 800; font-size: 1.15em; text-align: center; color: var(--text-heading); }
+        .row-item .zhi-shen { width: 35%; font-size: 0.95em; text-align: right; }
+
         .hidden { display: none; }
-        
-        /* 手機版響應式 */
+
         @media (max-width: 768px) {
-            .liunian-grid { grid-template-columns: 1fr; }
+            .liunian-grid { grid-template-columns: 1fr; gap: 16px; }
             .liunian-left { 
                 border-right: none; 
-                border-bottom: 2px dashed #dcdcdc; /* 手機版改為水平分隔線 */
+                border-bottom: 1px dashed var(--border-medium);
+                padding-right: 0;
+                padding-bottom: 20px;
             }
+            .container { padding: 20px 14px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="main-header">
-        <h1>K K 子 平 八 字 | 神 煞 排 盤</h1>
+    <div class="header-wrap">
+        <h1 class="main-header-title">K K 子 平 八 字 | 神 煞 排 盤</h1>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeBtn">
+            <span id="themeIcon">🌙</span> <span id="themeLabel">暗黑模式</span>
+        </button>
     </div>
 
     <div class="input-section">
@@ -286,6 +453,38 @@
 
 <script>
     // ==========================================
+    //  主題模式管理 (Light / Dark)
+    // ==========================================
+    function initTheme() {
+        let savedTheme = localStorage.getItem('kk_bazi_theme') || 'light';
+        applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('kk_bazi_theme', theme);
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        if (theme === 'dark') {
+            if (icon) icon.innerText = '☀️';
+            if (label) label.innerText = '淺色模式';
+        } else {
+            if (icon) icon.innerText = '🌙';
+            if (label) label.innerText = '暗黑模式';
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+    }
+
+    window.onload = function() {
+        initTheme();
+    };
+
+    // ==========================================
     //  全域資料 (Global Variables)
     // ==========================================
     const Tiangan = "甲,乙,丙,丁,戊,己,庚,辛,壬,癸".split(",");
@@ -351,7 +550,6 @@
         document.getElementById('outputArea').classList.remove('hidden');
 
         // --- 1. 計算四柱 ---
-        // 簡易立春邏輯
         let yStem, yBranch;
         let realBaziYear = y;
         
@@ -474,51 +672,52 @@
     // ==========================================
     //  渲染函數 (Rendering)
     // ==========================================
-   function renderYuanJu(yS, yB, mS, mB, dS, dB, hS, hB, tS, tB, mnS, mnB, ssS, ssB, infoStr, age, mins) {
+    function renderYuanJu(yS, yB, mS, mB, dS, dB, hS, hB, tS, tB, mnS, mnB, ssS, ssB, infoStr, age, mins) {
         const div = document.getElementById('yuanJuArea');
         const days = (mins / 1440).toFixed(1);
         
         let html = `<div class="section-title title-yuanju">【 原 局 命 盤 】 ${infoStr} ${days}天交運 (${age}歲起運)</div>`;
         
+        /* 四柱由右至左排列：時柱、日柱、月柱、年柱 */
         html += `<table>
             <tr class="text-gray">
-                <th></th><th>年柱</th><th>月柱</th><th>日柱</th><th>時柱</th>
+                <th></th><th>時柱</th><th>日柱</th><th>月柱</th><th>年柱</th>
                 <th>胎元</th><th>命宮</th><th>身宮</th>
             </tr>
             <tr>
                 <td>十神</td>
-                <td>${getTenGod(dS, yS)}</td>
-                <td>${getTenGod(dS, mS)}</td>
-                <td>【日主】</td>
                 <td>${getTenGod(dS, hS)}</td>
+                <td>【日主】</td>
+                <td>${getTenGod(dS, mS)}</td>
+                <td>${getTenGod(dS, yS)}</td>
                 <td>${getTenGod(dS, tS)}</td>
                 <td>${getTenGod(dS, mnS)}</td>
                 <td>${getTenGod(dS, ssS)}</td>
             </tr>
             <tr>
                 <td>串宮(干)</td>
-                ${generateShenShaCells(dS, [yS, mS, -1, hS, tS, mnS, ssS], true)}
+                ${generateShenShaCells(dS, [hS, -1, mS, yS, tS, mnS, ssS], true)}
             </tr>
             <tr class="highlight-bg">
                 <td>干支/納音</td>
-                <td>${getGZNY(yS, yB)}</td>
-                <td>${getGZNY(mS, mB)}</td>
-                <td>${getGZNY(dS, dB)}</td>
                 <td>${getGZNY(hS, hB)}</td>
+                <td>${getGZNY(dS, dB)}</td>
+                <td>${getGZNY(mS, mB)}</td>
+                <td>${getGZNY(yS, yB)}</td>
                 <td>${getGZNY(tS, tB)}</td>
                 <td>${getGZNY(mnS, mnB)}</td>
                 <td>${getGZNY(ssS, ssB)}</td>
             </tr>
             <tr>
                 <td>串宮(支)</td>
-                ${generateShenShaCells(dS, [yB, mB, dB, hB, tB, mnB, ssB], false)}
+                ${generateShenShaCells(dS, [hB, dB, mB, yB, tB, mnB, ssB], false)}
             </tr>
-             <tr>
+            <tr>
                 <td>藏干</td>
-                <td>${getBranchTenGod(dS, yB)}</td>
-                <td>${getBranchTenGod(dS, mB)}</td>
-                <td>${getBranchTenGod(dS, dB)}</td>
                 <td>${getBranchTenGod(dS, hB)}</td>
+                <td>${getBranchTenGod(dS, dB)}</td>
+                <td>${getBranchTenGod(dS, mB)}</td>
+                <td>${getBranchTenGod(dS, yB)}</td>
                 <td>${getBranchTenGod(dS, tB)}</td>
                 <td>${getBranchTenGod(dS, mnB)}</td>
                 <td>${getBranchTenGod(dS, ssB)}</td>
@@ -602,21 +801,13 @@
                 currDyStr = Tiangan[currDyStem] + Dizhi[currDyBranch];
             }
 
-            // ==========================================
-            // 優化：小限計算 (嚴格吻合圖片公式)
-            // ==========================================
-            
-            // 1. 小限地支：(命宮地支 + 生年地支 - 流年地支)
-            // 利用陣列索引 (0=子, 1=丑...) 進行同餘運算，免去繁瑣的數值轉換與 while 迴圈
+            // 1. 小限地支
             let xxBranch = (mingBranch + yB - loopBranch + 12) % 12;
 
-            // 2. 小限天干：五虎遁年法 (以「流年天干」起寅)
-            // 公式：計算流年起寅的天干，再加上小限地支距離寅的偏移值
-            let startStem = (loopStem % 5) * 2 + 2; // 該年寅月的天干
-            let stemDist = (xxBranch - 2 + 12) % 12; // 小限地支距離寅的距離
+            // 2. 小限天干：五虎遁年法
+            let startStem = (loopStem % 5) * 2 + 2;
+            let stemDist = (xxBranch - 2 + 12) % 12;
             let xxStem = (startStem + stemDist) % 10;
-            
-            // ==========================================
 
             let card = document.createElement('div');
             card.className = "liunian-card";
@@ -684,7 +875,7 @@
         return `<div class="row-item">
             <span class="label">${title}</span>
             <span class="gan-shen">${colorize(stemSS)}</span>
-            <span class="gan-zhi">${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.8em;font-weight:normal">${getNaYin(s,b)}</span></span>
+            <span class="gan-zhi">${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.75em;font-weight:normal;color:var(--text-muted);">${getNaYin(s,b)}</span></span>
             <span class="zhi-shen">${colorize(branchSS)}</span>
         </div>`;
     }
@@ -726,7 +917,7 @@
     }
     
     function getGZNY(s, b) {
-        return `${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.8em">${getNaYin(s,b)}</span>`;
+        return `${Tiangan[s]}${Dizhi[b]}<br><span style="font-size:0.75em;font-weight:normal;color:var(--text-muted);">${getNaYin(s,b)}</span>`;
     }
 
     function getStemMapping(s) {
