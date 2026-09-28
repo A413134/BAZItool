@@ -399,9 +399,17 @@
         liuyueActive: true
     };
 
+    // 新增：原命局查照來源柱位自由開關設定
+    let pillarConfig = {
+        year: true,
+        month: true,
+        day: true,
+        hour: true
+    };
+
     let onlyShowDayunBaziInLiunian = false;
     let onlyShowExistingShensha = false;
-    let yeziShiftDay = true; // 夜子時是否換日（進一日）
+    let yeziShiftDay = true;
 
     function initSettings() {
         const panel = document.getElementById('settingsPanel');
@@ -411,6 +419,15 @@
         });
         html += '</div>';
         
+        // 增設：原命局查神煞來源柱位選項
+        html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">原命局查神煞來源柱位</div>';
+        html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">';
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('year', this.checked)"><span>年柱 (年干/支)</span></label>`;
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('month', this.checked)"><span>月柱 (月干/支)</span></label>`;
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('day', this.checked)"><span>日柱 (日干/支)</span></label>`;
+        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('hour', this.checked)"><span>時柱 (時干/支)</span></label>`;
+        html += '</div>';
+
         html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">交互顯示與曆法設定</div>';
         html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">';
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('dayunActive', this.checked)"><span>大運照入原局</span></label>`;
@@ -437,6 +454,12 @@
         refreshDisplay();
     }
 
+    // 柱位開關切換函數
+    function togglePillarSource(pillar, isChecked) {
+        pillarConfig[pillar] = isChecked;
+        refreshDisplay();
+    }
+
     function toggleYeziShift(isChecked) {
         yeziShiftDay = isChecked;
         calculate();
@@ -452,6 +475,30 @@
         refreshDisplay();
     }
 
+    // 獲取目前選中啟用的「原局查照來源」列表
+    function getSelectedPillarSources() {
+        const d = currentBaziData;
+        let sources = [];
+        if (pillarConfig.year) {
+            sources.push({ name: "年支", branch: d.yBranch, rules: getBranchRules(d.yBranch) });
+            sources.push({ name: "年干", stem: d.yStem, rules: getStemRules(d.yStem) });
+        }
+        if (pillarConfig.month) {
+            sources.push({ name: "月支", branch: d.mBranch, rules: getBranchRules(d.mBranch) });
+            sources.push({ name: "月干", stem: d.mStem, rules: getStemRules(d.mStem) });
+        }
+        if (pillarConfig.day) {
+            sources.push({ name: "日支", branch: d.dBranch, rules: getBranchRules(d.dBranch) });
+            sources.push({ name: "日干", stem: d.dStem, rules: getStemRules(d.dStem) });
+        }
+        if (pillarConfig.hour) {
+            if (d.hBranch !== -1) sources.push({ name: "時支", branch: d.hBranch, rules: getBranchRules(d.hBranch) });
+            if (d.hStem !== -1) sources.push({ name: "時干", stem: d.hStem, rules: getStemRules(d.hStem) });
+        }
+        return sources;
+    }
+
+    // 計算「八字原局 + 當前大運」實質擁有的神煞名稱白名單（嚴格受柱位開關控制）
     function getBaziAndDayunActiveNames(dyIdx) {
         const activeNames = new Set();
         const d = currentBaziData;
@@ -460,28 +507,20 @@
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
         if (d.hBranch !== -1) baziBranches.push(d.hBranch);
 
-        let baziSources = [
-            { t: 'stem', v: d.dStem },
-            { t: 'branch', v: d.yBranch },
-            { t: 'branch', v: d.mBranch },
-            { t: 'branch', v: d.dBranch }
-        ];
-        if (d.hStem !== -1) baziSources.push({ t: 'stem', v: d.hStem });
-        if (d.hBranch !== -1) baziSources.push({ t: 'branch', v: d.hBranch });
-
+        // 原局內部查
+        let baziSources = getSelectedPillarSources();
         baziSources.forEach(src => {
-            let rules = src.t === 'stem' ? getStemRules(src.v) : getBranchRules(src.v);
-            rules.filter(r => shenshaConfig[r.name]).forEach(r => {
+            src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                 r.targets.forEach(tgt => {
                     if (baziBranches.includes(tgt)) activeNames.add(r.name);
                 });
             });
         });
 
+        // 大運互動
         if (dy) {
             baziSources.forEach(src => {
-                let rules = src.t === 'stem' ? getStemRules(src.v) : getBranchRules(src.v);
-                rules.filter(r => shenshaConfig[r.name]).forEach(r => {
+                src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(dy.branch)) activeNames.add(r.name);
                 });
             });
@@ -827,23 +866,17 @@
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
 
             let yearShenshas = [];
-            let baziSrcs = [
-                { r: getBranchRules(d.yBranch) },
-                { r: getBranchRules(d.mBranch) },
-                { r: getBranchRules(d.dBranch) },
-                { r: getStemRules(d.dStem) }
-            ];
-            if (d.hBranch !== -1) baziSrcs.push({ r: getBranchRules(d.hBranch) });
-            if (d.hStem !== -1) baziSrcs.push({ r: getStemRules(d.hStem) });
-
+            // 原局查流年支（受柱位開關控制）
+            let baziSrcs = getSelectedPillarSources();
             baziSrcs.forEach(src => {
-                src.r.filter(r => shenshaConfig[r.name]).forEach(r => {
+                src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(b) && !yearShenshas.includes(r.name)) {
                         yearShenshas.push(r.name);
                     }
                 });
             });
 
+            // 流年照入原局
             let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
             if (d.hBranch !== -1) baziBranches.push(d.hBranch);
 
@@ -908,7 +941,7 @@
         document.getElementById('starModalOverlay').style.display = 'none';
     }
 
-    // 垂直流月神煞列表 (含精確白名單過濾、年份跨度修復)
+    // 垂直流月神煞列表 (含柱位開關連動、精確白名單過濾)
     function renderVerticalMonthTable(ln, dyIdx) {
         const section = document.getElementById('verticalMonthSection');
         const tbody = document.getElementById('vMonthTableBody');
@@ -930,12 +963,10 @@
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
         if (d.hBranch !== -1) baziBranches.push(d.hBranch);
         
-        [
-            getBranchRules(d.yBranch), getBranchRules(d.mBranch), getBranchRules(d.dBranch), getStemRules(d.dStem),
-            ...(d.hBranch !== -1 ? [getBranchRules(d.hBranch)] : []),
-            ...(d.hStem !== -1 ? [getStemRules(d.hStem)] : [])
-        ].forEach(rules => {
-            rules.filter(r => shenshaConfig[r.name]).forEach(r => {
+        // 原局查流年支（受柱位開關控制）
+        let baziSrcs = getSelectedPillarSources();
+        baziSrcs.forEach(src => {
+            src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                 if (r.targets.includes(ln.branch)) allowedShenshaSet.add(r.name);
             });
         });
@@ -953,24 +984,14 @@
             let nayin = getNaYin(mStem, mBranch);
             let kwText = getKongWangText(mStem, mBranch);
 
-            // 修正跨年年份顯示標籤
             let displayPeriod = basePeriods[m];
             if (m === 10) displayPeriod = `${ln.year}年12月 - ${ln.year + 1}年1月`;
             if (m === 11) displayPeriod = `${ln.year + 1}年 1-2月`;
 
             let monthShenshas = [];
 
-            // 1. 原局查流月地支
-            let sources = [
-                { name: "年支", branch: d.yBranch, rules: getBranchRules(d.yBranch) },
-                { name: "月支", branch: d.mBranch, rules: getBranchRules(d.mBranch) },
-                { name: "日支", branch: d.dBranch, rules: getBranchRules(d.dBranch) },
-                { name: "日干", stem: d.dStem, rules: getStemRules(d.dStem) }
-            ];
-            if (d.hBranch !== -1) sources.push({ name: "時支", branch: d.hBranch, rules: getBranchRules(d.hBranch) });
-            if (d.hStem !== -1) sources.push({ name: "時干", stem: d.hStem, rules: getStemRules(d.hStem) });
-
-            sources.forEach(src => {
+            // 1. 原局查流月地支（受柱位開關控制）
+            baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(mBranch)) {
                         monthShenshas.push({ name: r.name, rawName: r.name, from: src.name, style: getSrcStyle(src.name) });
@@ -1004,7 +1025,7 @@
                 });
             }
 
-            // 4. 流月干支照入原局 (受 interactionConfig.liuyueActive 開關控制)
+            // 4. 流月干支照入原局
             if (interactionConfig.liuyueActive) {
                 let pillars = [{n:"年支", i:d.yBranch}, {n:"月支", i:d.mBranch}, {n:"日支", i:d.dBranch}, {n:"時支", i:d.hBranch}];
                 getStemRules(mStem).filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -1090,24 +1111,35 @@
             </div>`;
         };
 
-        addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
-        addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch));
-        addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch));
-        addGroup("日干", Tiangan[d.dStem], getStemRules(d.dStem));
-        if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch));
-        if (d.hStem !== -1) addGroup("時干", Tiangan[d.hStem], getStemRules(d.hStem));
+        // 1. 原局查找（受柱位開關自由控制）
+        if (pillarConfig.year) {
+            addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
+            addGroup("年干", Tiangan[d.yStem], getStemRules(d.yStem));
+        }
+        if (pillarConfig.month) {
+            addGroup("月支", Dizhi[d.mBranch], getBranchRules(d.mBranch));
+            addGroup("月干", Tiangan[d.mStem], getStemRules(d.mStem));
+        }
+        if (pillarConfig.day) {
+            addGroup("日支", Dizhi[d.dBranch], getBranchRules(d.dBranch));
+            addGroup("日干", Tiangan[d.dStem], getStemRules(d.dStem));
+        }
+        if (pillarConfig.hour) {
+            if (d.hBranch !== -1) addGroup("時支", Dizhi[d.hBranch], getBranchRules(d.hBranch));
+            if (d.hStem !== -1) addGroup("時干", Tiangan[d.hStem], getStemRules(d.hStem));
+        }
 
+        // 2. 大運互動（查照來源同樣受柱位開關控制）
         if (dy) {
             let dayunGroupStyle = getSrcStyle("大運支");
+            let baziSrcs = getSelectedPillarSources();
             
-            let passiveRules = [
-                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日支"})),
-                ...getStemRules(d.dStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"日干"})),
-                ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(dy.branch)).map(r => ({...r, src:"時支"})) : [])
-            ];
+            let passiveRules = [];
+            baziSrcs.forEach(src => {
+                src.rules.filter(r => r.targets.includes(dy.branch)).forEach(r => {
+                    passiveRules.push({ ...r, src: src.name });
+                });
+            });
             
             passiveRules = passiveRules.filter(r => shenshaConfig[r.name]);
 
@@ -1157,18 +1189,18 @@
             }
         }
 
+        // 3. 流年互動（原局查照來源受柱位開關控制）
         if (currentLiunian) {
             const ln = currentLiunian;
             let liunianGroupStyle = getSrcStyle("流年支");
+            let baziSrcs = getSelectedPillarSources();
             
-            let lnPassiveRules = [
-                ...getBranchRules(d.yBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"年支"})),
-                ...getBranchRules(d.mBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"月支"})),
-                ...getBranchRules(d.dBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日支"})),
-                ...getStemRules(d.dStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"日干"})),
-                ...((d.hStem !== -1) ? getStemRules(d.hStem).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時干"})) : []),
-                ...((d.hBranch !== -1) ? getBranchRules(d.hBranch).filter(r => r.targets.includes(ln.branch)).map(r => ({...r, src:"時支"})) : [])
-            ];
+            let lnPassiveRules = [];
+            baziSrcs.forEach(src => {
+                src.rules.filter(r => r.targets.includes(ln.branch)).forEach(r => {
+                    lnPassiveRules.push({ ...r, src: src.name });
+                });
+            });
 
             lnPassiveRules = lnPassiveRules.filter(r => shenshaConfig[r.name]);
 
