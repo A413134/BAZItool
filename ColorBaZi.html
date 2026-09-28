@@ -757,6 +757,14 @@
             <label>出生時 (0-23)</label>
             <input type="number" id="inpHour" value="12">
         </div>
+        <div class="input-group">
+            <label>子時設定 (23:00-0:59)</label>
+            <select id="inpZiMode">
+                <option value="0" selected>夜子屬當日 (不換日)</option>
+                <option value="1">23時換日 (算入明日)</option>
+                <option value="2">區分早夜子 (日當日/時明日)</option>
+            </select>
+        </div>
     </div>
 
     <div id="ganzhi-inputs" class="input-section" style="display:none;">
@@ -1284,7 +1292,7 @@ const gsDescriptions = {
         <li><b>大運/流年見之：</b>意志消沉挫敗，提不起勁，或易遇白事喪事影響情緒消極。</li>
     </ul>`,
     "撞命關": `<ul>
-        <li>爭拗，與家人易有衝突，關係較差，相剋。手腳筋腱關節易碰傷跌傷瘀青。</li>
+        <li>爭拗，Config與家人易有衝突，關係較差，相剋。手腳筋腱關節易碰傷跌傷瘀青。</li>
         <li>幼年若隨父母背祖離鄉或自幼由祖輩隔代撫養則可應劫化解。</li>
         <li>工作社交上容易遇到非常照顧自己的長輩（父母替代品）。</li>
         <li><b>月柱：</b>朋友多移居外國（不在身邊），兄弟疏離。</li>
@@ -2086,16 +2094,38 @@ function runCalculation() {
         const m = parseInt(document.getElementById('inpMonth').value);
         const d = parseInt(document.getElementById('inpDay').value);
         const h = parseInt(document.getElementById('inpHour').value);
+        
+        let ziMode = "0"; // 0:夜子當日, 1:23時換日, 2:早夜子
+        if(document.getElementById('inpZiMode')){
+            ziMode = document.getElementById('inpZiMode').value;
+        }
 
         if (!y || isNaN(y)) { alert("請輸入正確年份"); return; }
+
+        let dayPillarOffset = 0;
+        let hourStemOffset = 0;
+        
+        if (h >= 23) {
+            if (ziMode === "1") {
+                dayPillarOffset = 1;
+                hourStemOffset = 1;
+            } else if (ziMode === "2") {
+                dayPillarOffset = 0;
+                hourStemOffset = 1;
+            } else {
+                dayPillarOffset = 0;
+                hourStemOffset = 0;
+            }
+        }
+
+        // 以真實時間判斷節氣
+        bDate = new Date(y, m - 1, d, h); 
+        const liChunDate = getJieQiDate(y, 1); 
 
         let offY = safeMod(y - 4, 60);
         yStem = offY % 10;
         yBranch = offY % 12;
         RealBaziYear = y;
-
-        bDate = new Date(y, m - 1, d, h); 
-        const liChunDate = getJieQiDate(y, 1); 
 
         if (bDate < liChunDate) {
             yStem = safeMod(yStem - 1, 10);
@@ -2129,19 +2159,26 @@ function runCalculation() {
         }
         mStem = safeMod(tempStartStem + safeMod(mBranch - 2, 12), 10);
 
+        // 日柱計算 (根據早子夜子設定套用 offset)
         const baseD = new Date(1900, 0, 31); 
         const targetD = new Date(y, m - 1, d);
         const timeDiff = targetD - baseD;
         const daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
 
-        dStem = safeMod(daysDiff, 10); 
-        dBranch = safeMod(4 + daysDiff, 12); 
+        let actualDaysDiff = daysDiff + dayPillarOffset;
+        dStem = safeMod(actualDaysDiff, 10); 
+        dBranch = safeMod(4 + actualDaysDiff, 12); 
 
+        // 時支固定不變 (無論是早子或夜子，時支皆為子)
         if (h >= 23 || h < 1) hBranch = 0; 
         else hBranch = Math.floor((h + 1) / 2);
 
+        // 時干計算 (根據早子夜子設定套用 offset 決定是用哪一天的天干來遁出時干)
+        let hourTargetDaysDiff = daysDiff + hourStemOffset;
+        let hourTargetDStem = safeMod(hourTargetDaysDiff, 10);
+
         let hStartStem;
-        switch (dStem % 5) {
+        switch (hourTargetDStem % 5) {
             case 0: hStartStem = 0; break; 
             case 1: hStartStem = 2; break; 
             case 2: hStartStem = 4; break; 
