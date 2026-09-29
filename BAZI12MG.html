@@ -470,7 +470,6 @@
         calculate();
     }
 
-    /* 關鍵修復：分離事件處理與非同步安全刷新，防止瀏覽器中斷 Event Loop */
     function onLiunianFilterChange(el) {
         onlyShowDayunBaziInLiunian = el.checked;
         setTimeout(() => {
@@ -507,7 +506,7 @@
         return sources;
     }
 
-    /* 關鍵修復：正確判定「命盤/大運已具備引動資格的神煞」白名單 */
+    // 純淨提取：原命局與當前大運中「實質引動出現」的神煞名稱白名單
     function getPureBaseAndDayunActiveNames(dyIdx) {
         const activeNames = new Set();
         const d = currentBaziData;
@@ -520,7 +519,7 @@
 
         let baziSources = getSelectedPillarSources();
 
-        // 1. 原局四柱相互引動實質出現的神煞
+        // 1. 原局四柱互相落位查出
         baziSources.forEach(src => {
             src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                 r.targets.forEach(tgt => {
@@ -531,7 +530,7 @@
             });
         });
 
-        // 2. 原局查大運支實質出現者
+        // 2. 原局查大運支
         if (dy) {
             baziSources.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -554,7 +553,7 @@
             }
         }
 
-        // 3. 容錯保底：若原命局極度乾淨尚未觸發神煞，納入原命盤柱位本身有權起出的神煞項目，防止白名單空集
+        // 3. 安全保底機制：若原局四柱互不相引導致白名單空集，納入柱位具備起煞資格的所有神煞
         if (activeNames.size === 0) {
             baziSources.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => activeNames.add(r.name));
@@ -564,19 +563,14 @@
         return activeNames;
     }
 
-    // 全域即時刷新管線
     function refreshDisplay() {
         if (currentBaziData && currentBaziData.yStem !== undefined) {
             let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
             let validDayunIdx = activeDayunIdx >= 0 ? activeDayunIdx : 0;
 
-            // 1. 刷新神煞卡片與九宮格
             updateShenshaDisplay(validDayunIdx);
-
-            // 2. 重新計算並渲染流年橫列
             renderLiunianBar(validDayunIdx);
 
-            // 3. 刷新垂直 12 個月神煞明細
             if (currentLiunian) {
                 renderVerticalMonthTable(currentLiunian, validDayunIdx);
             }
@@ -719,55 +713,57 @@
         return age;
     }
 
+    // 核心修復：精準子時跨日曆判定算法
     function calculate() {
-        const year = parseInt(document.getElementById('year').value);
-        const month = parseInt(document.getElementById('month').value);
-        const day = parseInt(document.getElementById('day').value);
+        let year = parseInt(document.getElementById('year').value);
+        let month = parseInt(document.getElementById('month').value);
+        let day = parseInt(document.getElementById('day').value);
         const noHour = document.getElementById('noHour').checked;
         const gender = document.getElementById('gender').value;
         const hourVal = parseInt(document.getElementById('hourBranch').value);
 
-        let isAfterTerm = day >= TermDays[month - 1];
-        let mBranch = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0][month];
+        let calcDate = new Date(year, month - 1, day);
+
+        let hBranch = -1;
+        let hStem = -1;
+        let dStem = -1;
+        let dBranch = -1;
+
+        if (!noHour) {
+            hBranch = (hourVal === 12) ? 0 : hourVal;
+            if (hourVal === 12 && (ziHourMode === 'yezi_shift' || ziHourMode === 'zi_shift')) {
+                calcDate.setDate(calcDate.getDate() + 1);
+            }
+        }
+
+        let effYear = calcDate.getFullYear();
+        let effMonth = calcDate.getMonth() + 1;
+        let effDay = calcDate.getDate();
+
+        let isAfterTerm = effDay >= TermDays[effMonth - 1];
+        let mBranch = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0][effMonth];
         if (!isAfterTerm) mBranch = (mBranch - 1 + 12) % 12;
 
-        let baziYear = (month === 1 || (month === 2 && !isAfterTerm)) ? year - 1 : year;
+        let baziYear = (effMonth === 1 || (effMonth === 2 && !isAfterTerm)) ? effYear - 1 : effYear;
         let offY = (baziYear - 4) % 60; if (offY < 0) offY += 60;
         let yStem = offY % 10, yBranch = offY % 12;
 
         let mDist = (mBranch - 2 + 12) % 12;
         let mStem = ((yStem % 5) * 2 + 2 + mDist) % 10;
 
-        const baseDiffDays = Math.floor((new Date(year, month - 1, day) - new Date(2000, 0, 1)) / 86400000);
-        let origDStem = (4 + baseDiffDays) % 10;
-        let origDBranch = (6 + baseDiffDays) % 12;
-        while (origDStem < 0) origDStem += 10;
-        while (origDBranch < 0) origDBranch += 12;
-
-        let nextDStem = (origDStem + 1) % 10;
-        let nextDBranch = (origDBranch + 1) % 12;
-
-        let dStem = origDStem;
-        let dBranch = origDBranch;
-        let hStem = -1;
-        let hBranch = -1;
+        const baseDiffDays = Math.floor((new Date(effYear, effMonth - 1, effDay) - new Date(2000, 0, 1)) / 86400000);
+        dStem = (4 + baseDiffDays) % 10;
+        dBranch = (6 + baseDiffDays) % 12;
+        while (dStem < 0) dStem += 10;
+        while (dBranch < 0) dBranch += 12;
 
         if (!noHour) {
-            hBranch = (hourVal === 12) ? 0 : hourVal;
-
-            if (hourVal === 12) { 
-                if (ziHourMode === 'yezi_shift' || ziHourMode === 'zi_shift') {
-                    dStem = nextDStem;
-                    dBranch = nextDBranch;
-                    hStem = ((dStem % 5) * 2 + 0) % 10;
-                } else if (ziHourMode === 'yezi_stay') {
-                    dStem = origDStem;
-                    dBranch = origDBranch;
-                    hStem = ((origDStem % 5) * 2 + 0) % 10;
-                }
-            } else { 
-                dStem = origDStem;
-                dBranch = origDBranch;
+            if (hourVal === 12 && ziHourMode === 'yezi_stay') {
+                const origDiff = Math.floor((new Date(year, month - 1, day) - new Date(2000, 0, 1)) / 86400000);
+                dStem = (4 + origDiff) % 10; while(dStem < 0) dStem += 10;
+                dBranch = (6 + origDiff) % 12; while(dBranch < 0) dBranch += 12;
+                hStem = ((dStem % 5) * 2 + 0) % 10;
+            } else {
                 hStem = ((dStem % 5) * 2 + hBranch) % 10;
             }
         }
@@ -780,11 +776,10 @@
 
         let isYangYear = (yStem % 2 === 0);
         let direction = (gender === 'm') ? (isYangYear ? 1 : -1) : (isYangYear ? -1 : 1);
-        let startAge = calculateStartAge(year, month, day, direction);
+        let startAge = calculateStartAge(effYear, effMonth, effDay, direction);
         document.getElementById('startAgeInfo').innerText = `(約 ${startAge} 歲起運)`;
 
-        calculateAndRenderDayun(mStem, mBranch, direction, startAge, year, dStem);
-
+        calculateAndRenderDayun(mStem, mBranch, direction, startAge, effYear, dStem);
         selectDayun(0);
 
         document.getElementById('actionBar').style.display = 'flex';
@@ -883,7 +878,6 @@
         refreshDisplay();
     }
 
-    // 核心流年列表渲染（保證即時過濾反應）
     function renderLiunianBar(dyIdx) {
         if (dyIdx === null || dyIdx === undefined || !currentDayunList[dyIdx]) return;
         const dy = currentDayunList[dyIdx];
@@ -894,13 +888,11 @@
         const d = currentBaziData;
         const dStem = d.dStem; 
 
-        // 同步勾選狀態
         const filterCheckbox = document.getElementById('filterLiunianCheckbox');
         if (filterCheckbox) {
             filterCheckbox.checked = onlyShowDayunBaziInLiunian;
         }
 
-        // 取得純淨原盤/大運神煞白名單
         const pureAllowedSet = getPureBaseAndDayunActiveNames(dyIdx);
 
         for(let i=0; i<10; i++) {
@@ -944,7 +936,7 @@
                 });
             });
 
-            // 核心過濾：僅保留命盤與大運出現之神煞
+            // 核心過濾判斷
             if (onlyShowDayunBaziInLiunian) {
                 yearShenshas = yearShenshas.filter(name => pureAllowedSet.has(name));
             }
@@ -1012,7 +1004,6 @@
 
         title.innerHTML = `📅 ${ln.year}年 (${Tiangan[ln.stem]}${Dizhi[ln.branch]}年) 12 個月神煞明細列表`;
 
-        // 同步勾選狀態
         const filterCheckbox = document.getElementById('filterLiuyueCheckbox');
         if (filterCheckbox) {
             filterCheckbox.checked = onlyShowExistingShensha;
@@ -1025,7 +1016,6 @@
         const d = currentBaziData;
         const dy = (dyIdx !== null && dyIdx >= 0) ? currentDayunList[dyIdx] : null;
 
-        // 流月過濾白名單
         const allowedShenshaSet = new Set(getPureBaseAndDayunActiveNames(dyIdx));
 
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
@@ -1104,7 +1094,6 @@
                 });
             }
 
-            // 執行流月過濾
             if (onlyShowExistingShensha) {
                 monthShenshas = monthShenshas.filter(s => allowedShenshaSet.has(s.rawName));
             }
@@ -1129,6 +1118,7 @@
         }
     }
 
+    // 修正：羅盤神煞分布保持客觀完整性，不受上方快速過濾開關干擾
     function updateShenshaDisplay(dyIdx) {
         const container = document.getElementById('shenshaContainer');
         container.innerHTML = `
@@ -1151,8 +1141,6 @@
         globalShenshaList = [];
         const d = currentBaziData;
         const dy = (dyIdx !== null && dyIdx >= 0) ? currentDayunList[dyIdx] : null;
-
-        const pureAllowedSet = getPureBaseAndDayunActiveNames(dyIdx);
 
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
         if (d.hBranch !== -1) baziBranches.push(d.hBranch);
@@ -1265,10 +1253,6 @@
 
             lnPassiveRules = lnPassiveRules.filter(r => shenshaConfig[r.name]);
 
-            if (onlyShowDayunBaziInLiunian) {
-                lnPassiveRules = lnPassiveRules.filter(r => pureAllowedSet.has(r.name));
-            }
-
             let lnpItems = lnPassiveRules.map(r => {
                 let srcStyle = getSrcStyle(r.src);
                 globalShenshaList.push({ name: r.name, branchIdx: ln.branch, style: srcStyle, source: `流年(${r.src})` });
@@ -1279,8 +1263,8 @@
             }).join('');
 
             container.innerHTML += `<div class="category-row" style="border: 1px solid ${liunianGroupStyle.border};">
-                <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff;"><span>原局 查 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] (${ln.year})${onlyShowDayunBaziInLiunian ? ' (★已排除非命局/大運神煞)' : ''}</span></div>
-                <div class="shensha-grid">${lnpItems || '<span style="color:#999;margin:auto;font-size:13px;padding:5px;">(無原盤/大運對應神煞)</span>'}</div>
+                <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff;"><span>原局 查 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] (${ln.year})</span></div>
+                <div class="shensha-grid">${lnpItems || '<span style="color:#999;margin:auto;font-size:13px;padding:5px;">(無神煞)</span>'}</div>
             </div>`;
 
             if (interactionConfig.liunianActive) {
@@ -1293,11 +1277,7 @@
 
                 lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
 
-                if (onlyShowDayunBaziInLiunian) {
-                    lnActiveRules = lnActiveRules.filter(r => pureAllowedSet.has(r.name));
-                }
-
-                if(lnActiveRules.length > 0 || onlyShowDayunBaziInLiunian) {
+                if(lnActiveRules.length > 0) {
                     let lnaItems = lnActiveRules.map(r => {
                         let srcStyle = getSrcStyle(r.src); 
                         globalShenshaList.push({ name: r.name, branchIdx: r.i, style: srcStyle, source: r.src });
@@ -1307,8 +1287,8 @@
                         </div>`;
                     }).join('');
                     container.innerHTML += `<div class="category-row" style="border: 1px solid ${liunianGroupStyle.border};">
-                        <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff; opacity:0.9;"><span>流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] 照入原局${onlyShowDayunBaziInLiunian ? ' (★已排除非命局/大運神煞)' : ''}</span></div>
-                        <div class="shensha-grid">${lnaItems || '<span style="color:#999;margin:auto;font-size:13px;padding:5px;">(無原盤/大運對應神煞)</span>'}</div>
+                        <div class="category-header" style="background-color:${liunianGroupStyle.border}; color:#fff; opacity:0.9;"><span>流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}] 照入原局</span></div>
+                        <div class="shensha-grid">${lnaItems || '<span style="color:#999;margin:auto;font-size:13px;padding:5px;">(無神煞)</span>'}</div>
                     </div>`;
                 }
             }
