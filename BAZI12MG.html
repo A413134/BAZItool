@@ -17,18 +17,18 @@
         .container { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         h1 { text-align: center; color: var(--primary); margin-bottom: 25px; font-size: 24px; }
 
-        .input-group { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; align-items: flex-end; }
+        .input-group { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; align-items: flex-end; }
         .input-item { display: flex; flex-direction: column; align-items: center; }
         label { font-size: 13px; margin-bottom: 5px; color: #666; font-weight: bold; }
-        input, select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 16px; text-align: center; height: 40px; box-sizing: border-box; }
-        input { width: 80px; }
-        select { width: 140px; }
+        input, select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 15px; text-align: center; height: 40px; box-sizing: border-box; }
+        input { width: 75px; }
+        select { width: 155px; }
         input.disabled, select.disabled { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; }
         
         .checkbox-wrapper { margin-top: 8px; display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; cursor: pointer; }
         .checkbox-wrapper input { width: 16px; height: 16px; margin: 0; cursor: pointer; }
 
-        button { background-color: #2c3e50; color: white; border: none; padding: 0 30px; height: 40px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        button { background-color: #2c3e50; color: white; border: none; padding: 0 25px; height: 40px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #34495e; }
 
         .action-bar { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
@@ -89,6 +89,7 @@
         .dayun-year { font-size: 11px; color: #999; }
 
         .liunian-bar { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; width: 100%; }
+        /* 修正點 1: 修正 flex-wrap 與 gap 的語法錯誤 */
         .liunian-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
         .liunian-flex { display: flex; gap: 8px; min-width: max-content; padding-bottom: 8px; overflow-x: auto; }
         .liunian-btn { 
@@ -103,7 +104,7 @@
 
         .ln-stars-wrapper { 
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; 
-            margin-top: 6px; width: 100%; min-height: 42px; 
+            margin-top: 6px; width: 100%; min-height: 44px; align-content: start;
         }
         .ln-star-badge { 
             font-size: 10px; padding: 2px 1px; border-radius: 3px; 
@@ -399,7 +400,6 @@
         liuyueActive: true
     };
 
-    // 新增：原命局查照來源柱位自由開關設定
     let pillarConfig = {
         year: true,
         month: true,
@@ -409,7 +409,9 @@
 
     let onlyShowDayunBaziInLiunian = false;
     let onlyShowExistingShensha = false;
-    let yeziShiftDay = true;
+
+    // 子時換日模式定義
+    let ziHourMode = 'yezi_shift';
 
     function initSettings() {
         const panel = document.getElementById('settingsPanel');
@@ -419,7 +421,6 @@
         });
         html += '</div>';
         
-        // 增設：原命局查神煞來源柱位選項
         html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">原命局查神煞來源柱位</div>';
         html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">';
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('year', this.checked)"><span>年柱 (年干/支)</span></label>`;
@@ -428,12 +429,20 @@
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="togglePillarSource('hour', this.checked)"><span>時柱 (時干/支)</span></label>`;
         html += '</div>';
 
-        html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">交互顯示與曆法設定</div>';
-        html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">';
+        html += '<div style="width: 100%; border-top: 1px dashed #ddd; margin: 15px 0 10px; padding-top: 10px; text-align: center; color: #2c3e50; font-size: 14px; font-weight: bold;">交互顯示與子時換日模式</div>';
+        html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items:center;">';
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('dayunActive', this.checked)"><span>大運照入原局</span></label>`;
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('liunianActive', this.checked)"><span>流年照入原局</span></label>`;
         html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked onchange="toggleInteraction('liuyueActive', this.checked)"><span>流月照入原局</span></label>`;
-        html += `<label class="setting-item" style="width:auto;"><input type="checkbox" checked id="yeziShiftCheckbox" onchange="toggleYeziShift(this.checked)"><span>夜子時(23-24點)日柱進一日</span></label>`;
+        html += '</div>';
+
+        html += '<div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:10px; font-size:13px; flex-wrap:wrap;">';
+        html += '<span style="font-weight:bold; color:#2c3e50;">子時換日規則：</span>';
+        html += `<select id="ziHourModeSelect" style="width:auto; height:34px; font-size:13px;" onchange="changeZiHourMode(this.value)">
+            <option value="yezi_shift" selected>區分早夜子：夜子(23-24)日柱進一日，時干隨新日干起</option>
+            <option value="yezi_stay">區分早夜子：夜子(23-24)日柱不換日，時干隨當日日干起</option>
+            <option value="zi_shift">傳統子時換日：23點起全算次日早子時</option>
+        </select>`;
         html += '</div>';
         
         panel.innerHTML = html;
@@ -454,14 +463,13 @@
         refreshDisplay();
     }
 
-    // 柱位開關切換函數
     function togglePillarSource(pillar, isChecked) {
         pillarConfig[pillar] = isChecked;
         refreshDisplay();
     }
 
-    function toggleYeziShift(isChecked) {
-        yeziShiftDay = isChecked;
+    function changeZiHourMode(mode) {
+        ziHourMode = mode;
         calculate();
     }
 
@@ -475,7 +483,6 @@
         refreshDisplay();
     }
 
-    // 獲取目前選中啟用的「原局查照來源」列表
     function getSelectedPillarSources() {
         const d = currentBaziData;
         let sources = [];
@@ -498,7 +505,7 @@
         return sources;
     }
 
-    // 計算「八字原局 + 當前大運」實質擁有的神煞名稱白名單（嚴格受柱位開關控制）
+    // 計算八字原局與大運實質落位的神煞名稱
     function getBaziAndDayunActiveNames(dyIdx) {
         const activeNames = new Set();
         const d = currentBaziData;
@@ -507,7 +514,6 @@
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
         if (d.hBranch !== -1) baziBranches.push(d.hBranch);
 
-        // 原局內部查
         let baziSources = getSelectedPillarSources();
         baziSources.forEach(src => {
             src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -517,7 +523,6 @@
             });
         });
 
-        // 大運互動
         if (dy) {
             baziSources.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -526,8 +531,8 @@
             });
 
             if (interactionConfig.dayunActive) {
-                let dyRules = [...getStemRules(dy.stem), ...getBranchRules(dy.branch)];
-                dyRules.filter(r => shenshaConfig[r.name]).forEach(r => {
+                let dyStemRules = getStemRules(dy.stem);
+                dyStemRules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     r.targets.forEach(tgt => {
                         if (baziBranches.includes(tgt)) activeNames.add(r.name);
                     });
@@ -662,7 +667,7 @@
     }
 
     function getStemRules(stemIdx) {
-        if (stemIdx < 0) return [];
+        if (stemIdx < 0 || stemIdx === undefined) return [];
         let rules = [];
         for (let name in ShenshaRules.stem) {
             let targets = ShenshaRules.stem[name][stemIdx];
@@ -672,7 +677,7 @@
     }
 
     function getBranchRules(branchIdx) {
-        if (branchIdx < 0) return [];
+        if (branchIdx < 0 || branchIdx === undefined) return [];
         let rules = [];
         for (let name in ShenshaRules.branch) {
             let target = ShenshaRules.branch[name].map[branchIdx];
@@ -690,7 +695,7 @@
         return age;
     }
 
-    // 核心排盤函數（包含夜子時換日判定）
+    // 核心排盤函數（徹底修復早夜子時、時柱五鼠遁連動、空指標防護）
     function calculate() {
         const year = parseInt(document.getElementById('year').value);
         const month = parseInt(document.getElementById('month').value);
@@ -710,21 +715,47 @@
         let mDist = (mBranch - 2 + 12) % 12;
         let mStem = ((yStem % 5) * 2 + 2 + mDist) % 10;
 
-        // 夜子時換日判定
-        let isYezi = (!noHour && hourVal === 12);
-        let calcDate = new Date(year, month - 1, day);
-        if (isYezi && yeziShiftDay) {
-            calcDate.setDate(calcDate.getDate() + 1);
-        }
+        // 當日基準日柱
+        const baseDiffDays = Math.floor((new Date(year, month - 1, day) - new Date(2000, 0, 1)) / 86400000);
+        let origDStem = (4 + baseDiffDays) % 10;
+        let origDBranch = (6 + baseDiffDays) % 12;
+        while (origDStem < 0) origDStem += 10;
+        while (origDBranch < 0) origDBranch += 12;
 
-        const diffDays = Math.floor((calcDate - new Date(2000, 0, 1)) / 86400000);
-        let dStem = (4 + diffDays) % 10, dBranch = (6 + diffDays) % 12;
-        while (dStem < 0) dStem += 10; while (dBranch < 0) dBranch += 12;
+        let nextDStem = (origDStem + 1) % 10;
+        let nextDBranch = (origDBranch + 1) % 12;
 
-        let hStem = -1, hBranch = -1;
+        let dStem = origDStem;
+        let dBranch = origDBranch;
+        let hStem = -1;
+        let hBranch = -1;
+
         if (!noHour) {
             hBranch = (hourVal === 12) ? 0 : hourVal;
-            hStem = ((dStem % 5) * 2 + hBranch) % 10;
+
+            if (hourVal === 12) { // 夜子時 (23:00 - 24:00)
+                if (ziHourMode === 'yezi_shift') {
+                    // 模式 1：日柱進一日，時柱天干隨新日干起
+                    dStem = nextDStem;
+                    dBranch = nextDBranch;
+                    hStem = ((dStem % 5) * 2 + 0) % 10;
+                } else if (ziHourMode === 'yezi_stay') {
+                    // 模式 2：日柱不換，時柱天干隨當日日干起
+                    dStem = origDStem;
+                    dBranch = origDBranch;
+                    hStem = ((origDStem % 5) * 2 + 0) % 10;
+                } else if (ziHourMode === 'zi_shift') {
+                    // 模式 3：傳統子時換日，日柱進一日，時柱天干隨新日干起
+                    dStem = nextDStem;
+                    dBranch = nextDBranch;
+                    hStem = ((dStem % 5) * 2 + 0) % 10;
+                }
+            } else { 
+                // 早子時(00-01) 及 其他11個時辰：日柱均為公曆當日
+                dStem = origDStem;
+                dBranch = origDBranch;
+                hStem = ((dStem % 5) * 2 + hBranch) % 10;
+            }
         }
 
         currentBaziData = { yStem, yBranch, mStem, mBranch, dStem, dBranch, hStem, hBranch };
@@ -826,6 +857,7 @@
     }
 
     function selectDayun(idx) {
+        if (idx < 0 || idx >= currentDayunList.length) return;
         document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
         const el = document.getElementById(`dayun-${idx}`);
         if(el) el.classList.add('selected');
@@ -839,6 +871,7 @@
     }
 
     function renderLiunianBar(dyIdx) {
+        if (dyIdx === null || dyIdx === undefined || !currentDayunList[dyIdx]) return;
         const dy = currentDayunList[dyIdx];
         const bar = document.getElementById('liunianDisplay');
         const list = document.getElementById('liunianList');
@@ -866,7 +899,6 @@
             let hiddenStemsHTML = renderHiddenStemsHTML(dStem, b);
 
             let yearShenshas = [];
-            // 原局查流年支（受柱位開關控制）
             let baziSrcs = getSelectedPillarSources();
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -876,11 +908,10 @@
                 });
             });
 
-            // 流年照入原局
             let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
             if (d.hBranch !== -1) baziBranches.push(d.hBranch);
 
-            [...getStemRules(s), ...getBranchRules(b)].filter(r => shenshaConfig[r.name]).forEach(r => {
+            getStemRules(s).filter(r => shenshaConfig[r.name]).forEach(r => {
                 r.targets.forEach(tgt => {
                     if (baziBranches.includes(tgt) && !yearShenshas.includes(r.name)) {
                         yearShenshas.push(r.name);
@@ -941,8 +972,8 @@
         document.getElementById('starModalOverlay').style.display = 'none';
     }
 
-    // 垂直流月神煞列表 (含柱位開關連動、精確白名單過濾)
     function renderVerticalMonthTable(ln, dyIdx) {
+        if (!ln) return;
         const section = document.getElementById('verticalMonthSection');
         const tbody = document.getElementById('vMonthTableBody');
         const title = document.getElementById('vMonthTitle');
@@ -956,14 +987,13 @@
         
         let startMonthStem = ((ln.stem % 5) * 2 + 2) % 10;
         const d = currentBaziData;
-        const dy = (dyIdx !== null) ? currentDayunList[dyIdx] : null;
+        const dy = (dyIdx !== null && dyIdx >= 0) ? currentDayunList[dyIdx] : null;
 
         const allowedShenshaSet = new Set(getBaziAndDayunActiveNames(dyIdx));
 
         let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
         if (d.hBranch !== -1) baziBranches.push(d.hBranch);
         
-        // 原局查流年支（受柱位開關控制）
         let baziSrcs = getSelectedPillarSources();
         baziSrcs.forEach(src => {
             src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -971,7 +1001,7 @@
             });
         });
 
-        [...getStemRules(ln.stem), ...getBranchRules(ln.branch)].filter(r => shenshaConfig[r.name]).forEach(r => {
+        getStemRules(ln.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
             r.targets.forEach(tgt => {
                 if (baziBranches.includes(tgt)) allowedShenshaSet.add(r.name);
             });
@@ -990,7 +1020,7 @@
 
             let monthShenshas = [];
 
-            // 1. 原局查流月地支（受柱位開關控制）
+            // 1. 原局查流月地支
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(mBranch)) {
@@ -1025,7 +1055,7 @@
                 });
             }
 
-            // 4. 流月干支照入原局
+            // 4. 流月干照入原局
             if (interactionConfig.liuyueActive) {
                 let pillars = [{n:"年支", i:d.yBranch}, {n:"月支", i:d.mBranch}, {n:"日支", i:d.dBranch}, {n:"時支", i:d.hBranch}];
                 getStemRules(mStem).filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -1035,16 +1065,8 @@
                         }
                     });
                 });
-                getBranchRules(mBranch).filter(r => shenshaConfig[r.name]).forEach(r => {
-                    pillars.forEach(p => {
-                        if (p.i !== -1 && r.targets.includes(p.i)) {
-                            monthShenshas.push({ name: `${r.name}(入${p.n})`, rawName: r.name, from: "流月支", style: getSrcStyle("流年支") });
-                        }
-                    });
-                });
             }
 
-            // 執行按鈕過濾
             if (onlyShowExistingShensha) {
                 monthShenshas = monthShenshas.filter(s => allowedShenshaSet.has(s.rawName));
             }
@@ -1090,7 +1112,7 @@
         `;
         globalShenshaList = [];
         const d = currentBaziData;
-        const dy = (dyIdx !== null) ? currentDayunList[dyIdx] : null;
+        const dy = (dyIdx !== null && dyIdx >= 0) ? currentDayunList[dyIdx] : null;
 
         const baziDayunActiveSet = getBaziAndDayunActiveNames(dyIdx);
 
@@ -1111,7 +1133,6 @@
             </div>`;
         };
 
-        // 1. 原局查找（受柱位開關自由控制）
         if (pillarConfig.year) {
             addGroup("年支", Dizhi[d.yBranch], getBranchRules(d.yBranch));
             addGroup("年干", Tiangan[d.yStem], getStemRules(d.yStem));
@@ -1129,7 +1150,6 @@
             if (d.hStem !== -1) addGroup("時干", Tiangan[d.hStem], getStemRules(d.hStem));
         }
 
-        // 2. 大運互動（查照來源同樣受柱位開關控制）
         if (dy) {
             let dayunGroupStyle = getSrcStyle("大運支");
             let baziSrcs = getSelectedPillarSources();
@@ -1166,9 +1186,6 @@
                 getStemRules(dy.stem).forEach(r => pillars.forEach(p => {
                     if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運干"});
                 }));
-                getBranchRules(dy.branch).forEach(r => pillars.forEach(p => {
-                    if(p.i !== -1 && r.targets.includes(p.i)) activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
-                }));
 
                 activeRules = activeRules.filter(r => shenshaConfig[r.name]);
 
@@ -1189,7 +1206,6 @@
             }
         }
 
-        // 3. 流年互動（原局查照來源受柱位開關控制）
         if (currentLiunian) {
             const ln = currentLiunian;
             let liunianGroupStyle = getSrcStyle("流年支");
@@ -1228,9 +1244,6 @@
 
                 getStemRules(ln.stem).forEach(r => pillars.forEach(p => {
                     if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年干"});
-                }));
-                getBranchRules(ln.branch).forEach(r => pillars.forEach(p => {
-                    if(p.i !== -1 && r.targets.includes(p.i)) lnActiveRules.push({name:r.name, loc:p.n, i:p.i, src:"流年支"});
                 }));
 
                 lnActiveRules = lnActiveRules.filter(r => shenshaConfig[r.name]);
