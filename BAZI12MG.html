@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤流年流月全功能版</title>
+    <title>八字神煞速查 | 羅盤流年流月全功能專業版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -31,6 +31,8 @@
         button { background-color: #2c3e50; color: white; border: none; padding: 0 25px; height: 40px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #34495e; }
 
+        .notice-banner { text-align: center; font-size: 12px; color: #7f8c8d; margin-top: 8px; width: 100%; }
+
         .action-bar { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
         .btn-action { background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; height: auto; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
         .btn-action:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
@@ -38,13 +40,15 @@
         .btn-export:hover { background: #219a52; border-color: #219a52; }
 
         .settings-panel { margin-top: 15px; padding: 15px 20px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; }
-        .setting-item { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #444; cursor: pointer; user-select: none; width: 85px;}
+        .setting-item { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #444; cursor: pointer; user-select: none; width: 95px;}
         .setting-item input { width: 16px; height: 16px; margin: 0; cursor: pointer; }
 
         .result-box { display: none; margin-top: 15px; position: relative; background: #fff; padding-top: 10px; }
 
-        .chart-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .chart-header-left { display: flex; align-items: baseline; gap: 10px; }
         .chart-header h3 { margin: 0; color: var(--primary); font-size: 18px;}
+        .chart-summary-text { font-size: 13px; color: #666; font-weight: bold; }
         .age-badge { background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; }
 
         .bazi-chart { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-top: 15px; margin-bottom: 20px; border: 2px solid #333; border-radius: 8px; padding: 15px; background: #fff; }
@@ -196,7 +200,7 @@
 <body>
 
 <div class="container">
-    <h1>八字神煞速查 | 羅盤流年流月全功能版</h1>
+    <h1>八字神煞速查 | 羅盤流年流月全功能專業版</h1>
 
     <div class="input-group">
         <div class="input-item">
@@ -240,6 +244,7 @@
             </select>
         </div>
         <button onclick="calculate()">開始排盤</button>
+        <div class="notice-banner">注：節氣採用標準平均交節日；逢節氣交接日出生者，請核對真太陽時與節氣時刻。</div>
     </div>
 
     <div class="action-bar" id="actionBar" style="display: none;">
@@ -251,7 +256,10 @@
 
     <div id="result" class="result-box">
         <div class="chart-header">
-            <h3>八字命盤</h3>
+            <div class="chart-header-left">
+                <h3>八字命盤</h3>
+                <span id="chartSummaryText" class="chart-summary-text"></span>
+            </div>
             <div id="virtualAgeDisplay" class="age-badge"></div>
         </div>
 
@@ -314,8 +322,8 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="starModalOverlay" onclick="closeStarModal(event)">
-    <div class="modal-box" onclick="event.stopPropagation()">
+<div class="modal-overlay" id="starModalOverlay">
+    <div class="modal-box" id="modalBox">
         <div class="modal-header">
             <span id="modalTitle">🌟 流年神煞完整明細</span>
             <button class="modal-close" onclick="closeStarModal()">&times;</button>
@@ -327,6 +335,7 @@
 <script>
     const Tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+    const Zodiacs = ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"];
 
     const NaYinList = [
         "海中金","爐中火","大林木","路旁土","劍鋒金", "山頭火","澗下水","城頭土","白蠟金","楊柳木",
@@ -338,16 +347,6 @@
         [9], [5, 9, 7], [0, 2, 4], [1], [4, 1, 9], [2, 4, 6], 
         [3, 5], [5, 3, 1], [6, 8, 4], [7], [4, 7, 3], [8, 0]
     ];
-
-    const ShishenNames = {
-        yang: ["比肩","劫財","食神","傷官","偏財","正財","七殺","正官","偏印","正印"],
-        yin:  ["比肩","傷官","食神","正財","偏財","正官","七殺","正印","偏印","劫財"]
-    };
-
-    const ShishenShort = {
-        yang: ["比","劫","食","傷","才","財","殺","官","梟","印"],
-        yin:  ["比","傷","食","財","才","官","殺","印","梟","劫"]
-    };
 
     const GridConfig = [
         { dir: "東南", branches: [4, 5],   mountains: "辰巽巳", class: "cell-se" },
@@ -370,7 +369,7 @@
             "祿神": { 0:[2], 1:[3], 2:[5], 3:[6], 4:[5], 5:[6], 6:[8], 7:[9], 8:[11], 9:[0] },
             "羊刃": { 0:[3], 1:[4], 2:[6], 3:[7], 4:[6], 5:[7], 6:[9], 7:[10], 8:[0], 9:[1] },
             "金輿": { 0:[4], 1:[5], 2:[7], 3:[8], 4:[7], 5:[8], 6:[10], 7:[11], 8:[1], 9:[2] },
-            "流霞": { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[3], 8:[11], 9:[2] },
+            "流霞": { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[3], 8:[0], 9:[2] },
             "學堂": { 0:[11], 1:[6], 2:[2], 3:[9], 4:[2], 5:[9], 6:[5], 7:[0], 8:[8], 9:[3] }
         },
         branch: { 
@@ -385,11 +384,11 @@
             "亡神": { map: [11,8,5,2,11,8,5,2,11,8,5,2] },
             "劫煞": { map: [5,2,11,8,5,2,11,8,5,2,11,8] },
             "災煞": { map: [6,3,0,9,6,3,0,9,6,3,0,9] },
-            "大耗": { map: [6,7,8,9,10,11,0,1,2,3,4,5] }
+            "歲破(大耗)": { map: [6,7,8,9,10,11,0,1,2,3,4,5] }
         }
     };
 
-    const allShensha = ["天乙","文昌","紅艷","沐浴","祿神","羊刃","金輿","流霞","學堂","咸池","紅鸞","天喜","驛馬","孤辰","寡宿","將星","華蓋","亡神","劫煞","災煞","大耗"];
+    const allShensha = ["天乙","文昌","紅艷","沐浴","祿神","羊刃","金輿","流霞","學堂","咸池","紅鸞","天喜","驛馬","孤辰","寡宿","將星","華蓋","亡神","劫煞","災煞","歲破(大耗)"];
     let shenshaConfig = {};
     allShensha.forEach(name => shenshaConfig[name] = true);
 
@@ -409,6 +408,42 @@
     let onlyShowDayunBaziInLiunian = false;
     let onlyShowExistingShensha = false;
     let ziHourMode = 'yezi_shift';
+
+    function getStemFiveElement(stem) {
+        return Math.floor(stem / 2);
+    }
+
+    function calculateShishen(dayStem, targetStem) {
+        if (dayStem === -1 || targetStem === -1 || dayStem === undefined || targetStem === undefined) return "";
+        const wDay = getStemFiveElement(dayStem);
+        const wTarget = getStemFiveElement(targetStem);
+        const samePolarity = (dayStem % 2) === (targetStem % 2);
+        const relation = (wTarget - wDay + 5) % 5;
+        const matrix = [
+            samePolarity ? "比肩" : "劫財",
+            samePolarity ? "食神" : "傷官",
+            samePolarity ? "偏財" : "正財",
+            samePolarity ? "七殺" : "正官",
+            samePolarity ? "偏印" : "正印"
+        ];
+        return matrix[relation];
+    }
+
+    function calculateShishenShort(dayStem, targetStem) {
+        if (dayStem === -1 || targetStem === -1 || dayStem === undefined || targetStem === undefined) return "";
+        const wDay = getStemFiveElement(dayStem);
+        const wTarget = getStemFiveElement(targetStem);
+        const samePolarity = (dayStem % 2) === (targetStem % 2);
+        const relation = (wTarget - wDay + 5) % 5;
+        const matrixShort = [
+            samePolarity ? "比" : "劫",
+            samePolarity ? "食" : "傷",
+            samePolarity ? "才" : "財",
+            samePolarity ? "殺" : "官",
+            samePolarity ? "梟" : "印"
+        ];
+        return matrixShort[relation];
+    }
 
     function initSettings() {
         const panel = document.getElementById('settingsPanel');
@@ -447,7 +482,7 @@
 
     function toggleSettings() {
         const panel = document.getElementById('settingsPanel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
     }
 
     function toggleShensha(name, isChecked) {
@@ -472,16 +507,12 @@
 
     function onLiunianFilterChange(el) {
         onlyShowDayunBaziInLiunian = el.checked;
-        setTimeout(() => {
-            refreshDisplay();
-        }, 10);
+        setTimeout(() => { refreshDisplay(); }, 10);
     }
 
     function onMonthFilterChange(el) {
         onlyShowExistingShensha = el.checked;
-        setTimeout(() => {
-            refreshDisplay();
-        }, 10);
+        setTimeout(() => { refreshDisplay(); }, 10);
     }
 
     function getSelectedPillarSources() {
@@ -506,7 +537,6 @@
         return sources;
     }
 
-    // 純淨提取：原命局與當前大運中「實質引動出現」的神煞名稱白名單
     function getPureBaseAndDayunActiveNames(dyIdx) {
         const activeNames = new Set();
         const d = currentBaziData;
@@ -519,41 +549,31 @@
 
         let baziSources = getSelectedPillarSources();
 
-        // 1. 原局四柱互相落位查出
         baziSources.forEach(src => {
             src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                 r.targets.forEach(tgt => {
-                    if (baziBranches.includes(tgt)) {
-                        activeNames.add(r.name);
-                    }
+                    if (baziBranches.includes(tgt)) activeNames.add(r.name);
                 });
             });
         });
 
-        // 2. 原局查大運支
         if (dy) {
             baziSources.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
-                    if (r.targets.includes(dy.branch)) {
-                        activeNames.add(r.name);
-                    }
+                    if (r.targets.includes(dy.branch)) activeNames.add(r.name);
                 });
             });
 
-            // 大運干照入原局地支
             if (interactionConfig.dayunActive) {
                 let dyStemRules = getStemRules(dy.stem);
                 dyStemRules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     r.targets.forEach(tgt => {
-                        if (baziBranches.includes(tgt)) {
-                            activeNames.add(r.name);
-                        }
+                        if (baziBranches.includes(tgt)) activeNames.add(r.name);
                     });
                 });
             }
         }
 
-        // 3. 安全保底機制：若原局四柱互不相引導致白名單空集，納入柱位具備起煞資格的所有神煞
         if (activeNames.size === 0) {
             baziSources.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => activeNames.add(r.name));
@@ -586,6 +606,14 @@
     window.onload = () => {
         initSettings();
         calculate();
+
+        const overlay = document.getElementById('starModalOverlay');
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) closeStarModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeStarModal();
+        });
     }
 
     function exportImage() {
@@ -658,20 +686,6 @@
         cb.checked ? sel.classList.add('disabled') : sel.classList.remove('disabled');
     }
 
-    function calculateShishen(dayStem, targetStem) {
-        if (dayStem === -1 || targetStem === -1) return "";
-        const diff = (targetStem - dayStem + 10) % 10;
-        const isYang = (dayStem % 2 === 0);
-        return isYang ? ShishenNames.yang[diff] : ShishenNames.yin[diff];
-    }
-
-    function calculateShishenShort(dayStem, targetStem) {
-        if (dayStem === -1 || targetStem === -1) return "";
-        const diff = (targetStem - dayStem + 10) % 10;
-        const isYang = (dayStem % 2 === 0);
-        return isYang ? ShishenShort.yang[diff] : ShishenShort.yin[diff];
-    }
-
     function renderHiddenStemsHTML(dayStem, branchIdx) {
         if (dayStem === -1 || branchIdx === -1) return "";
         const stems = ZangGanFull[branchIdx];
@@ -713,7 +727,19 @@
         return age;
     }
 
-    // 核心修復：精準子時跨日曆判定算法
+    /* ==========================================================================
+       標準格里高利曆轉儒略日數（Julian Day Number, JD）
+       ========================================================================== */
+    function getJulianDay(y, m, d) {
+        if (m <= 2) {
+            y -= 1;
+            m += 12;
+        }
+        let A = Math.floor(y / 100);
+        let B = 2 - A + Math.floor(A / 4);
+        return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+    }
+
     function calculate() {
         let year = parseInt(document.getElementById('year').value);
         let month = parseInt(document.getElementById('month').value);
@@ -740,29 +766,45 @@
         let effMonth = calcDate.getMonth() + 1;
         let effDay = calcDate.getDate();
 
+        // 節氣月支
         let isAfterTerm = effDay >= TermDays[effMonth - 1];
-        let mBranch = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0][effMonth];
-        if (!isAfterTerm) mBranch = (mBranch - 1 + 12) % 12;
+        let mBranchMap = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0];
+        let mBranch = mBranchMap[effMonth];
+        if (!isAfterTerm) {
+            mBranch = (mBranch - 1 + 12) % 12;
+        }
 
-        let baziYear = (effMonth === 1 || (effMonth === 2 && !isAfterTerm)) ? effYear - 1 : effYear;
+        // 年柱劃分
+        let isBeforeLiChun = (effMonth === 1) || (effMonth === 2 && !isAfterTerm);
+        let baziYear = isBeforeLiChun ? effYear - 1 : effYear;
+
         let offY = (baziYear - 4) % 60; if (offY < 0) offY += 60;
         let yStem = offY % 10, yBranch = offY % 12;
 
-        let mDist = (mBranch - 2 + 12) % 12;
-        let mStem = ((yStem % 5) * 2 + 2 + mDist) % 10;
+        // 五虎遁年起月干
+        let monthSeqFromYin = (mBranch - 2 + 12) % 12;
+        let startMonthStem = ((yStem % 5) * 2 + 2) % 10;
+        let mStem = (startMonthStem + monthSeqFromYin) % 10;
 
-        const baseDiffDays = Math.floor((new Date(effYear, effMonth - 1, effDay) - new Date(2000, 0, 1)) / 86400000);
-        dStem = (4 + baseDiffDays) % 10;
-        dBranch = (6 + baseDiffDays) % 12;
+        /* ==========================================================================
+           【精確日柱干支公式】：
+           1989-08-09 JD = 2447748
+           天干: (2447748 + 9) % 10 = 17 % 10 = 7 (辛)
+           地支: (2447748 + 1) % 12 = 2447749 % 12 = 1 (丑) => 辛丑日
+           ========================================================================== */
+        let jd = Math.floor(getJulianDay(effYear, effMonth, effDay) + 0.5);
+        dStem = (jd + 9) % 10;
+        dBranch = (jd + 1) % 12;
         while (dStem < 0) dStem += 10;
         while (dBranch < 0) dBranch += 12;
 
+        // 時柱計算（日上起時干）
         if (!noHour) {
             if (hourVal === 12 && ziHourMode === 'yezi_stay') {
-                const origDiff = Math.floor((new Date(year, month - 1, day) - new Date(2000, 0, 1)) / 86400000);
-                dStem = (4 + origDiff) % 10; while(dStem < 0) dStem += 10;
-                dBranch = (6 + origDiff) % 12; while(dBranch < 0) dBranch += 12;
-                hStem = ((dStem % 5) * 2 + 0) % 10;
+                let origJd = Math.floor(getJulianDay(year, month, day) + 0.5);
+                let origDStem = (origJd + 9) % 10;
+                while (origDStem < 0) origDStem += 10;
+                hStem = ((origDStem % 5) * 2 + 0) % 10;
             } else {
                 hStem = ((dStem % 5) * 2 + hBranch) % 10;
             }
@@ -773,6 +815,10 @@
 
         const vAge = calculateVirtualAgeCorrectly(year);
         document.getElementById('virtualAgeDisplay').innerText = `當前虛歲：${vAge} 歲`;
+
+        const dayMainZanggan = ZangGanFull[dBranch][0];
+        const daySitShishen = calculateShishen(dStem, dayMainZanggan);
+        document.getElementById('chartSummaryText').innerText = `【生肖屬${Zodiacs[yBranch]} · 日元坐支${daySitShishen}】`;
 
         let isYangYear = (yStem % 2 === 0);
         let direction = (gender === 'm') ? (isYangYear ? 1 : -1) : (isYangYear ? -1 : 1);
@@ -930,13 +976,12 @@
 
             getStemRules(s).filter(r => shenshaConfig[r.name]).forEach(r => {
                 r.targets.forEach(tgt => {
-                    if (baziBranches.includes(tgt) && !yearShenshas.includes(r.name)) {
+                    if (baziBranches.includes(tgt)) {
                         yearShenshas.push(r.name);
                     }
                 });
             });
 
-            // 核心過濾判斷
             if (onlyShowDayunBaziInLiunian) {
                 yearShenshas = yearShenshas.filter(name => pureAllowedSet.has(name));
             }
@@ -1118,7 +1163,6 @@
         }
     }
 
-    // 修正：羅盤神煞分布保持客觀完整性，不受上方快速過濾開關干擾
     function updateShenshaDisplay(dyIdx) {
         const container = document.getElementById('shenshaContainer');
         container.innerHTML = `
