@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (無預選大運版)</title>
+    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (無預選大運·完善修正版)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -483,7 +483,7 @@
     let currentBaziData = {};
     let currentDayunList = [];
     let currentLiunian = null; 
-    let currentDayunIndex = null; // 初始為 null：不預選任何大運
+    let currentDayunIndex = null;
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7];
 
     function getStemFiveElement(stem) {
@@ -662,6 +662,12 @@
                         if (baziBranches.includes(tgt)) activeNames.add(r.name);
                     });
                 });
+                let dyBranchRules = getBranchRules(dy.branch, false);
+                dyBranchRules.filter(r => shenshaConfig[r.name]).forEach(r => {
+                    r.targets.forEach(tgt => {
+                        if (baziBranches.includes(tgt)) activeNames.add(r.name);
+                    });
+                });
             }
         }
 
@@ -714,17 +720,22 @@
             dyBox.style.display = "block";
             dyTitle.innerHTML = `🚩 【第${dy.seq}運 ${Tiangan[dy.stem]}${Dizhi[dy.branch]} (${dy.startAge}~${dy.startAge+9}歲) ➔ 原八字命盤】神煞互涉對照：`;
             let dyItems = [];
+            let seenKeys = new Set();
+
+            const pushDyItem = (name, detail, style) => {
+                let key = `${name}_${detail}`;
+                if (!seenKeys.has(key)) {
+                    seenKeys.add(key);
+                    dyItems.push({ name, detail, style });
+                }
+            };
 
             let baziSrcs = getSelectedPillarSources();
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(dy.branch)) {
                         let style = getSrcStyle(src.name);
-                        dyItems.push({
-                            name: r.name,
-                            detail: `原局${src.name}在運支(${Dizhi[dy.branch]})見`,
-                            style: style
-                        });
+                        pushDyItem(r.name, `原局${src.name}在運支(${Dizhi[dy.branch]})見`, style);
                     }
                 });
             });
@@ -734,11 +745,15 @@
                     baziPillars.forEach(p => {
                         if (p.i !== -1 && r.targets.includes(p.i)) {
                             let style = getSrcStyle("大運干");
-                            dyItems.push({
-                                name: r.name,
-                                detail: `運干照入原局${p.n}(${Dizhi[p.i]})`,
-                                style: style
-                            });
+                            pushDyItem(r.name, `運干照入原局${p.n}(${Dizhi[p.i]})`, style);
+                        }
+                    });
+                });
+                getBranchRules(dy.branch, false).filter(r => shenshaConfig[r.name]).forEach(r => {
+                    baziPillars.forEach(p => {
+                        if (p.i !== -1 && r.targets.includes(p.i)) {
+                            let style = getSrcStyle("大運支");
+                            pushDyItem(r.name, `運支照入原局${p.n}(${Dizhi[p.i]})`, style);
                         }
                     });
                 });
@@ -767,17 +782,22 @@
             lnBox.style.display = "block";
             lnTitle.innerHTML = `🌟 【${ln.year}年 ${Tiangan[ln.stem]}${Dizhi[ln.branch]} ➔ 原八字命盤】神煞互涉對照：`;
             let lnItems = [];
+            let seenLnKeys = new Set();
+
+            const pushLnItem = (name, detail, style) => {
+                let key = `${name}_${detail}`;
+                if (!seenLnKeys.has(key)) {
+                    seenLnKeys.add(key);
+                    lnItems.push({ name, detail, style });
+                }
+            };
 
             let baziSrcs = getSelectedPillarSources();
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(ln.branch)) {
                         let style = getSrcStyle(src.name);
-                        lnItems.push({
-                            name: r.name,
-                            detail: `原局${src.name}見太歲支(${Dizhi[ln.branch]})`,
-                            style: style
-                        });
+                        pushLnItem(r.name, `原局${src.name}見太歲支(${Dizhi[ln.branch]})`, style);
                     }
                 });
             });
@@ -787,11 +807,7 @@
                     baziPillars.forEach(p => {
                         if (p.i !== -1 && r.targets.includes(p.i)) {
                             let style = getSrcStyle("流年干");
-                            lnItems.push({
-                                name: r.name,
-                                detail: `太歲天干照入原局${p.n}(${Dizhi[p.i]})`,
-                                style: style
-                            });
+                            pushLnItem(r.name, `太歲天干照入原局${p.n}(${Dizhi[p.i]})`, style);
                         }
                     });
                 });
@@ -802,11 +818,7 @@
                 baziPillars.forEach(p => {
                     if (p.i === suiPoBranch) {
                         let style = getSrcStyle("年支");
-                        lnItems.push({
-                            name: "歲破(大耗)",
-                            detail: `流年與原局${p.n}(${Dizhi[p.i]})六沖`,
-                            style: style
-                        });
+                        pushLnItem("歲破(大耗)", `流年與原局${p.n}(${Dizhi[p.i]})六沖`, style);
                     }
                 });
             }
@@ -1031,18 +1043,16 @@
 
         calculateAndRenderDayun(mStem, mBranch, direction, startAge, year, dStem);
 
-        // 【調整】：起盤時不預選大運與流年，全數設為 null
+        // 徹底重設大運及流年狀態（不預選任何大運）
         currentDayunIndex = null;
         currentLiunian = null;
         document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
         
-        // 隱藏流年展示列、月神煞與互涉展示盒
         document.getElementById('liunianDisplay').style.display = "none";
         document.getElementById('verticalMonthSection').style.display = "none";
         document.getElementById('dayunVsBaziBox').style.display = "none";
         document.getElementById('liunianVsBaziBox').style.display = "none";
 
-        // 僅展示原局神煞與羅盤
         updateShenshaDisplay(null);
 
         document.getElementById('actionBar').style.display = 'flex';
@@ -1106,8 +1116,8 @@
                     <div class="shishen">${stemShishen}</div>
                     <div class="stem">${sText}</div>
                     <div class="branch">${bText}</div>
-                    <div class="nayin-text">${nayinText}</div>
-                    <div class="kw-text">${kwText}</div>
+                    <div class="nayin-text">${nayinText || '&nbsp;'}</div>
+                    <div class="kw-text">${kwText || '&nbsp;'}</div>
                     ${hiddenStemsHTML}
                 </div>`;
         }).join('');
@@ -1549,6 +1559,11 @@
                 getStemRules(dy.stem).forEach(r => pillars.forEach(p => {
                     if (p.i !== -1 && r.targets.includes(p.i)) {
                         activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運干"});
+                    }
+                }));
+                getBranchRules(dy.branch, false).forEach(r => pillars.forEach(p => {
+                    if (p.i !== -1 && r.targets.includes(p.i)) {
+                        activeRules.push({name:r.name, loc:p.n, i:p.i, src:"大運支"});
                     }
                 }));
 
