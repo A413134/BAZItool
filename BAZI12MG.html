@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (無預選大運·完善修正版)</title>
+    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (全方位完善版)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -1043,7 +1043,7 @@
 
         calculateAndRenderDayun(mStem, mBranch, direction, startAge, year, dStem);
 
-        // 徹底重設大運及流年狀態（不預選任何大運）
+        // 重設狀態（不預選大運）
         currentDayunIndex = null;
         currentLiunian = null;
         document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
@@ -1170,6 +1170,8 @@
 
         const dy = currentDayunList[idx];
         let off = (dy.startYear - 4) % 60; if (off < 0) off += 60;
+        
+        // 點擊大運時，預設選中該大運第 1 年流年
         currentLiunian = { year: dy.startYear, stem: off % 10, branch: off % 12 };
 
         refreshDisplay();
@@ -1363,6 +1365,7 @@
         });
 
         getStemRules(ln.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
+            allowedShenshaSet.add(r.name);
             r.targets.forEach(tgt => {
                 if (baziBranches.includes(tgt)) allowedShenshaSet.add(r.name);
             });
