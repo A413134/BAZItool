@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤流年流月全功能專業版</title>
+    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (無預選大運版)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -14,7 +14,7 @@
         }
 
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1020px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        .container { max-width: 1040px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 24px; letter-spacing: 1px; }
 
         .input-group { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; align-items: flex-end; }
@@ -22,7 +22,7 @@
         label { font-size: 13px; margin-bottom: 5px; color: #666; font-weight: bold; }
         input, select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 15px; text-align: center; height: 40px; box-sizing: border-box; }
         input { width: 85px; }
-        select { width: 175px; }
+        select { width: 185px; }
         input.disabled, select.disabled { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; }
 
         .checkbox-wrapper { margin-top: 8px; display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; cursor: pointer; }
@@ -56,16 +56,61 @@
         .pillar-head { font-size: 14px; color: #777; font-weight: bold; margin-bottom: 5px;}
 
         .shishen { font-size: 13px; color: #7f8c8d; min-height: 18px; margin-bottom: -2px; }
-        .stem { font-size: 24px; font-weight: bold; color: #e74c3c; min-height: 36px; line-height: 1.2;}
-        .branch { font-size: 24px; font-weight: bold; color: #2c3e50; min-height: 36px; line-height: 1.2;}
+        .stem { font-size: 26px; font-weight: bold; color: #e74c3c; min-height: 36px; line-height: 1.2;}
+        .branch { font-size: 26px; font-weight: bold; color: #2c3e50; min-height: 36px; line-height: 1.2;}
         .unknown-text { color: #aaa; font-size: 20px; }
         .nayin-text { font-size: 12px; color: #8e44ad; font-weight: bold; margin-bottom: 2px; }
         .kw-text { font-size: 12px; color: #7f8c8d; font-weight: bold; margin-bottom: 2px; }
 
         .zanggan-box { display: flex; flex-direction: column; margin-top: 5px; border-top: 1px dashed #eee; padding-top: 4px; gap: 2px; }
         .zg-row { display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 11px; }
-        .zg-shishen { color: #999; width: 24px; text-align: right; transform: scale(0.9); }
+        .zg-shishen { color: #999; width: 26px; text-align: right; transform: scale(0.9); }
         .zg-stem { color: #555; font-weight: bold; width: 14px; }
+
+        .interactive-panel-box {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #dcdde1;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .interactive-panel-header {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            background: #f8f9fa;
+        }
+        .interactive-panel-header:hover {
+            filter: brightness(0.97);
+        }
+        .btn-toggle-box {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 3px 10px;
+            font-size: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .btn-toggle-box:hover {
+            border-color: #2c3e50;
+            color: #2c3e50;
+        }
+        .interactive-content {
+            padding: 12px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
 
         .timeline-section { margin-bottom: 20px; overflow-x: auto; border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fdfdfd; }
         .timeline-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #2c3e50; border-left: 4px solid #2c3e50; padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -263,6 +308,24 @@
 
         <div class="bazi-chart" id="baziDisplay"></div>
 
+        <!-- 獨立空格：大運對原命盤神煞展示盒 -->
+        <div class="interactive-panel-box" id="dayunVsBaziBox" style="display: none; border-color: #c0392b;">
+            <div class="interactive-panel-header" onclick="togglePanelBody('dayunVsBaziContent', 'dayunToggleBtn')" style="background: #fdedec; color: #c0392b;">
+                <span id="dayunVsBaziTitle">🚩 【大運 ➔ 原局命盤】神煞互涉對照</span>
+                <button class="btn-toggle-box" id="dayunToggleBtn" type="button">收合 ▲</button>
+            </div>
+            <div class="interactive-content" id="dayunVsBaziContent"></div>
+        </div>
+
+        <!-- 獨立空格：流年對原命盤神煞展示盒 -->
+        <div class="interactive-panel-box" id="liunianVsBaziBox" style="display: none; border-color: #27ae60;">
+            <div class="interactive-panel-header" onclick="togglePanelBody('liunianVsBaziContent', 'liunianToggleBtn')" style="background: #eafaf1; color: #27ae60;">
+                <span id="liunianVsBaziTitle">🌟 【流年 ➔ 原局命盤】神煞互涉對照</span>
+                <button class="btn-toggle-box" id="liunianToggleBtn" type="button">收合 ▲</button>
+            </div>
+            <div class="interactive-content" id="liunianVsBaziContent"></div>
+        </div>
+
         <div class="timeline-section">
             <div class="timeline-title">
                 <span>大運排盤 (點擊大運顯示流年)</span>
@@ -335,10 +398,17 @@
     const Dizhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     const Zodiacs = ["鼠","牛","虎","兔","龍","蛇","馬","羊","猴","雞","狗","豬"];
 
-    const NaYinList = [
-        "海中金","爐中火","大林木","路旁土","劍鋒金", "山頭火","澗下水","城頭土","白蠟金","楊柳木",
-        "泉中水","屋上土","霹靂火","松柏木","長流水", "沙中金","山下火","平地木","壁上土","金箔金",
-        "覆燈火","天河水","大驛土","釵釧金","桑柘木", "大溪水","沙中土","天上火","石榴木","大海水"
+    const SixtyNaYin = [
+        "海中金","海中金","爐中火","爐中火","大林木","大林木",
+        "路旁土","路旁土","劍鋒金","劍鋒金","山頭火","山頭火",
+        "澗下水","澗下水","城頭土","城頭土","白蠟金","白蠟金",
+        "楊柳木","楊柳木","泉中水","泉中水","屋上土","屋上土",
+        "霹靂火","霹靂火","松柏木","松柏木","長流水","長流水",
+        "沙中金","沙中金","山下火","山下火","平地木","平地木",
+        "壁上土","壁上土","金箔金","金箔金","覆燈火","覆燈火",
+        "天河水","天河水","大驛土","大驛土","釵釧金","釵釧金",
+        "桑柘木","桑柘木","大溪水","大溪水","沙中土","沙中土",
+        "天上火","天上火","石榴木","石榴木","大海水","大海水"
     ];
 
     const ZangGanFull = [
@@ -358,7 +428,6 @@
         { dir: "西北", branches: [10, 11], mountains: "戌乾亥", class: "cell-nw" }
     ];
 
-    /* 全局神煞標準字典：甲戊庚牛羊、乙己鼠猴鄉、丙丁豬雞位、壬癸兔蛇藏、六辛逢馬虎(寅午)；戊己怕辰 */
     const ShenshaRules = {
         stem: { 
             "天乙": { 0: [1,7], 1: [0,8], 2: [11,9], 3: [11,9], 4: [1,7], 5: [0,8], 6: [1,7], 7: [2,6], 8: [3,5], 9: [3,5] },
@@ -392,11 +461,11 @@
     allShensha.forEach(name => shenshaConfig[name] = true);
 
     let interactionConfig = {
-        dayunActive: true,        // 大運照入原局
-        liunianActive: true,      // 流年照入原局
-        liuyueActive: true,       // 流月照入原局
-        dayunToLiunian: true,     // 大運照入流年
-        dayunToLiuyue: true       // 大運照入流月
+        dayunActive: true,
+        liunianActive: true,
+        liuyueActive: true,
+        dayunToLiunian: true,
+        dayunToLiuyue: true
     };
 
     let pillarConfig = {
@@ -414,6 +483,7 @@
     let currentBaziData = {};
     let currentDayunList = [];
     let currentLiunian = null; 
+    let currentDayunIndex = null; // 初始為 null：不預選任何大運
     const TermDays = [5, 4, 6, 5, 5, 6, 7, 7, 8, 8, 7, 7];
 
     function getStemFiveElement(stem) {
@@ -524,6 +594,18 @@
         refreshDisplay();
     }
 
+    function togglePanelBody(contentId, btnId) {
+        const content = document.getElementById(contentId);
+        const btn = document.getElementById(btnId);
+        if (content.style.display === "none") {
+            content.style.display = "flex";
+            btn.innerText = "收合 ▲";
+        } else {
+            content.style.display = "none";
+            btn.innerText = "展開 ▼";
+        }
+    }
+
     function getSelectedPillarSources() {
         const d = currentBaziData;
         let sources = [];
@@ -594,15 +676,152 @@
 
     function refreshDisplay() {
         if (currentBaziData && currentBaziData.yStem !== undefined) {
-            let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
-            let validDayunIdx = activeDayunIdx >= 0 ? activeDayunIdx : 0;
+            let activeDayunIdx = currentDayunIndex;
 
-            updateShenshaDisplay(validDayunIdx);
-            renderLiunianBar(validDayunIdx);
-
-            if (currentLiunian) {
-                renderVerticalMonthTable(currentLiunian, validDayunIdx);
+            updateShenshaDisplay(activeDayunIdx);
+            
+            if (activeDayunIdx !== null && activeDayunIdx >= 0) {
+                renderLiunianBar(activeDayunIdx);
+            } else {
+                document.getElementById('liunianDisplay').style.display = "none";
+                document.getElementById('verticalMonthSection').style.display = "none";
             }
+
+            renderDedicatedPanels(activeDayunIdx);
+
+            if (currentLiunian && activeDayunIdx !== null) {
+                renderVerticalMonthTable(currentLiunian, activeDayunIdx);
+            }
+        }
+    }
+
+    function renderDedicatedPanels(validDayunIdx) {
+        const d = currentBaziData;
+        const dyBox = document.getElementById('dayunVsBaziBox');
+        const dyContent = document.getElementById('dayunVsBaziContent');
+        const dyTitle = document.getElementById('dayunVsBaziTitle');
+
+        let baziPillars = [
+            { n: "年支", i: d.yBranch },
+            { n: "月支", i: d.mBranch },
+            { n: "日支", i: d.dBranch },
+            { n: "時支", i: d.hBranch }
+        ];
+
+        // 1. 渲染「大運 ➔ 原局命盤」神煞
+        if (validDayunIdx !== null && validDayunIdx >= 0 && currentDayunList[validDayunIdx]) {
+            const dy = currentDayunList[validDayunIdx];
+            dyBox.style.display = "block";
+            dyTitle.innerHTML = `🚩 【第${dy.seq}運 ${Tiangan[dy.stem]}${Dizhi[dy.branch]} (${dy.startAge}~${dy.startAge+9}歲) ➔ 原八字命盤】神煞互涉對照：`;
+            let dyItems = [];
+
+            let baziSrcs = getSelectedPillarSources();
+            baziSrcs.forEach(src => {
+                src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
+                    if (r.targets.includes(dy.branch)) {
+                        let style = getSrcStyle(src.name);
+                        dyItems.push({
+                            name: r.name,
+                            detail: `原局${src.name}在運支(${Dizhi[dy.branch]})見`,
+                            style: style
+                        });
+                    }
+                });
+            });
+
+            if (interactionConfig.dayunActive) {
+                getStemRules(dy.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
+                    baziPillars.forEach(p => {
+                        if (p.i !== -1 && r.targets.includes(p.i)) {
+                            let style = getSrcStyle("大運干");
+                            dyItems.push({
+                                name: r.name,
+                                detail: `運干照入原局${p.n}(${Dizhi[p.i]})`,
+                                style: style
+                            });
+                        }
+                    });
+                });
+            }
+
+            if (dyItems.length > 0) {
+                dyContent.innerHTML = dyItems.map(item => `
+                    <span class="v-star-tag" style="background:${item.style.bg}; border-color:${item.style.border}; color:${item.style.text}; font-size:13px; padding:4px 10px;">
+                        ${item.name} <small style="opacity:0.8; margin-left:4px;">(${item.detail})</small>
+                    </span>
+                `).join('');
+            } else {
+                dyContent.innerHTML = '<span style="color:#999; font-size:13px;">當前大運與原局未引動特殊設定神煞</span>';
+            }
+        } else {
+            dyBox.style.display = "none";
+        }
+
+        // 2. 渲染「流年 ➔ 原局命盤」神煞
+        const lnBox = document.getElementById('liunianVsBaziBox');
+        const lnContent = document.getElementById('liunianVsBaziContent');
+        const lnTitle = document.getElementById('liunianVsBaziTitle');
+
+        if (currentLiunian && validDayunIdx !== null) {
+            const ln = currentLiunian;
+            lnBox.style.display = "block";
+            lnTitle.innerHTML = `🌟 【${ln.year}年 ${Tiangan[ln.stem]}${Dizhi[ln.branch]} ➔ 原八字命盤】神煞互涉對照：`;
+            let lnItems = [];
+
+            let baziSrcs = getSelectedPillarSources();
+            baziSrcs.forEach(src => {
+                src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
+                    if (r.targets.includes(ln.branch)) {
+                        let style = getSrcStyle(src.name);
+                        lnItems.push({
+                            name: r.name,
+                            detail: `原局${src.name}見太歲支(${Dizhi[ln.branch]})`,
+                            style: style
+                        });
+                    }
+                });
+            });
+
+            if (interactionConfig.liunianActive) {
+                getStemRules(ln.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
+                    baziPillars.forEach(p => {
+                        if (p.i !== -1 && r.targets.includes(p.i)) {
+                            let style = getSrcStyle("流年干");
+                            lnItems.push({
+                                name: r.name,
+                                detail: `太歲天干照入原局${p.n}(${Dizhi[p.i]})`,
+                                style: style
+                            });
+                        }
+                    });
+                });
+            }
+
+            if (shenshaConfig["歲破(大耗)"]) {
+                let suiPoBranch = ShenshaRules.branch["歲破(大耗)"].map[ln.branch];
+                baziPillars.forEach(p => {
+                    if (p.i === suiPoBranch) {
+                        let style = getSrcStyle("年支");
+                        lnItems.push({
+                            name: "歲破(大耗)",
+                            detail: `流年與原局${p.n}(${Dizhi[p.i]})六沖`,
+                            style: style
+                        });
+                    }
+                });
+            }
+
+            if (lnItems.length > 0) {
+                lnContent.innerHTML = lnItems.map(item => `
+                    <span class="v-star-tag" style="background:${item.style.bg}; border-color:${item.style.border}; color:${item.style.text}; font-size:13px; padding:4px 10px;">
+                        ${item.name} <small style="opacity:0.8; margin-left:4px;">(${item.detail})</small>
+                    </span>
+                `).join('');
+            } else {
+                lnContent.innerHTML = '<span style="color:#999; font-size:13px;">該流年與原局未引動特殊設定神煞</span>';
+            }
+        } else {
+            lnBox.style.display = "none";
         }
     }
 
@@ -648,15 +867,14 @@
     }
 
     function getNaYin(stemIdx, branchIdx) {
-        if (stemIdx < 0 || branchIdx < 0) return "";
-        let diff = (stemIdx - branchIdx + 12) % 12;
-        let idx = stemIdx + 10 * (diff / 2);
-        return NaYinList[Math.floor(idx / 2)] || "";
+        if (stemIdx < 0 || branchIdx < 0 || stemIdx === undefined || branchIdx === undefined) return "";
+        let gzIdx = (stemIdx * 6 - branchIdx * 5 + 600) % 60;
+        return SixtyNaYin[gzIdx] || "";
     }
 
     function getKongWang(stem, branch) {
-        if (stem < 0 || branch < 0) return [];
-        let diff = (branch - stem + 12) % 12;
+        if (stem < 0 || branch < 0 || stem === undefined || branch === undefined) return [];
+        let diff = (branch - stem + 120) % 12;
         return [(10 + diff) % 12, (11 + diff) % 12];
     }
 
@@ -732,7 +950,6 @@
         return Math.max(1, age);
     }
 
-    /* 天文標準整數儒略日計算 (JDN) */
     function getStandardJDN(y, m, d) {
         let a = Math.floor((14 - m) / 12);
         let yPrime = y + 4800 - a;
@@ -748,52 +965,44 @@
         const gender = document.getElementById('gender').value;
         const hourVal = parseInt(document.getElementById('hourBranch').value);
 
-        let calcDate = new Date(year, month - 1, day);
-
-        let hBranch = -1;
-        let hStem = -1;
-        let dStem = -1;
-        let dBranch = -1;
-
-        if (!noHour) {
-            hBranch = (hourVal === 12) ? 0 : hourVal;
-            if (hourVal === 12 && (ziHourMode === 'yezi_shift' || ziHourMode === 'zi_shift')) {
-                calcDate.setDate(calcDate.getDate() + 1);
-            }
-        }
-
-        let effYear = calcDate.getFullYear();
-        let effMonth = calcDate.getMonth() + 1;
-        let effDay = calcDate.getDate();
-
-        // 節氣月支判定 (嚴格以二十四節氣劃分月令)
-        let isAfterTerm = effDay >= TermDays[effMonth - 1];
+        let isAfterTerm = day >= TermDays[month - 1];
         let mBranchMap = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0];
-        let mBranch = mBranchMap[effMonth];
+        let mBranch = mBranchMap[month];
         if (!isAfterTerm) {
             mBranch = (mBranch - 1 + 12) % 12;
         }
 
-        // 年柱劃分：八字嚴格以立春為歲首換年
-        let isBeforeLiChun = (effMonth === 1) || (effMonth === 2 && !isAfterTerm);
-        let baziYear = isBeforeLiChun ? effYear - 1 : effYear;
+        let isBeforeLiChun = (month === 1) || (month === 2 && !isAfterTerm);
+        let baziYear = isBeforeLiChun ? year - 1 : year;
 
         let offY = (baziYear - 4) % 60; if (offY < 0) offY += 60;
         let yStem = offY % 10, yBranch = offY % 12;
 
-        // 五虎遁年起月干：以立春年干起寅月(0)
         let monthSeqFromYin = (mBranch - 2 + 12) % 12;
         let startMonthStem = ((yStem % 5) * 2 + 2) % 10;
         let mStem = (startMonthStem + monthSeqFromYin) % 10;
 
-        // 精確日柱計算（標準天文 JDN）
-        let jdn = getStandardJDN(effYear, effMonth, effDay);
-        dStem = (jdn + 9) % 10;
-        dBranch = (jdn + 1) % 12;
+        let dayCalcDate = new Date(year, month - 1, day);
+        let hBranch = -1;
+        let hStem = -1;
+
+        if (!noHour) {
+            hBranch = (hourVal === 12) ? 0 : hourVal;
+            if (hourVal === 12 && (ziHourMode === 'yezi_shift' || ziHourMode === 'zi_shift')) {
+                dayCalcDate.setDate(dayCalcDate.getDate() + 1);
+            }
+        }
+
+        let effDayYear = dayCalcDate.getFullYear();
+        let effDayMonth = dayCalcDate.getMonth() + 1;
+        let effDayDay = dayCalcDate.getDate();
+
+        let jdn = getStandardJDN(effDayYear, effDayMonth, effDayDay);
+        let dStem = (jdn + 9) % 10;
+        let dBranch = (jdn + 1) % 12;
         if (dStem < 0) dStem += 10;
         if (dBranch < 0) dBranch += 12;
 
-        // 時柱計算（日上起時干）
         if (!noHour) {
             if (hourVal === 12 && ziHourMode === 'yezi_stay') {
                 let origJdn = getStandardJDN(year, month, day);
@@ -821,24 +1030,35 @@
         document.getElementById('startAgeInfo').innerText = `(約 ${startAge} 歲起運)`;
 
         calculateAndRenderDayun(mStem, mBranch, direction, startAge, year, dStem);
-        selectDayun(0);
+
+        // 【調整】：起盤時不預選大運與流年，全數設為 null
+        currentDayunIndex = null;
+        currentLiunian = null;
+        document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
+        
+        // 隱藏流年展示列、月神煞與互涉展示盒
+        document.getElementById('liunianDisplay').style.display = "none";
+        document.getElementById('verticalMonthSection').style.display = "none";
+        document.getElementById('dayunVsBaziBox').style.display = "none";
+        document.getElementById('liunianVsBaziBox').style.display = "none";
+
+        // 僅展示原局神煞與羅盤
+        updateShenshaDisplay(null);
 
         document.getElementById('actionBar').style.display = 'flex';
         document.getElementById('result').style.display = 'block';
     }
 
-    /* 【精確算法】：三天折算一年，滿2天也算1年，未滿2天不算（交節當日平滑過渡保護） */
     function calculateStartAge(year, month, day, direction) {
         let curTermDay = TermDays[month - 1];
         let birthJDN = getStandardJDN(year, month, day);
         let targetJDN = 0;
 
         if (day === curTermDay) {
-            return 1; // 逢節氣交接日出生者，平滑過渡
+            return 1;
         }
 
         if (direction === 1) {
-            // 順行：數到未來下一個節令
             if (day > curTermDay) {
                 let nextMonth = month === 12 ? 1 : month + 1;
                 let nextYear = month === 12 ? year + 1 : year;
@@ -847,7 +1067,6 @@
                 targetJDN = getStandardJDN(year, month, curTermDay);
             }
         } else {
-            // 逆行：數到過去上一個節令
             if (day > curTermDay) {
                 targetJDN = getStandardJDN(year, month, curTermDay);
             } else {
@@ -858,8 +1077,6 @@
         }
 
         let gapDays = Math.abs(targetJDN - birthJDN);
-        
-        // 核心計算法：三天算1年，餘數滿2天進1年，未滿2天捨去
         let fullYears = Math.floor(gapDays / 3);
         let remainder = gapDays % 3;
         let age = fullYears + (remainder >= 2 ? 1 : 0);
@@ -936,6 +1153,7 @@
 
     function selectDayun(idx) {
         if (idx < 0 || idx >= currentDayunList.length) return;
+        currentDayunIndex = idx;
         document.querySelectorAll('.dayun-col').forEach(el => el.classList.remove('selected'));
         const el = document.getElementById(`dayun-${idx}`);
         if (el) el.classList.add('selected');
@@ -984,7 +1202,6 @@
             let yearShenshas = [];
             let baziSrcs = getSelectedPillarSources();
 
-            // 1. 原局查流年支
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(b) && !yearShenshas.includes(r.name)) {
@@ -993,7 +1210,6 @@
                 });
             });
 
-            // 2. 流年天干照入原局地支
             let baziBranches = [d.yBranch, d.mBranch, d.dBranch];
             if (d.hBranch !== -1) baziBranches.push(d.hBranch);
 
@@ -1005,7 +1221,6 @@
                 });
             });
 
-            // 3. 流年地支六沖太歲引動「歲破(大耗)」
             if (shenshaConfig["歲破(大耗)"]) {
                 let suiPoTarget = ShenshaRules.branch["歲破(大耗)"].map[b];
                 if (baziBranches.includes(suiPoTarget) && !yearShenshas.includes("歲破(大耗)")) {
@@ -1013,7 +1228,6 @@
                 }
             }
 
-            // 4. 大運照入流年 (若啟用)
             if (interactionConfig.dayunToLiunian && dy) {
                 getStemRules(dy.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(b) && !yearShenshas.includes(r.name)) {
@@ -1055,6 +1269,7 @@
 
             btn.onclick = function(e) {
                 if (e.target.classList.contains('ln-expand-badge')) {
+                    e.stopPropagation();
                     let y = e.target.getAttribute('data-year');
                     let gz = e.target.getAttribute('data-gz');
                     let stars = JSON.parse(e.target.getAttribute('data-stars'));
@@ -1067,10 +1282,10 @@
 
                 currentLiunian = { year: year, stem: s, branch: b };
 
-                let activeDayunIdx = currentDayunList.findIndex(dy => document.getElementById(`dayun-${dy.seq-1}`)?.classList.contains('selected'));
-                let validDayunIdx = activeDayunIdx >= 0 ? activeDayunIdx : null;
-                updateShenshaDisplay(validDayunIdx);
-                renderVerticalMonthTable(currentLiunian, validDayunIdx);
+                let activeDayunIdx = currentDayunIndex;
+                updateShenshaDisplay(activeDayunIdx);
+                renderDedicatedPanels(activeDayunIdx);
+                renderVerticalMonthTable(currentLiunian, activeDayunIdx);
             };
             list.appendChild(btn);
         }
@@ -1143,7 +1358,6 @@
             });
         });
 
-        // 納入流年引動之歲破
         if (shenshaConfig["歲破(大耗)"]) {
             let suiPoTarget = ShenshaRules.branch["歲破(大耗)"].map[ln.branch];
             if (baziBranches.includes(suiPoTarget)) {
@@ -1151,7 +1365,6 @@
             }
         }
 
-        // 大運照入流月動態加入允許名單
         if (interactionConfig.dayunToLiuyue && dy) {
             getStemRules(dy.stem).filter(r => shenshaConfig[r.name]).forEach(r => allowedShenshaSet.add(r.name));
             getBranchRules(dy.branch, false).filter(r => shenshaConfig[r.name]).forEach(r => allowedShenshaSet.add(r.name));
@@ -1167,7 +1380,6 @@
             let displayPeriod = basePeriods[m];
             let monthShenshas = [];
 
-            // 1. 原局查流月地支
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(mBranch)) {
@@ -1176,7 +1388,6 @@
                 });
             });
 
-            // 2. 流年查流月地支
             getBranchRules(ln.branch).filter(r => shenshaConfig[r.name]).forEach(r => {
                 if (r.targets.includes(mBranch)) {
                     monthShenshas.push({ name: r.name, rawName: r.name, from: "流年支", style: getSrcStyle("流年支") });
@@ -1188,7 +1399,6 @@
                 }
             });
 
-            // 3. 大運照入流月 (受開關控管)
             if (interactionConfig.dayunToLiuyue && dy) {
                 getBranchRules(dy.branch).filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(mBranch)) {
@@ -1202,13 +1412,12 @@
                 });
             }
 
-            // 4. 流月干照入原局地支
             if (interactionConfig.liuyueActive) {
                 let pillars = [{n:"年支", i:d.yBranch}, {n:"月支", i:d.mBranch}, {n:"日支", i:d.dBranch}, {n:"時支", i:d.hBranch}];
                 getStemRules(mStem).filter(r => shenshaConfig[r.name]).forEach(r => {
                     pillars.forEach(p => {
                         if (p.i !== -1 && r.targets.includes(p.i)) {
-                            monthShenshas.push({ name: `${r.name}(入${p.n})`, rawName: r.name, from: "流月干", style: getSrcStyle("流年干") });
+                            monthShenshas.push({ name: `${r.name}(入${p.n})`, rawName: r.name, from: "流月干", style: getSrcStyle("流月干") });
                         }
                     });
                 });
@@ -1362,7 +1571,7 @@
             }
         }
 
-        if (currentLiunian) {
+        if (currentLiunian && dy) {
             const ln = currentLiunian;
             let liunianGroupStyle = getSrcStyle("流年支");
             let baziSrcs = getSelectedPillarSources();
@@ -1374,7 +1583,6 @@
                 });
             });
 
-            // 歲破在原局查流年時主動命中
             if (shenshaConfig["歲破(大耗)"]) {
                 let suiPoBranch = ShenshaRules.branch["歲破(大耗)"].map[ln.branch];
                 if (baziBranches.includes(suiPoBranch)) {
@@ -1424,7 +1632,6 @@
                 }
             }
 
-            // 大運照入流年專屬區塊
             if (interactionConfig.dayunToLiunian && dy) {
                 let lnDyRules = [];
                 getStemRules(dy.stem).forEach(r => {
