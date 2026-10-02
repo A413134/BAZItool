@@ -827,15 +827,19 @@
         document.getElementById('result').style.display = 'block';
     }
 
-    /* 【精確算法】：三天折算一年，滿2天也算1年，未滿2天不算（基於JDN整數天距，杜絕時區夏令時捨入誤差） */
+    /* 【精確算法】：三天折算一年，滿2天也算1年，未滿2天不算（交節當日平滑過渡保護） */
     function calculateStartAge(year, month, day, direction) {
         let curTermDay = TermDays[month - 1];
         let birthJDN = getStandardJDN(year, month, day);
         let targetJDN = 0;
 
+        if (day === curTermDay) {
+            return 1; // 逢節氣交接日出生者，平滑過渡
+        }
+
         if (direction === 1) {
             // 順行：數到未來下一個節令
-            if (day >= curTermDay) {
+            if (day > curTermDay) {
                 let nextMonth = month === 12 ? 1 : month + 1;
                 let nextYear = month === 12 ? year + 1 : year;
                 targetJDN = getStandardJDN(nextYear, nextMonth, TermDays[nextMonth - 1]);
@@ -844,7 +848,7 @@
             }
         } else {
             // 逆行：數到過去上一個節令
-            if (day >= curTermDay) {
+            if (day > curTermDay) {
                 targetJDN = getStandardJDN(year, month, curTermDay);
             } else {
                 let prevMonth = month === 1 ? 12 : month - 1;
@@ -1443,7 +1447,7 @@
                     }).join('');
 
                     container.innerHTML += `<div class="category-row" style="border: 1px solid #27ae60;">
-                        <div class="category-header" style="background-color:${#27ae60}; color:#fff;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}]</span></div>
+                        <div class="category-header" style="background-color:#27ae60; color:#fff;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}]</span></div>
                         <div class="shensha-grid">${lndyItems}</div>
                     </div>`;
                 }
