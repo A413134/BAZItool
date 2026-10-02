@@ -151,7 +151,7 @@
         .v-table th { background: #f1f2f6; padding: 8px; font-size: 13px; border-bottom: 1px solid #ddd; color: #555; text-align: center; }
         .v-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px; vertical-align: middle; }
         .v-table tr:hover { background-color: #fafbfc; }
-        .v-period { font-size: 12px; font-weight: bold; color: #555; width: 135px; }
+        .v-period { font-size: 12px; font-weight: bold; color: #555; width: 145px; }
         .v-ganzhi { font-size: 18px; font-weight: bold; width: 70px; letter-spacing: 2px; }
         .v-shishen { font-size: 12px; color: #7f8c8d; }
         .v-stars { text-align: left !important; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -191,7 +191,7 @@
             .compass-cell { padding: 8px 4px; min-height: 100px;}
             .v-table th, .v-table td { padding: 6px 4px; font-size: 12px; }
             .v-ganzhi { font-size: 15px; }
-            .v-period { width: 100px; font-size: 11px; }
+            .v-period { width: 105px; font-size: 11px; }
         }
     </style>
 </head>
@@ -242,7 +242,7 @@
             </select>
         </div>
         <button onclick="calculate()">開始排盤</button>
-        <div class="notice-banner">注：四柱年柱嚴格以立春換年；大運按三天折算一年（餘滿2天進1年，未滿2天不計）。</div>
+        <div class="notice-banner">注：四柱年柱嚴格以立春換年；大運按三天折算一年（滿2天算1年，未滿2天不計）。</div>
     </div>
 
     <div class="action-bar" id="actionBar" style="display: none;">
@@ -298,7 +298,7 @@
             <table class="v-table">
                 <thead>
                     <tr>
-                        <th style="width: 135px;">公曆對應區間</th>
+                        <th style="width: 145px;">公曆對應區間</th>
                         <th style="width: 65px;">節氣月</th>
                         <th style="width: 70px;">干支</th>
                         <th style="width: 60px;">十神</th>
@@ -1443,7 +1443,7 @@
                     }).join('');
 
                     container.innerHTML += `<div class="category-row" style="border: 1px solid #27ae60;">
-                        <div class="category-header" style="background-color:#27ae60; color:#fff;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}]</span></div>
+                        <div class="category-header" style="background-color:${#27ae60}; color:#fff;"><span>大運 [${Tiangan[dy.stem]}${Dizhi[dy.branch]}] 照入 流年 [${Tiangan[ln.stem]}${Dizhi[ln.branch]}]</span></div>
                         <div class="shensha-grid">${lndyItems}</div>
                     </div>`;
                 }
