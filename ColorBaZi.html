@@ -869,7 +869,7 @@ function toggleTheme() {
 }
 
 // ==========================================
-// 1. 日家十二神煞私人班手稿原話庫
+// 1. 日家十二神煞原話庫
 // ==========================================
 const shenShaDescriptions = {
     "太歲": `<ul>
@@ -1159,7 +1159,7 @@ const dualStarMasterData = {
 };
 
 // ==========================================
-// 3. 39 關煞私人班手稿原話庫 (精確還原 39 關煞)
+// 3. 39 關煞原話庫 (精確還原 39 關煞)
 // ==========================================
 const gsDescriptions = {
     "白虎關": `<ul>
@@ -1656,12 +1656,12 @@ function showGuanShaInfo(gsName) {
     }
 
     if (desc) {
-        document.getElementById('gsModalTitle').innerText = `【 ${matchedTitle} 】私人班定義解釋`;
+        document.getElementById('gsModalTitle').innerText = `【 ${matchedTitle} 】定義解釋`;
         document.getElementById('gsModalBody').innerHTML = desc;
         document.getElementById('gsModal').style.display = 'flex';
     } else {
         document.getElementById('gsModalTitle').innerText = `【 ${gsName} 】`;
-        document.getElementById('gsModalBody').innerHTML = `<p style="color:var(--text-muted);">暫無此關煞的詳細私人班註解。</p>`;
+        document.getElementById('gsModalBody').innerHTML = `<p style="color:var(--text-muted);">暫無此關煞的詳細註解。</p>`;
         document.getElementById('gsModal').style.display = 'flex';
     }
 }
@@ -1681,7 +1681,7 @@ function showShenShaInfo(ssName) {
     }
 
     if (desc) {
-        document.getElementById('gsModalTitle').innerText = `【 日家神煞 · ${cleanKey} 】私人班定義解釋`;
+        document.getElementById('gsModalTitle').innerText = `【 日家神煞 · ${cleanKey} 】定義解釋`;
         document.getElementById('gsModalBody').innerHTML = desc;
         document.getElementById('gsModal').style.display = 'flex';
     }
