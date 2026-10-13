@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (高抗脆弱架構修復版)</title>
+    <title>八字神煞速查 | 羅盤流年流月全功能專業版 (修復版)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -415,7 +415,6 @@
         "天上火","天上火","石榴木","石榴木","大海水","大海水"
     ];
 
-    // 嚴格對照圖片 1 與圖片 3 地支藏干：[主氣, 中氣, 餘氣]
     const ZangGanFull = [
         [9],          // 子: 癸
         [5, 9, 7],    // 丑: 己癸辛
@@ -443,24 +442,19 @@
         { dir: "西北", branches: [10, 11], mountains: "戌乾亥", class: "cell-nw" }
     ];
 
-    // 嚴格對照圖檔定義之神煞規則 (100% 吻合附圖 Key-Value 映射)
     const ShenshaRules = {
         stem: { 
-            // 圖三口訣：甲戊庚牛羊(1,7)、乙己鼠猴(0,8)、丙丁豬雞(11,9)、辛午寅(6,2)、壬癸兔蛇(3,5)
             "天乙": { 0: [1,7], 1: [0,8], 2: [9,11], 3: [9,11], 4: [1,7], 5: [0,8], 6: [1,7], 7: [2,6], 8: [3,5], 9: [3,5] },
             "文昌": { 0:[5], 1:[6], 2:[8], 3:[9], 4:[8], 5:[9], 6:[11], 7:[0], 8:[2], 9:[3] },
-            // 圖一：紅艷 (甲午、乙申、丙寅、丁未、戊辰、己辰、庚戌、辛酉、壬子、癸申)
             "紅艷": { 0:[6], 1:[8], 2:[2], 3:[7], 4:[4], 5:[4], 6:[10], 7:[9], 8:[0], 9:[8] },
             "沐浴": { 0:[0], 1:[5], 2:[3], 3:[8], 4:[3], 5:[8], 6:[6], 7:[11], 8:[9], 9:[2] },
             "祿神": { 0:[2], 1:[3], 2:[5], 3:[6], 4:[5], 5:[6], 6:[8], 7:[9], 8:[11], 9:[0] },
-            // 圖一羊刃：甲卯(3)、丙戊午(6)、庚酉(9)、壬子(0)
             "羊刃": { 0:[3], 2:[6], 4:[6], 6:[9], 8:[0] },
             "金輿": { 0:[4], 1:[5], 2:[7], 3:[8], 4:[7], 5:[8], 6:[10], 7:[11], 8:[1], 9:[2] },
             "流霞": { 0:[9], 1:[10], 2:[7], 3:[8], 4:[5], 5:[6], 6:[4], 7:[2], 8:[11], 9:[0] },
             "學堂": { 0:[11], 1:[6], 2:[2], 3:[9], 4:[2], 5:[9], 6:[5], 7:[0], 8:[8], 9:[3] }
         },
         branch: { 
-            // 圖二：12 地支全吻合
             "咸池": { map: [9, 6, 3, 0, 9, 6, 3, 0, 9, 6, 3, 0] },
             "驛馬": { map: [2, 11, 8, 5, 2, 11, 8, 5, 2, 11, 8, 5] },
             "孤辰": { map: [2, 2, 5, 5, 5, 8, 8, 8, 11, 11, 11, 2] },
@@ -471,7 +465,6 @@
             "災煞": { map: [6, 3, 0, 9, 6, 3, 0, 9, 6, 3, 0, 9] },
             "白虎": { map: [8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7] },
             "華蓋": { map: [4, 1, 10, 7, 4, 1, 10, 7, 4, 1, 10, 7] },
-            // 圖一：紅鸞天喜
             "紅鸞": { map: [3, 2, 1, 0, 11, 10, 9, 8, 7, 6, 5, 4] },
             "天喜": { map: [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11, 10] },
             "歲破(大耗)": { map: [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5] }
@@ -530,7 +523,7 @@
         const wDay = getStemFiveElement(dayStem);
         const wTarget = getStemFiveElement(targetStem);
         const samePolarity = (dayStem % 2) === (targetStem % 2);
-        const relation = (wTarget - wDay + 5) % 5;
+        const relation = safeMod(wTarget - wDay, 5);
         const matrix = [
             samePolarity ? "比肩" : "劫財",
             samePolarity ? "食神" : "傷官",
@@ -546,7 +539,7 @@
         const wDay = getStemFiveElement(dayStem);
         const wTarget = getStemFiveElement(targetStem);
         const samePolarity = (dayStem % 2) === (targetStem % 2);
-        const relation = (wTarget - wDay + 5) % 5;
+        const relation = safeMod(wTarget - wDay, 5);
         const matrixShort = [
             samePolarity ? "比" : "劫",
             samePolarity ? "食" : "傷",
@@ -1159,6 +1152,7 @@
         return d + Math.floor((153 * mPrime + 2) / 5) + 365 * yPrime + Math.floor(yPrime / 4) - Math.floor(yPrime / 100) + Math.floor(yPrime / 400) - 32045;
     }
 
+    // 核心修復：正確判定節氣與月柱地支
     function calculate(resetSelection = true) {
         let year = parseInt(document.getElementById('year').value);
         let month = parseInt(document.getElementById('month').value);
@@ -1167,7 +1161,6 @@
         const gender = document.getElementById('gender').value;
         const hourVal = parseInt(document.getElementById('hourBranch').value);
 
-        // 建立日曆日物件與換日日物件，避免夜子時日柱換日干擾節氣切換
         let calendarDate = new Date(year, month - 1, day);
         let dayPillarDate = new Date(year, month - 1, day);
         let hBranch = -1;
@@ -1187,33 +1180,40 @@
             }
         }
 
-        // 節氣月及年柱嚴格依據真實日曆日計算，不被夜子換日污染
         let calYear = calendarDate.getFullYear();
         let calMonth = calendarDate.getMonth() + 1;
         let calDay = calendarDate.getDate();
 
+        // 節氣交節日判定
         let isAfterTerm = calDay >= TermDays[calMonth - 1];
+
+        // 地支映射表：公曆月份(1-12)在交節前後對應的月支(0=子, 1=丑, 2=寅... 11=亥)
+        // 1月: 節前子(0), 節後丑(1)
+        // 2月: 節前丑(1), 節後寅(2) [立春]
+        // 3月: 節前寅(2), 節後卯(3)
+        // ...
+        // 12月: 節前亥(11), 節後子(0)
         let mBranch;
-        if (calMonth === 1) {
-            mBranch = isAfterTerm ? 1 : 0; 
-        } else if (calMonth === 2) {
-            mBranch = isAfterTerm ? 2 : 1; 
+        if (isAfterTerm) {
+            mBranch = safeMod(calMonth, 12);
         } else {
-            mBranch = isAfterTerm ? calMonth : calMonth - 1;
+            mBranch = safeMod(calMonth - 1, 12);
         }
 
+        // 年柱是否過立春
         let isBeforeLiChun = (calMonth === 1) || (calMonth === 2 && !isAfterTerm);
         let baziYear = isBeforeLiChun ? calYear - 1 : calYear;
 
         let offY = safeMod(baziYear - 4, 60);
         let yStem = offY % 10, yBranch = offY % 12;
 
+        // 五虎遁起月干 (正月立春起寅月)
         let monthSeqFromYin = safeMod(mBranch - 2, 12);
         const WuHuDunMonthStem = [2, 4, 6, 8, 0];
         let startMonthStem = WuHuDunMonthStem[yStem % 5];
         let mStem = safeMod(startMonthStem + monthSeqFromYin, 10);
 
-        // 日柱嚴格依據 dayPillarDate
+        // 日柱計算
         let dpYear = dayPillarDate.getFullYear();
         let dpMonth = dayPillarDate.getMonth() + 1;
         let dpDay = dayPillarDate.getDate();
@@ -1222,6 +1222,7 @@
         let dStem = safeMod(jdn + 9, 10);
         let dBranch = safeMod(jdn + 1, 12);
 
+        // 時柱計算
         if (!noHour) {
             if (hourVal === 12) { 
                 if (ziHourMode === 'yezi_stay' || ziHourMode === 'yezi_shift') {
@@ -1283,7 +1284,6 @@
         let targetJDN = 0;
 
         if (direction === 1) {
-            // 順行：計算距離下一個節氣交節日的天數
             if (day >= curTermDay) {
                 let nextMonth = month === 12 ? 1 : month + 1;
                 let nextYear = month === 12 ? year + 1 : year;
@@ -1292,7 +1292,6 @@
                 targetJDN = getStandardJDN(year, month, curTermDay);
             }
         } else {
-            // 逆行：計算距離上一個節氣交節日的天數
             if (day > curTermDay) {
                 targetJDN = getStandardJDN(year, month, curTermDay);
             } else {
@@ -1654,7 +1653,6 @@
                 }
             };
 
-            // 原局 查 流月支
             baziSrcs.forEach(src => {
                 src.rules.filter(r => shenshaConfig[r.name]).forEach(r => {
                     if (r.targets.includes(mBranch)) {
@@ -1663,14 +1661,12 @@
                 });
             });
 
-            // 流年支 查 流月支
             getBranchRules(ln.branch).filter(r => shenshaConfig[r.name]).forEach(r => {
                 if (r.targets.includes(mBranch)) {
                     pushMonthItem(r.name, r.name, "流年支", getSrcStyle("流年支"));
                 }
             });
 
-            // 流年干 查 流月支
             getStemRules(ln.stem).filter(r => shenshaConfig[r.name]).forEach(r => {
                 if (r.targets.includes(mBranch)) {
                     pushMonthItem(r.name, r.name, "流年干", getSrcStyle("流年干"));
@@ -1684,7 +1680,6 @@
                 }
             }
 
-            // 大運 照入 流月
             if (interactionConfig.dayunToLiuyue && dy) {
                 if (sourcePairConfig.dyBranch && dy.branch !== undefined) {
                     getBranchRules(dy.branch).filter(r => shenshaConfig[r.name]).forEach(r => {
@@ -1702,7 +1697,6 @@
                 }
             }
 
-            // 流月干 照入 原局
             if (interactionConfig.liuyueActive) {
                 let pillars = [
                     {n:"年支", i:d.yBranch, active: sourcePairConfig.yBranch && d.yBranch !== -1},
