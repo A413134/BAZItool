@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>易學專研 | 文王卦六爻排盤 & 八字大運流年與天紀推命系統 (精確起運版)</title>
+    <title>易學專研 | 文王卦六爻排盤 & 八字大運流年與天紀推命系統 (校正修復版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -404,7 +404,7 @@
         "火水未濟": { xian: "王虎之人受桎梏，卯卓宋高得利人，高臺傾覆，婚事不成反招凶，求財求官兩不利，發在亂世，一生武官主大利，餘不吉，夫婦不和爭執多，有女為貴。", hou: "東南西北居無定所，凡事缺臨門一腳，踏谷揚旗終凶，不貪不吝正財可守終生，憂中見喜之課。", zhi: "未濟之年，虎人受困之時，事多壅滯，慎處守成吉，力爭招是非，婚事不利，求財謹慎防小人。" }
     };
 
-    /* 2. 嚴格先天八卦數與陣列映射 */
+    /* 2. 先天八卦與六十四卦定義 */
     const TianGan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
     const DiZhi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
 
@@ -711,14 +711,7 @@
         return { guaShen, shiShen, xiangGui, chuangZhang };
     }
 
-    function deriveHoutianGua(xianUpCode, xianDownCode) {
-        const xianY = [...XIAN_TIAN_GUA[xianDownCode].yao, ...XIAN_TIAN_GUA[xianUpCode].yao];
-        const houDownY = [1 - xianY[3], 1 - xianY[4], 1 - xianY[5]];
-        const houUpY = [1 - xianY[0], 1 - xianY[1], 1 - xianY[2]];
-        return getFullGuaInfo(findGuaByYao(houUpY), findGuaByYao(houDownY));
-    }
-
-    /* 4. 精確子平八字大運排盤核心 (引入節氣時間精確計算起運歲數) */
+    /* 4. 八字大運排盤核心 (引入節氣精算) */
     let baziDaYunList = [];
 
     function renderBaziDaYun(sz, gender, birthYear, birthDate) {
@@ -829,7 +822,7 @@
 
     /* 5. 天紀值年卦（流年小限）推演核心 */
     let currentMainGuaInfo = null;
-    let currentHoutianGuaInfo = null;
+    let currentChangeGuaInfo = null;
     let currentDongYao = 1;
     let currentZhinianMode = 'yuantang';
 
@@ -853,7 +846,7 @@
     }
 
     function updateZhinianGua() {
-        if (!currentMainGuaInfo || !currentHoutianGuaInfo) return;
+        if (!currentMainGuaInfo || !currentChangeGuaInfo) return;
 
         let ageInput = document.getElementById('zhinian-age-input');
         let age = parseInt(ageInput.value) || 1;
@@ -880,14 +873,14 @@
             let lIdx = (startLineIdx + i) % 6;
             let isY = (currentMainGuaInfo.fullY[lIdx] === 1);
             let span = isY ? 9 : 6;
-            stepList.push({ guaType: "先天", lineIndex: lIdx, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
+            stepList.push({ guaType: "主卦", lineIndex: lIdx, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
             curTracker += span;
         }
 
         for (let i = 0; i < 6; i++) {
-            let isY = (currentHoutianGuaInfo.fullY[i] === 1);
+            let isY = (currentChangeGuaInfo.fullY[i] === 1);
             let span = isY ? 9 : 6;
-            stepList.push({ guaType: "後天", lineIndex: i, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
+            stepList.push({ guaType: "變卦", lineIndex: i, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
             curTracker += span;
         }
 
@@ -895,9 +888,9 @@
             stepList = [];
             curTracker = 1;
             for (let i = 0; i < 6; i++) {
-                let isY = (currentHoutianGuaInfo.fullY[i] === 1);
+                let isY = (currentChangeGuaInfo.fullY[i] === 1);
                 let span = isY ? 9 : 6;
-                stepList.push({ guaType: "後天", lineIndex: i, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
+                stepList.push({ guaType: "變卦", lineIndex: i, isYang: isY, span, start: curTracker, end: curTracker + span - 1 });
                 curTracker += span;
             }
         }
@@ -906,7 +899,7 @@
         let cycleAge = ((age - 1) % totalSpan) + 1;
         let activeStep = stepList.find(s => cycleAge >= s.start && cycleAge <= s.end) || stepList[0];
 
-        baseGua = (activeStep.guaType === "先天") ? currentMainGuaInfo : currentHoutianGuaInfo;
+        baseGua = (activeStep.guaType === "主卦") ? currentMainGuaInfo : currentChangeGuaInfo;
         let activeLineIndex = activeStep.lineIndex;
         let activeLineNum = activeLineIndex + 1;
 
@@ -941,7 +934,7 @@
 
         document.getElementById('zhinian-gua-title').innerText = `值年卦：${zhinianGua.name}`;
         document.getElementById('zhinian-step-detail').innerText = 
-            `以${activeStep.guaType}卦［${baseGua.name}］為體 · 當前歲運：第 ${activeLineNum} 爻(${lineNames[activeLineIndex]}) · ${dongExplain}`;
+            `以${activeStep.guaType}［${baseGua.name}］為體 · 當前歲運：第 ${activeLineNum} 爻(${lineNames[activeLineIndex]}) · ${dongExplain}`;
 
         let cycleOffset = Math.floor((age - 1) / totalSpan) * totalSpan;
         document.getElementById('zhinian-range-info').innerText = 
@@ -1044,13 +1037,15 @@
         document.getElementById('info-xunkong').innerText = `${getXunKong(sz.yStem, sz.yBranch).join('')} ${getXunKong(sz.mStem, sz.mBranch).join('')} ${getXunKong(sz.dStem, sz.dBranch).join('')} ${getXunKong(sz.hStem, sz.hBranch).join('')}`;
         document.getElementById('display-nowTime').innerText = `排盤時間：${new Date().toLocaleTimeString('zh-TW')}`;
 
-        // 精算交運大運排盤
+        // 八字大運排盤
         renderBaziDaYun(sz, gender, y, birthDate);
 
+        // 主卦
         let mainGua = getFullGuaInfo(upGuaCode, downGuaCode);
         let mainLines = getNaJiaDetails(upGuaCode, downGuaCode, mainGua.elem);
         currentMainGuaInfo = mainGua;
 
+        // 變卦
         let mainYao = [...mainGua.fullY];
         let changeYao = [...mainYao];
         changeYao[dongYao - 1] = 1 - changeYao[dongYao - 1];
@@ -1059,6 +1054,8 @@
         let changeUpGua = findGuaByYao(changeYao.slice(3, 6));
         let changeGua = getFullGuaInfo(changeUpGua, changeDownGua);
         let changeLines = getNaJiaDetails(changeUpGua, changeDownGua, changeGua.elem);
+        currentChangeGuaInfo = changeGua;
+
         let fuList = getFuShenList(mainGua.palace, mainLines);
 
         document.getElementById('main-gua-palace').innerText = `${mainGua.palace}宮：${mainGua.name} ${mainGua.type ? `(${mainGua.type})` : ''}`;
@@ -1117,16 +1114,18 @@
         }
 
         renderSixSubGuas(upGuaCode, downGuaCode, changeUpGua, changeDownGua, mainYao, changeYao);
-        currentHoutianGuaInfo = deriveHoutianGua(upGuaCode, downGuaCode);
-        renderTianJiInterpretation(mainGua.name, currentHoutianGuaInfo.name);
+
+        // 正確載入：左邊為主卦（風雷益），右邊為變卦（天雷無妄）的專屬天紀批斷！
+        renderTianJiInterpretation(mainGua.name, changeGua.name);
         updateZhinianGua();
     }
 
-    function renderTianJiInterpretation(xianName, houName) {
-        document.getElementById('tianji-main-title').innerText = xianName;
-        document.getElementById('tianji-change-title').innerText = houName;
-        const mainData = TianJiTextDB[xianName] || { xian: "待考", hou: "待考" };
-        const houData = TianJiTextDB[houName] || { xian: "待考", hou: "待考" };
+    function renderTianJiInterpretation(mainName, changeName) {
+        document.getElementById('tianji-main-title').innerText = mainName;
+        document.getElementById('tianji-change-title').innerText = changeName;
+
+        const mainData = TianJiTextDB[mainName] || { xian: "此卦暫無批註。", hou: "順應時勢為吉。" };
+        const changeData = TianJiTextDB[changeName] || { xian: "此卦暫無批註。", hou: "順應時勢為吉。" };
 
         document.getElementById('tianji-main-content').innerHTML = `
             <div class="p-2.5 rounded-lg bg-white border border-stone-200">
@@ -1138,14 +1137,15 @@
                 <p class="text-stone-800 leading-relaxed">${mainData.hou}</p>
             </div>
         `;
+
         document.getElementById('tianji-change-content').innerHTML = `
             <div class="p-2.5 rounded-lg bg-white border border-stone-200">
                 <span class="font-bold text-[#8a6538] block mb-1">【變卦趨勢祥批】</span>
-                <p class="text-stone-800 leading-relaxed">${houData.hou}</p>
+                <p class="text-stone-800 leading-relaxed">${changeData.hou}</p>
             </div>
             <div class="p-2.5 rounded-lg bg-white border border-stone-200 mt-2">
                 <span class="font-bold text-stone-600 block mb-1">【晚運與婚姻歸宿】</span>
-                <p class="text-stone-800 leading-relaxed">${houData.xian}</p>
+                <p class="text-stone-800 leading-relaxed">${changeData.xian}</p>
             </div>
         `;
     }
