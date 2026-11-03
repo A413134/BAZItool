@@ -183,7 +183,7 @@
                     <div class="grid grid-cols-6 gap-2 text-center" id="multiGuaDisplay"></div>
                 </div>
 
-                <!-- 先天/後天命卦詳批 -->
+                <!-- 主卦與變卦之 先天/後天命卦詳批 -->
                 <div class="mt-6 pt-5 border-t border-dashed border-stone-300">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-base text-[#c0392b]">📜</span>
@@ -192,27 +192,29 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 主卦卡片 -->
                         <div class="bg-[#faf8f4] border border-[#e5dfd5] rounded-xl p-4 shadow-sm flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between border-b border-stone-200 pb-2 mb-3">
                                     <span class="font-bold text-sm text-[#235a43] flex items-center gap-1.5">
                                         <span class="w-2 h-2 rounded-full bg-[#235a43]"></span>
-                                        【主卦/先天】<span id="tianji-main-title"></span>
+                                        【主卦】<span id="tianji-main-title"></span>
                                     </span>
-                                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">前運根基</span>
+                                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">本卦</span>
                                 </div>
                                 <div class="space-y-3 text-xs sm:text-sm text-stone-700 leading-relaxed font-sans" id="tianji-main-content"></div>
                             </div>
                         </div>
 
+                        <!-- 變卦卡片 -->
                         <div class="bg-[#faf8f4] border border-[#e5dfd5] rounded-xl p-4 shadow-sm flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between border-b border-stone-200 pb-2 mb-3">
                                     <span class="font-bold text-sm text-[#8a6538] flex items-center gap-1.5">
                                         <span class="w-2 h-2 rounded-full bg-[#8a6538]"></span>
-                                        【變卦/後天】<span id="tianji-change-title"></span>
+                                        【變卦】<span id="tianji-change-title"></span>
                                     </span>
-                                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono">變革歸宿</span>
+                                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono">之卦</span>
                                 </div>
                                 <div class="space-y-3 text-xs sm:text-sm text-stone-700 leading-relaxed font-sans" id="tianji-change-content"></div>
                             </div>
@@ -1115,7 +1117,7 @@
 
         renderSixSubGuas(upGuaCode, downGuaCode, changeUpGua, changeDownGua, mainYao, changeYao);
 
-        // 正確載入：左邊為主卦（風雷益），右邊為變卦（天雷無妄）的專屬天紀批斷！
+        // 主卦與變卦分別輸出各自的先天卦與後天卦
         renderTianJiInterpretation(mainGua.name, changeGua.name);
         updateZhinianGua();
     }
@@ -1127,25 +1129,27 @@
         const mainData = TianJiTextDB[mainName] || { xian: "此卦暫無批註。", hou: "順應時勢為吉。" };
         const changeData = TianJiTextDB[changeName] || { xian: "此卦暫無批註。", hou: "順應時勢為吉。" };
 
+        // 主卦：分別顯示主卦之【先天卦】與【後天卦】
         document.getElementById('tianji-main-content').innerHTML = `
             <div class="p-2.5 rounded-lg bg-white border border-stone-200">
-                <span class="font-bold text-[#c0392b] block mb-1">【主卦推命祥批】</span>
+                <span class="font-bold text-[#c0392b] block mb-1">【先天卦】</span>
                 <p class="text-stone-800 leading-relaxed">${mainData.xian}</p>
             </div>
             <div class="p-2.5 rounded-lg bg-white border border-stone-200 mt-2">
-                <span class="font-bold text-[#235a43] block mb-1">【事業才學氣運】</span>
+                <span class="font-bold text-[#235a43] block mb-1">【後天卦】</span>
                 <p class="text-stone-800 leading-relaxed">${mainData.hou}</p>
             </div>
         `;
 
+        // 變卦：分別顯示變卦之【先天卦】與【後天卦】
         document.getElementById('tianji-change-content').innerHTML = `
             <div class="p-2.5 rounded-lg bg-white border border-stone-200">
-                <span class="font-bold text-[#8a6538] block mb-1">【變卦趨勢祥批】</span>
-                <p class="text-stone-800 leading-relaxed">${changeData.hou}</p>
+                <span class="font-bold text-[#c0392b] block mb-1">【先天卦】</span>
+                <p class="text-stone-800 leading-relaxed">${changeData.xian}</p>
             </div>
             <div class="p-2.5 rounded-lg bg-white border border-stone-200 mt-2">
-                <span class="font-bold text-stone-600 block mb-1">【晚運與婚姻歸宿】</span>
-                <p class="text-stone-800 leading-relaxed">${changeData.xian}</p>
+                <span class="font-bold text-[#8a6538] block mb-1">【後天卦】</span>
+                <p class="text-stone-800 leading-relaxed">${changeData.hou}</p>
             </div>
         `;
     }
